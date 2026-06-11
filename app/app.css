@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   PATAN BRAND DESIGN SYSTEM
+   ============================================================================ */
+
+@theme {
+  /* Typography */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-heading: "Merriweather", Georgia, serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Primary Colors */
+  --color-midnight: #0D2B45;    /* Trust, Wisdom, Stability */
+  --color-golden: #F5B942;      /* Hope, Celebration, Transformation */
+  --color-forest: #2E6F40;      /* Growth, Renewal, Life */
+
+  /* Secondary Colors */
+  --color-dawn: #FDF9F2;        /* Backgrounds, cards */
+  --color-mist: #E8ECF0;        /* Borders, dividers */
+  --color-night: #1C2230;       /* Dark mode, text */
+  --color-soft-gold: #F8D98B;   /* Hover states, highlights */
+
+  /* Semantic Colors */
+  --color-success: #3FAE5A;
+  --color-warning: #F5B942;
+  --color-error: #D64545;
+  --color-info: #3D84F5;
+
+  /* Typography Scale */
+  --text-display: 3.5rem;       /* 56px */
+  --text-h1: 3rem;              /* 48px */
+  --text-h2: 2.5rem;            /* 40px */
+  --text-h3: 2rem;              /* 32px */
+  --text-h4: 1.5rem;            /* 24px */
+  --text-body-lg: 1.125rem;     /* 18px */
+  --text-body: 1rem;            /* 16px */
+  --text-caption: 0.875rem;     /* 14px */
+  --text-small: 0.75rem;        /* 12px */
+}
+
+/* ============================================================================
+   BASE STYLES
+   ============================================================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-dawn text-night;
+  font-family: var(--font-body);
+  
+  @media (prefers-color-scheme: dark) {
+    @apply bg-night text-dawn;
+    color-scheme: dark;
+  }
+}
+
+/* Headings use Merriweather */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  @apply text-midnight;
+  
+  @media (prefers-color-scheme: dark) {
+    @apply text-dawn;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY
+   ============================================================================ */
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  @apply absolute -top-10 left-0 bg-midnight text-dawn px-4 py-2 z-50;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  @apply top-0;
+}
+
+/* Focus styles - never remove, only enhance */
+:focus-visible {
+  outline: 2px solid var(--color-golden);
+  outline-offset: 2px;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================================
+   BRAND COMPONENTS
+   ============================================================================ */
+
+/* Primary button - Golden accent */
+.btn-primary {
+  @apply bg-golden text-midnight font-medium px-6 py-3 rounded-lg;
+  @apply hover:bg-soft-gold;
+  @apply focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* Secondary button */
+.btn-secondary {
+  @apply bg-transparent text-midnight border-2 border-midnight px-6 py-3 rounded-lg;
+  @apply hover:bg-midnight hover:text-dawn;
+  @apply focus-visible:ring-2 focus-visible:ring-midnight focus-visible:ring-offset-2;
+  transition: all 0.2s;
+  
+  @media (prefers-color-scheme: dark) {
+    @apply text-dawn border-dawn;
+    @apply hover:bg-dawn hover:text-midnight;
+  }
+}
+
+/* Card component */
+.card {
+  @apply bg-white rounded-xl shadow-sm border border-mist p-6;
+  
+  @media (prefers-color-scheme: dark) {
+    @apply bg-night border-midnight/30;
+  }
+}
+
+/* Engagement reactions */
+.engagement-btn {
+  @apply inline-flex items-center gap-2 px-4 py-2 rounded-full;
+  @apply text-midnight bg-mist/50;
+  @apply hover:bg-mist;
+  @apply focus-visible:ring-2 focus-visible:ring-golden;
+  transition: all 0.2s;
+}
+
+.engagement-btn[aria-pressed="true"] {
+  @apply bg-golden/20 text-midnight;
+}
+
+/* Status badges */
+.badge-achieved {
+  @apply inline-flex items-center gap-1 px-3 py-1 rounded-full;
+  @apply bg-success/10 text-success text-sm font-medium;
+}
+
+.badge-in-progress {
+  @apply inline-flex items-center gap-1 px-3 py-1 rounded-full;
+  @apply bg-golden/10 text-golden text-sm font-medium;
+}
+
+.badge-pending {
+  @apply inline-flex items-center gap-1 px-3 py-1 rounded-full;
+  @apply bg-mist text-night/70 text-sm font-medium;
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
