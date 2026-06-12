@@ -35,6 +35,15 @@ export default [
     route("privacy", "routes/privacy.tsx"),
     route("terms", "routes/terms.tsx"),
     route("accessibility", "routes/accessibility.tsx"),
+    
+    // SEO Landing Pages
+    route("stories-of-hope", "routes/stories-of-hope.tsx"),
+    route("gratitude-stories", "routes/gratitude-stories.tsx"),
+    route("overcoming-adversity", "routes/overcoming-adversity.tsx"),
+    route("stories-of-transformation", "routes/stories-of-transformation.tsx"),
+    route("inspirational-testimonies", "routes/inspirational-testimonies.tsx"),
+    route("personal-growth-stories", "routes/personal-growth-stories.tsx"),
+    route("healing-and-resilience", "routes/healing-and-resilience.tsx"),
   ]),
   
   // Auth routes (no nav/footer)

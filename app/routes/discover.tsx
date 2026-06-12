@@ -88,11 +88,11 @@ export default function Discover() {
   const selectedCategory = searchParams.get('category') || '';
 
   return (
-    <main id="main-content" className="min-h-screen bg-dawn">
+    <main id="main-content" className="page-modern min-h-screen bg-dawn">
       {/* Hero Section */}
-      <section className="bg-midnight text-dawn py-16">
+      <section className="bg-midnight text-dawn py-16" aria-labelledby="discover-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="font-heading text-3xl sm:text-4xl font-bold text-center">
+          <h1 id="discover-heading" className="font-heading text-3xl sm:text-4xl font-bold text-center">
             Discover Inspiring Stories
           </h1>
           <p className="mt-4 text-lg text-dawn/70 text-center max-w-2xl mx-auto">

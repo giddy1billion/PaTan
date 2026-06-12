@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
 
 export default function ForgotPassword() {
   return (
-    <div className="min-h-screen bg-dawn flex flex-col">
+    <div className="min-h-screen page-modern flex flex-col">
       {/* Header */}
       <header className="p-4">
         <Link
@@ -29,17 +29,17 @@ export default function ForgotPassword() {
       </header>
 
       {/* Main Content */}
-      <main id="main-content" className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-lg p-8">
+      <main id="main-content" className="page-modern flex-1 flex items-center justify-center p-4 sm:p-6">
+        <div className="w-full max-w-lg">
+          <div className="page-hero-modern p-6 sm:p-8">
             <h1 className="font-heading text-2xl font-bold text-midnight text-center">
               Reset Your Password
             </h1>
-            <p className="mt-2 text-center text-night/60">
+            <p className="mt-2 text-center text-[#64748B]">
               Enter your email and we'll send you a reset link
             </p>
 
-            <Form method="post" className="mt-8 space-y-6">
+            <Form method="post" className="form-modern mt-8 space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-night">
                   Email address
@@ -67,7 +67,7 @@ export default function ForgotPassword() {
               Remember your password?{' '}
               <Link
                 to="/login"
-                className="font-medium text-golden hover:text-soft-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
+                className="font-medium text-[#2E6F40] hover:text-[#0D2B45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded"
               >
                 Log in
               </Link>

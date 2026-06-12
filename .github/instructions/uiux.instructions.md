@@ -160,7 +160,7 @@ Use consistent spacing scale for visual rhythm:
 
 // Text gradient (sparingly)
 <span className="
-  bg-gradient-to-r from-golden via-soft-gold to-golden
+  bg-gradient-to-r from-golden via-[#FDF3D6] to-golden
   bg-clip-text text-transparent
 ">
 ```
@@ -169,23 +169,43 @@ Use consistent spacing scale for visual rhythm:
 
 ### Button States
 
+Use pre-built CSS classes: `.btn-primary`, `.btn-secondary`, `.btn-tertiary`
+
+```tsx
+// Primary Button - Midnight Blue (most important action)
+// USE: Get Started, Share Your Story, Join the Community, Create Account
+<button className="btn-primary">Share Your Story</button>
+
+// Secondary Button - Golden (supporting action)
+// USE: Explore Stories, Read More, Learn More, Discover Journeys
+// RULE: Only use when a primary CTA already exists
+<button className="btn-secondary">Explore Stories</button>
+
+// Tertiary Button - Transparent (subtle action)
+// USE: Cancel, Back, Inline actions
+<button className="btn-tertiary">Cancel</button>
+```
+
+For custom button styling from scratch:
+
 ```tsx
 <button className="
-  /* Base state */
-  bg-golden text-midnight font-medium
+  /* Base state - Midnight Blue primary */
+  bg-midnight text-white font-medium
   rounded-xl px-6 py-3
+  min-h-[44px]
   
   /* Hover - subtle lift */
-  hover:bg-soft-gold 
+  hover:bg-[#123A5A]
   hover:-translate-y-0.5
-  hover:shadow-lg hover:shadow-golden/25
+  hover:shadow-lg hover:shadow-midnight/25
   
   /* Active - press down */
   active:translate-y-0 
   active:shadow-sm
   active:scale-[0.98]
   
-  /* Focus - clear ring */
+  /* Focus - golden ring */
   focus-visible:outline-none
   focus-visible:ring-2 
   focus-visible:ring-golden

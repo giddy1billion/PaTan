@@ -53,7 +53,7 @@ export default function AspirationDetail() {
   const { id } = useParams();
 
   return (
-    <main id="main-content" className="bg-dawn">
+    <main id="main-content" className="page-modern bg-dawn">
       <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">

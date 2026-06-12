@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
 
 export default function Accessibility() {
   return (
-    <main id="main-content" className="bg-dawn">
+    <main id="main-content" className="page-modern bg-dawn">
       {/* Hero */}
       <section className="bg-midnight text-dawn py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

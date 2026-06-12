@@ -173,6 +173,20 @@ export async function generatePWAIcons(): Promise<void> {
     .png()
     .toFile(path.join(PUBLIC_DIR, 'favicon.png'));
 
+  // SVG favicon generated from source logo by embedding a transparent PNG payload
+  const faviconSvgPayload = await sharp(SOURCE_LOGO)
+    .resize(64, 64, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .png()
+    .toBuffer();
+
+  const faviconSvg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="PaTan favicon">
+  <image href="data:image/png;base64,${faviconSvgPayload.toString('base64')}" x="0" y="0" width="64" height="64"/>
+</svg>
+`;
+
+  fs.writeFileSync(path.join(PUBLIC_DIR, 'favicon.svg'), faviconSvg, 'utf8');
+
   // Multi-size favicons
   for (const size of [16, 32, 48]) {
     await sharp(SOURCE_LOGO)
@@ -181,7 +195,7 @@ export async function generatePWAIcons(): Promise<void> {
       .toFile(path.join(PUBLIC_DIR, `favicon-${size}x${size}.png`));
   }
 
-  console.log(`✓ Generated ${sizes.length + 5} PWA icons in ${iconsDir}`);
+  console.log(`✓ Generated PWA icons and favicon assets in ${iconsDir}`);
 }
 
 // ============================================================================

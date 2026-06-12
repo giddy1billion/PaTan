@@ -55,40 +55,69 @@ function SocialIcon({ name }: { name: string }) {
 
 export function Footer() {
   return (
-    <footer className="bg-midnight text-dawn" role="contentinfo">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+    <footer className="bg-[#0D2B45] text-white relative overflow-hidden" role="contentinfo">
+      {/* Background decoration */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#F5B942]/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[#2E6F40]/5 rounded-full blur-[100px]" />
+      </div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-8">
+        {/* Main footer grid - responsive layout */}
+        <div className="grid grid-cols-2 gap-8 sm:gap-10 lg:grid-cols-12 lg:gap-8">
           {/* Brand Column */}
-          <div className="col-span-2 md:col-span-1">
+          <div className="col-span-2 lg:col-span-3">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 focus-visible:ring-offset-midnight rounded-lg"
+              className="inline-flex items-center gap-2 sm:gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0D2B45] rounded-lg group"
               aria-label="PaTan home"
             >
-              <img
-                src="/brand/logos/logo-sm.png"
-                alt=""
-                className="h-10 w-auto brightness-0 invert"
-                aria-hidden="true"
-              />
-              <span className="font-heading text-xl font-bold">PaTan</span>
+              <div className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center">
+                <img
+                  src="/brand/logos/logo-sm.png"
+                  alt=""
+                  className="h-full w-auto brightness-0 invert transition-transform duration-300 group-hover:scale-110"
+                  aria-hidden="true"
+                />
+              </div>
+              <span className="font-heading text-xl sm:text-2xl font-bold">PaTan</span>
             </Link>
-            <p className="mt-4 text-sm text-dawn/70">
-              Reflect. Inspire. Connect.
+            <p className="mt-4 sm:mt-6 text-sm sm:text-base text-white/80 leading-relaxed max-w-xs">
+              Illuminating lives through authentic stories of gratitude, resilience, hope, and transformation.
             </p>
+            
+            {/* Social Icons */}
+            <div className="mt-6 sm:mt-8">
+              <h2 className="sr-only">Follow us on social media</h2>
+              <ul className="flex gap-3" role="list">
+                {footerLinks.social.map((link) => (
+                  <li key={link.href}>
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/5 text-white/70 hover:bg-[#F5B942]/20 hover:text-[#F5B942] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942]"
+                      aria-label={`Follow PaTan on ${link.label}`}
+                    >
+                      <SocialIcon name={link.icon} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Product */}
-          <div>
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-golden">
+          <div className="lg:col-span-2">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-[#F5B942]">
               Product
             </h2>
-            <ul className="mt-4 space-y-3" role="list">
+            <ul className="mt-4 sm:mt-6 space-y-3 sm:space-y-4" role="list">
               {footerLinks.product.map((link) => (
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="text-sm text-dawn/70 hover:text-dawn transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
+                    className="text-sm text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded inline-block"
                   >
                     {link.label}
                   </Link>
@@ -98,16 +127,16 @@ export function Footer() {
           </div>
 
           {/* Company */}
-          <div>
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-golden">
+          <div className="lg:col-span-2">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-[#F5B942]">
               Company
             </h2>
-            <ul className="mt-4 space-y-3" role="list">
+            <ul className="mt-4 sm:mt-6 space-y-3 sm:space-y-4" role="list">
               {footerLinks.company.map((link) => (
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="text-sm text-dawn/70 hover:text-dawn transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
+                    className="text-sm text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded inline-block"
                   >
                     {link.label}
                   </Link>
@@ -117,16 +146,16 @@ export function Footer() {
           </div>
 
           {/* Resources */}
-          <div>
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-golden">
+          <div className="lg:col-span-2">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-[#F5B942]">
               Resources
             </h2>
-            <ul className="mt-4 space-y-3" role="list">
+            <ul className="mt-4 sm:mt-6 space-y-3 sm:space-y-4" role="list">
               {footerLinks.resources.map((link) => (
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="text-sm text-dawn/70 hover:text-dawn transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
+                    className="text-sm text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded inline-block"
                   >
                     {link.label}
                   </Link>
@@ -134,38 +163,45 @@ export function Footer() {
               ))}
             </ul>
           </div>
-
-          {/* Social */}
-          <div>
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-golden">
-              Connect
+          
+          {/* Newsletter - wider column */}
+          <div className="col-span-2 lg:col-span-3">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-[#F5B942]">
+              Stay Inspired
             </h2>
-            <ul className="mt-4 flex gap-4" role="list">
-              {footerLinks.social.map((link) => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-dawn/70 hover:text-dawn transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
-                    aria-label={`Follow PaTan on ${link.label}`}
-                  >
-                    <SocialIcon name={link.icon} />
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <p className="mt-4 sm:mt-6 text-sm text-white/70 max-w-sm">
+              Get weekly stories of hope and transformation delivered to your inbox.
+            </p>
+            <form className="mt-4" onSubmit={(e) => e.preventDefault()}>
+              <div className="flex flex-col gap-3">
+                <label htmlFor="footer-email" className="sr-only">Email address</label>
+                <input
+                  id="footer-email"
+                  type="email"
+                  placeholder="Enter your email"
+                  className="w-full min-h-[44px] px-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#F5B942] focus:border-transparent text-sm"
+                />
+                <button
+                  type="submit"
+                  className="btn-secondary min-h-[44px] px-6 text-sm w-full sm:w-auto"
+                >
+                  Subscribe
+                </button>
+              </div>
+            </form>
           </div>
         </div>
 
         {/* Bottom */}
-        <div className="mt-12 pt-8 border-t border-dawn/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-dawn/50">
-            © {new Date().getFullYear()} PaTan. All rights reserved.
-          </p>
-          <p className="text-sm text-dawn/70 font-medium tracking-widest">
-            REFLECT • INSPIRE • CONNECT
-          </p>
+        <div className="mt-12 sm:mt-16 pt-8 border-t border-white/10">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-white/60 order-2 sm:order-1">
+              © {new Date().getFullYear()} PaTan. All rights reserved.
+            </p>
+            <p className="text-sm text-white/60 font-medium tracking-[0.2em] order-1 sm:order-2">
+              REFLECT • INSPIRE • CONNECT
+            </p>
+          </div>
         </div>
       </div>
     </footer>

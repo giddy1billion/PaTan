@@ -1,7 +1,14 @@
 @import "tailwindcss";
 
 /* ============================================================================
-   PATAN BRAND DESIGN SYSTEM
+   PATAN BRAND COLOR SYSTEM
+   Tree of Light Identity: Reflection, Hope, Trust, Growth, Human Connection
+   
+   USAGE RATIO:
+   - 70% Neutral colors (White, Surface, Borders)
+   - 20% Midnight Blue (structure and authority)
+   - 7% Golden Light (celebration and emphasis)
+   - 3% Forest Green (growth and success)
    ============================================================================ */
 
 @theme {
@@ -11,22 +18,92 @@
   --font-heading: "Merriweather", Georgia, serif;
   --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  /* Primary Colors */
-  --color-midnight: #0D2B45;    /* Trust, Wisdom, Stability */
-  --color-golden: #F5B942;      /* Hope, Celebration, Transformation */
-  --color-forest: #2E6F40;      /* Growth, Renewal, Life */
+  /* =========================================================================
+     BASE COLORS - Use for every page, every story, every reflection
+     ========================================================================= */
+  --color-page: #FFFFFF;           /* Page background - clarity & spaciousness */
+  --color-surface: #F8FAFC;        /* Card/surface background */
+  --color-border: #E2E8F0;         /* Borders, dividers, inputs */
 
-  /* Secondary Colors */
-  --color-dawn: #FDF9F2;        /* Backgrounds, cards */
-  --color-mist: #E8ECF0;        /* Borders, dividers */
-  --color-night: #1C2230;       /* Dark mode, text */
-  --color-soft-gold: #F8D98B;   /* Hover states, highlights */
+  /* =========================================================================
+     TYPOGRAPHY COLORS
+     ========================================================================= */
+  --color-text-primary: #0D2B45;   /* Headlines H1-H6, Story titles, Nav links */
+  --color-text-body: #334155;      /* Body content, descriptions, long-form */
+  --color-text-secondary: #64748B; /* Author names, timestamps, categories */
+  --color-text-muted: #94A3B8;     /* Captions, helper text, disclaimers */
 
-  /* Semantic Colors */
-  --color-success: #3FAE5A;
-  --color-warning: #F5B942;
-  --color-error: #D64545;
-  --color-info: #3D84F5;
+  /* =========================================================================
+     PRIMARY BRAND COLORS - The Four Pillars
+     ========================================================================= */
+  --color-midnight: #0D2B45;       /* Trust, Reflection, Depth - Brand Foundation */
+  --color-golden: #F5B942;         /* Hope, Joy, Transformation - Hope Accent */
+  --color-forest: #2E6F40;         /* Growth, Renewal, Life - Growth Accent */
+  --color-night: #1C2230;          /* Dark mode, expanded nav, premium */
+
+  /* =========================================================================
+     SUPPORTING BRAND COLORS
+     ========================================================================= */
+  --color-golden-glow: #FDF3D6;    /* Celebration callouts, featured panels */
+  --color-forest-mist: #EAF5EC;    /* Success banners, aspiration updates */
+  --color-sky-reflection: #EDF6FB; /* Educational content, AI guidance */
+  --color-midnight-hover: #123A5A; /* Primary button hover */
+  --color-golden-hover: #E4A72E;   /* Secondary button hover */
+
+  /* Legacy aliases for compatibility */
+  --color-dawn: #FFFFFF;
+  --color-mist: #E2E8F0;
+  --color-soft-gold: #FDF3D6;
+
+  /* =========================================================================
+     REACTION COLORS
+     ========================================================================= */
+  --color-celebrate: #F5B942;      /* Joy, Recognition */
+  --color-uplift: #2E6F40;         /* Growth, Support */
+  --color-empathy: #A855F7;        /* Understanding, Connection */
+
+  /* =========================================================================
+     STATUS / SEMANTIC COLORS
+     ========================================================================= */
+  --color-success: #2E6F40;
+  --color-success-bg: #EAF5EC;
+  --color-warning: #F59E0B;
+  --color-warning-bg: #FEF3C7;
+  --color-error: #DC2626;
+  --color-error-bg: #FEE2E2;
+  --color-info: #2563EB;
+  --color-info-bg: #DBEAFE;
+
+  /* =========================================================================
+     AI ASSISTANT COLORS
+     ========================================================================= */
+  --color-ai-bg: #EDF6FB;
+  --color-ai-border: #B8E3F3;
+  --color-ai-accent: #0D2B45;
+  --color-ai-highlight: #FDF3D6;
+
+  /* =========================================================================
+     INTERACTION STATES
+     ========================================================================= */
+  --color-focus-ring: #F5B942;
+  --color-selected-bg: #EDF6FB;
+  --color-selected-border: #0D2B45;
+  --color-disabled-bg: #E2E8F0;
+  --color-disabled-text: #94A3B8;
+
+  /* =========================================================================
+     WCAG 2.2 AA ACCESSIBLE COLOR VARIANTS
+     These colors meet 4.5:1 contrast on light backgrounds
+     ========================================================================= */
+  --color-golden-accessible: #996A00;
+  --color-forest-accessible: #1E5A2F;
+  --color-info-accessible: #1D4ED8;
+  --color-error-accessible: #B91C1C;
+  --color-success-accessible: #166534;
+
+  /* Accessible muted text for light backgrounds (used by .text-muted / .text-subtle) */
+  --color-night-muted: #475569;    /* Secondary text - ~7.4:1 on white */
+  --color-night-subtle: #64748B;   /* Tertiary text - ~4.8:1 on white */
 
   /* Typography Scale */
   --text-display: 3.5rem;       /* 56px */
@@ -49,23 +126,85 @@ html {
 }
 
 body {
-  @apply bg-dawn text-night;
+  background-color: var(--color-page);
+  color: var(--color-text-body);
   font-family: var(--font-body);
-  
-  @media (prefers-color-scheme: dark) {
-    @apply bg-night text-dawn;
-    color-scheme: dark;
-  }
 }
 
-/* Headings use Merriweather */
+/* Headings use Merriweather - set font only, let color inherit or use utilities */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  @apply text-midnight;
-  
-  @media (prefers-color-scheme: dark) {
-    @apply text-dawn;
-  }
+}
+
+/* ============================================================================
+   DARK BACKGROUND TEXT CONTRAST
+   On dark backgrounds (midnight, night), text defaults to white for readability.
+   CSS inheritance handles children; Tailwind utilities can override for accents.
+   ============================================================================ */
+.bg-midnight,
+.bg-night,
+[class*="bg-[#0D2B45"],
+[class*="bg-[#0d2b45"],
+[class*="bg-[#1C2230"],
+[class*="bg-[#1c2230"],
+[class*="bg-[#0E2C46"],
+[class*="bg-[#0e2c46"] {
+  color: #FFFFFF;
+}
+
+/* Headings on dark backgrounds - white text */
+.bg-midnight h1,
+.bg-midnight h2,
+.bg-midnight h3,
+.bg-midnight h4,
+.bg-midnight h5,
+.bg-midnight h6,
+.bg-night h1,
+.bg-night h2,
+.bg-night h3,
+.bg-night h4,
+.bg-night h5,
+.bg-night h6,
+[class*="bg-[#0D2B45"] h1,
+[class*="bg-[#0D2B45"] h2,
+[class*="bg-[#0D2B45"] h3,
+[class*="bg-[#0D2B45"] h4,
+[class*="bg-[#0D2B45"] h5,
+[class*="bg-[#0D2B45"] h6 {
+  color: #FFFFFF;
+}
+
+/* Body text on dark backgrounds - white text */
+.bg-midnight p,
+.bg-midnight span,
+.bg-midnight li,
+.bg-midnight td,
+.bg-midnight label,
+.bg-night p,
+.bg-night span,
+.bg-night li,
+.bg-night td,
+.bg-night label,
+[class*="bg-[#0D2B45"] p,
+[class*="bg-[#0D2B45"] span,
+[class*="bg-[#0D2B45"] li,
+[class*="bg-[#0D2B45"] td,
+[class*="bg-[#0D2B45"] label {
+  color: #FFFFFF;
+}
+
+/* Secondary/meta text */
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+/* Muted text - captions, helper text (accessible on light backgrounds) */
+.text-muted {
+  color: var(--color-night-muted);
+}
+
+.text-subtle {
+  color: var(--color-night-subtle);
 }
 
 /* ============================================================================
@@ -74,7 +213,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Skip link for keyboard navigation */
 .skip-link {
-  @apply absolute -top-10 left-0 bg-midnight text-dawn px-4 py-2 z-50;
+  @apply absolute -top-10 left-0 px-4 py-2 z-50;
+  background-color: var(--color-midnight);
+  color: #FFFFFF;
   transition: top 0.2s;
 }
 
@@ -84,7 +225,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Focus styles - never remove, only enhance */
 :focus-visible {
-  outline: 2px solid var(--color-golden);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
@@ -101,76 +242,537 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================================================
-   BRAND COMPONENTS
+   BRAND COMPONENTS - BUTTONS
    ============================================================================ */
 
-/* Primary button - Golden accent */
+/* Primary Button - Midnight Blue background, White text
+   USE: Get Started, Share Your Story, Join the Community, Create Account, Submit Aspiration
+   RULE: Most important action on every screen */
 .btn-primary {
-  @apply bg-golden text-midnight font-medium px-6 py-3 rounded-lg;
-  @apply hover:bg-soft-gold;
-  @apply focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2;
-  transition: background-color 0.2s, transform 0.1s;
+  @apply font-medium rounded-xl;
+  @apply px-6 py-3;
+  @apply min-h-[44px];
+  @apply inline-flex items-center justify-center;
+  background-color: var(--color-midnight);
+  color: #FFFFFF;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-midnight-hover);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(13, 43, 69, 0.3),
+    0 8px 24px rgba(13, 43, 69, 0.2);
+}
+
+.btn-primary:hover::before {
+  transform: translateX(100%);
 }
 
 .btn-primary:active {
-  transform: scale(0.98);
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 8px rgba(13, 43, 69, 0.2);
 }
 
-/* Secondary button */
+.btn-primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--color-golden);
+}
+
+.btn-primary:disabled {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Secondary Button - Golden background, Midnight text
+   USE: Explore Stories, Read More, Learn More, Discover Journeys
+   RULE: Use only when a primary CTA already exists */
 .btn-secondary {
-  @apply bg-transparent text-midnight border-2 border-midnight px-6 py-3 rounded-lg;
-  @apply hover:bg-midnight hover:text-dawn;
-  @apply focus-visible:ring-2 focus-visible:ring-midnight focus-visible:ring-offset-2;
-  transition: all 0.2s;
-  
-  @media (prefers-color-scheme: dark) {
-    @apply text-dawn border-dawn;
-    @apply hover:bg-dawn hover:text-midnight;
-  }
+  @apply font-medium rounded-xl;
+  @apply px-6 py-3;
+  @apply min-h-[44px];
+  @apply inline-flex items-center justify-center;
+  background-color: var(--color-golden);
+  color: var(--color-midnight);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Card component */
+.btn-secondary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-golden-hover);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(245, 185, 66, 0.3),
+    0 8px 24px rgba(245, 185, 66, 0.2);
+}
+
+.btn-secondary:hover::before {
+  transform: translateX(100%);
+}
+
+.btn-secondary:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 8px rgba(245, 185, 66, 0.2);
+}
+
+.btn-secondary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--color-midnight);
+}
+
+.btn-secondary:disabled {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Secondary Button Dark - For use on dark backgrounds (midnight, night)
+   USE: Explore Stories, Read More, Learn More on dark hero sections
+   RULE: White outline with white text, inverts on hover */
+.btn-secondary-dark {
+  @apply font-medium rounded-xl;
+  @apply px-6 py-3;
+  @apply min-h-[44px];
+  @apply inline-flex items-center justify-center;
+  background-color: transparent;
+  color: #FFFFFF;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-secondary-dark:hover {
+  background-color: #FFFFFF;
+  color: var(--color-midnight);
+  border-color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(255, 255, 255, 0.2),
+    0 8px 24px rgba(255, 255, 255, 0.1);
+}
+
+.btn-secondary-dark:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-secondary-dark:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-midnight), 0 0 0 4px var(--color-golden);
+}
+
+/* Tertiary Button - Transparent background, Midnight text
+   USE: Text actions, Cancel actions, Back navigation, Inline actions */
+.btn-tertiary,
+.btn-ghost {
+  @apply font-medium rounded-xl;
+  @apply px-6 py-3;
+  @apply min-h-[44px];
+  @apply inline-flex items-center justify-center;
+  background-color: transparent;
+  color: var(--color-midnight);
+  transition: all 0.2s ease;
+}
+
+.btn-tertiary:hover,
+.btn-ghost:hover {
+  background-color: var(--color-surface);
+}
+
+.btn-tertiary:active,
+.btn-ghost:active {
+  background-color: var(--color-border);
+}
+
+.btn-tertiary:focus-visible,
+.btn-ghost:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-golden);
+}
+
+/* ============================================================================
+   CARD COMPONENTS
+   ============================================================================ */
+
+/* Card component - Surface background with subtle depth
+   USE: Story cards, Aspiration cards, Comment containers, Sidebar widgets, Modal surfaces */
 .card {
-  @apply bg-white rounded-xl shadow-sm border border-mist p-6;
-  
-  @media (prefers-color-scheme: dark) {
-    @apply bg-night border-midnight/30;
+  @apply rounded-2xl p-4 sm:p-6;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.02),
+    0 2px 4px rgba(0, 0, 0, 0.02),
+    0 4px 8px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.04),
+    0 8px 16px rgba(0, 0, 0, 0.04),
+    0 16px 32px rgba(0, 0, 0, 0.04);
+  border-color: rgba(245, 185, 66, 0.3);
+}
+
+/* Interactive card with link behavior */
+.card-interactive {
+  @apply rounded-2xl p-4 sm:p-6 cursor-pointer;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.02),
+    0 2px 4px rgba(0, 0, 0, 0.02),
+    0 4px 8px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-interactive:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.04),
+    0 8px 16px rgba(0, 0, 0, 0.04),
+    0 16px 32px rgba(0, 0, 0, 0.04);
+  border-color: rgba(245, 185, 66, 0.3);
+}
+
+.card-interactive:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-golden);
+}
+
+/* ============================================================================
+   SPECIAL CONTENT ELEMENTS
+   ============================================================================ */
+
+/* Reflection Block - Featured insights, Editor's reflections, Story takeaways */
+.reflection-block {
+  @apply rounded-lg p-4 sm:p-6;
+  background-color: var(--color-surface);
+  border-left: 4px solid var(--color-midnight);
+  color: var(--color-text-primary);
+}
+
+/* Hope Highlight Box - Encouraging moments, Community wins, Positive reminders */
+.hope-highlight {
+  @apply rounded-lg p-4 sm:p-6;
+  background-color: var(--color-golden-glow);
+  border: 1px solid var(--color-golden);
+  color: var(--color-text-primary);
+}
+
+/* Growth Callout Box - Transformation insights, Aspiration updates, Journey milestones */
+.growth-callout {
+  @apply rounded-lg p-4 sm:p-6;
+  background-color: var(--color-forest-mist);
+  border: 1px solid var(--color-forest);
+  color: var(--color-text-primary);
+}
+
+/* AI Assistant Container - Narrative refinement, AI prompts, Story guidance */
+.ai-container {
+  @apply rounded-lg p-4 sm:p-6;
+  background-color: var(--color-ai-bg);
+  border: 1px solid var(--color-ai-border);
+}
+
+.ai-suggestion {
+  @apply rounded p-3;
+  background-color: var(--color-ai-highlight);
+}
+
+/* ============================================================================
+   ENGAGEMENT REACTIONS
+   ============================================================================ */
+
+.engagement-btn {
+  @apply inline-flex items-center gap-2 rounded-full;
+  @apply px-4 py-2;
+  @apply min-h-[44px];
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.engagement-btn:hover {
+  background-color: var(--color-border);
+  border-color: var(--color-border);
+}
+
+.engagement-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-golden);
+}
+
+/* Celebrate reaction - Joy, Recognition */
+.engagement-btn[data-reaction="celebrate"],
+.engagement-btn[aria-pressed="true"][data-reaction="celebrate"] {
+  background-color: rgba(245, 185, 66, 0.15);
+  color: var(--color-golden-accessible);
+  border-color: rgba(245, 185, 66, 0.3);
+}
+
+/* Uplift reaction - Growth, Support */
+.engagement-btn[data-reaction="uplift"],
+.engagement-btn[aria-pressed="true"][data-reaction="uplift"] {
+  background-color: rgba(46, 111, 64, 0.1);
+  color: var(--color-forest);
+  border-color: rgba(46, 111, 64, 0.3);
+}
+
+/* Empathy reaction - Understanding, Connection */
+.engagement-btn[data-reaction="empathy"],
+.engagement-btn[aria-pressed="true"][data-reaction="empathy"] {
+  background-color: rgba(168, 85, 247, 0.1);
+  color: var(--color-empathy);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+/* Generic pressed state */
+.engagement-btn[aria-pressed="true"] {
+  background-color: rgba(245, 185, 66, 0.15);
+  color: var(--color-golden-accessible);
+  border-color: rgba(245, 185, 66, 0.3);
+}
+
+/* ============================================================================
+   STATUS BADGES
+   ============================================================================ */
+
+.badge {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full;
+  @apply text-sm font-medium;
+}
+
+/* Achieved - Success state */
+.badge-achieved {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full;
+  @apply text-sm font-medium;
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+  box-shadow: 0 1px 3px rgba(46, 111, 64, 0.1);
+}
+
+/* In Progress - Active state */
+.badge-in-progress {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full;
+  @apply text-sm font-medium;
+  background-color: var(--color-golden-glow);
+  color: var(--color-golden-accessible);
+  box-shadow: 0 1px 3px rgba(245, 185, 66, 0.1);
+}
+
+/* Pending - Waiting state */
+.badge-pending {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full;
+  @apply text-sm font-medium;
+  background-color: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+
+/* ============================================================================
+   LINKS
+   USE: Story tags, Inline hyperlinks, Related story links, Author references
+   RULE: Links should signal exploration without competing with primary actions
+   ============================================================================ */
+
+.link {
+  color: var(--color-forest);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: var(--color-midnight);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--color-golden);
+  outline-offset: 2px;
+}
+
+/* ============================================================================
+   MODERN-CLASSIC PAGE AND FORM SYSTEM
+   ============================================================================ */
+
+.page-modern {
+  background:
+    radial-gradient(1200px 400px at 85% -10%, rgba(245, 185, 66, 0.12), transparent 60%),
+    radial-gradient(900px 320px at -10% -5%, rgba(46, 111, 64, 0.1), transparent 55%),
+    linear-gradient(180deg, #ffffff 0%, #f8fafc 45%, #ffffff 100%);
+}
+
+.surface-modern {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 8px 24px rgba(13, 43, 69, 0.04);
+}
+
+.page-hero-modern {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 1.5rem;
+  background: #ffffff;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 12px 32px rgba(13, 43, 69, 0.06);
+}
+
+.page-hero-modern::before,
+.page-hero-modern::after {
+  content: "";
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(48px);
+}
+
+.page-hero-modern::before {
+  width: 18rem;
+  height: 18rem;
+  right: -4rem;
+  top: -6rem;
+  background: rgba(245, 185, 66, 0.18);
+}
+
+.page-hero-modern::after {
+  width: 16rem;
+  height: 16rem;
+  left: -4rem;
+  bottom: -6rem;
+  background: rgba(46, 111, 64, 0.14);
+}
+
+.form-modern {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.form-modern > fieldset,
+.form-modern > div,
+.form-modern > section {
+  border-radius: 1rem;
+}
+
+.form-modern input:not([type="radio"]):not([type="checkbox"]),
+.form-modern select,
+.form-modern textarea {
+  border: 1px solid var(--color-border) !important;
+  border-radius: 0.75rem !important;
+  background-color: #ffffff;
+  color: var(--color-text-body);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.form-modern input:not([type="radio"]):not([type="checkbox"]):hover,
+.form-modern select:hover,
+.form-modern textarea:hover {
+  border-color: rgba(13, 43, 69, 0.28) !important;
+}
+
+.form-modern input:not([type="radio"]):not([type="checkbox"]):focus,
+.form-modern select:focus,
+.form-modern textarea:focus {
+  border-color: transparent !important;
+  box-shadow: 0 0 0 2px var(--color-golden);
+}
+
+.form-modern fieldset {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+}
+
+.form-modern input[type="radio"],
+.form-modern input[type="checkbox"] {
+  accent-color: var(--color-golden);
+}
+
+.form-modern .btn-primary,
+.form-modern .btn-secondary {
+  min-height: 48px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-hero-modern::before,
+  .page-hero-modern::after {
+    filter: none;
   }
 }
 
-/* Engagement reactions */
-.engagement-btn {
-  @apply inline-flex items-center gap-2 px-4 py-2 rounded-full;
-  @apply text-midnight bg-mist/50;
-  @apply hover:bg-mist;
-  @apply focus-visible:ring-2 focus-visible:ring-golden;
-  transition: all 0.2s;
+/* ============================================================================
+   FORM ELEMENTS
+   ============================================================================ */
+
+.input {
+  @apply rounded-lg px-4 py-3 w-full;
+  background-color: var(--color-page);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-body);
+  transition: all 0.2s ease;
 }
 
-.engagement-btn[aria-pressed="true"] {
-  @apply bg-golden/20 text-midnight;
+.input:focus {
+  border-color: var(--color-midnight);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(13, 43, 69, 0.1);
 }
 
-/* Status badges */
-.badge-achieved {
-  @apply inline-flex items-center gap-1 px-3 py-1 rounded-full;
-  @apply bg-success/10 text-success text-sm font-medium;
+.input::placeholder {
+  color: var(--color-text-muted);
 }
 
-.badge-in-progress {
-  @apply inline-flex items-center gap-1 px-3 py-1 rounded-full;
-  @apply bg-golden/10 text-golden text-sm font-medium;
+.input:disabled {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
 }
 
-.badge-pending {
-  @apply inline-flex items-center gap-1 px-3 py-1 rounded-full;
-  @apply bg-mist text-night/70 text-sm font-medium;
+/* Selected state */
+.input-selected,
+.input[aria-selected="true"] {
+  background-color: var(--color-selected-bg);
+  border-color: var(--color-selected-border);
 }
 
 /* ============================================================================
    ANIMATIONS
    ============================================================================ */
 
+/* Floating animation for decorative elements */
 @keyframes float {
   0%, 100% {
     transform: translateY(0) scale(1);
@@ -184,4 +786,359 @@ h1, h2, h3, h4, h5, h6 {
 
 .animate-float {
   animation: float 4s ease-in-out infinite;
+}
+
+/* Subtle pulse for logos/icons */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+/* Fade in up for scroll reveals */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Staggered delays for children */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* Slide in from left */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Slide in from right */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Scale in for modals/cards */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Glow pulse for CTAs */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(245, 185, 66, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(245, 185, 66, 0.5);
+  }
+}
+
+.animate-glow {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* Counter number animation */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-count {
+  animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Shimmer effect for loading */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-mist) 25%,
+    var(--color-dawn) 50%,
+    var(--color-mist) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Gradient text animation */
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-text {
+  background: linear-gradient(
+    90deg,
+    var(--color-golden),
+    var(--color-soft-gold),
+    var(--color-golden)
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+/* Floating particles */
+@keyframes floatParticle {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) scale(1);
+    opacity: 0;
+  }
+}
+
+.animate-particle {
+  animation: floatParticle linear infinite;
+}
+
+/* ============================================================================
+   MODERN UTILITY CLASSES
+   ============================================================================ */
+
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+  background: rgba(13, 43, 69, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient borders */
+.gradient-border {
+  position: relative;
+  background: var(--color-dawn);
+  border-radius: 1rem;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, var(--color-golden), var(--color-forest), var(--color-golden));
+  border-radius: inherit;
+  z-index: -1;
+}
+
+/* Text gradient */
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-golden) 0%, var(--color-soft-gold) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Layered shadows for depth */
+.shadow-layered {
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.02),
+    0 2px 4px rgba(0, 0, 0, 0.02),
+    0 4px 8px rgba(0, 0, 0, 0.02),
+    0 8px 16px rgba(0, 0, 0, 0.02),
+    0 16px 32px rgba(0, 0, 0, 0.02);
+}
+
+.shadow-layered-lg {
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.03),
+    0 4px 8px rgba(0, 0, 0, 0.03),
+    0 8px 16px rgba(0, 0, 0, 0.03),
+    0 16px 32px rgba(0, 0, 0, 0.03),
+    0 32px 64px rgba(0, 0, 0, 0.03);
+}
+
+/* Golden glow shadow */
+.shadow-golden {
+  box-shadow: 
+    0 4px 14px rgba(245, 185, 66, 0.15),
+    0 8px 32px rgba(245, 185, 66, 0.1);
+}
+
+.shadow-golden-lg {
+  box-shadow: 
+    0 8px 24px rgba(245, 185, 66, 0.2),
+    0 16px 48px rgba(245, 185, 66, 0.15);
+}
+
+/* Noise texture overlay */
+.noise {
+  position: relative;
+}
+
+.noise::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+/* Line decorations */
+.line-accent {
+  position: relative;
+}
+
+.line-accent::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-golden), transparent);
+  border-radius: 2px;
+}
+
+/* ============================================================================
+   ACCESSIBLE COLOR UTILITIES
+   WCAG 2.2 AA compliant text colors for light backgrounds
+   ============================================================================ */
+
+/* Text colors that meet 4.5:1 contrast on light backgrounds */
+.text-golden-accessible {
+  color: var(--color-golden-accessible);
+}
+
+.text-forest-accessible {
+  color: var(--color-forest-accessible);
+}
+
+.text-info-accessible {
+  color: var(--color-info-accessible);
+}
+
+.text-error-accessible {
+  color: var(--color-error-accessible);
+}
+
+.text-success-accessible {
+  color: var(--color-success-accessible);
+}
+
+/* Muted text that meets contrast requirements */
+.text-muted {
+  color: var(--color-night-muted);
+}
+
+.text-subtle {
+  color: var(--color-night-subtle);
+}
+
+/* Accessible badge variants */
+.badge-golden-accessible {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold;
+  background-color: rgba(245, 185, 66, 0.15);
+  color: var(--color-golden-accessible);
+}
+
+.badge-forest-accessible {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold;
+  background-color: rgba(46, 111, 64, 0.12);
+  color: var(--color-forest-accessible);
+}
+
+.badge-info-accessible {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold;
+  background-color: rgba(61, 132, 245, 0.12);
+  color: var(--color-info-accessible);
+}
+
+.badge-error-accessible {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold;
+  background-color: rgba(214, 69, 69, 0.12);
+  color: var(--color-error-accessible);
+}
+
+.badge-midnight-accessible {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold;
+  background-color: rgba(13, 43, 69, 0.08);
+  color: var(--color-midnight);
 }

@@ -9,8 +9,8 @@ Review the following for PaTan brand compliance:
 ## Check against:
 
 ### Colors
-- [ ] Uses only approved palette (Midnight Blue #0D2B45, Golden Light #F5B942, Deep Forest #2E6F40, etc.)
-- [ ] Semantic colors used appropriately (success=#3FAE5A, error=#D64545, etc.)
+- [ ] Uses only approved palette (White #FFFFFF, Surface #F8FAFC, Border #E2E8F0, Midnight Blue #0D2B45, Golden Light #F5B942, Forest Green #2E6F40, etc.)
+- [ ] Semantic colors used appropriately (success=#2E6F40, warning=#F59E0B, error=#DC2626, info=#2563EB)
 - [ ] WCAG AA contrast ratios maintained
 
 ### Typography

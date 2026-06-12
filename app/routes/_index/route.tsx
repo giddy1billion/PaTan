@@ -45,7 +45,7 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
   return (
-    <main id="main-content">
+    <main id="main-content" className="page-modern">
       <Hero />
       <FeaturedStories />
       <HowItWorks />

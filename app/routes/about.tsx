@@ -49,11 +49,11 @@ const team = [
 
 export default function About() {
   return (
-    <main id="main-content">
+    <main id="main-content" className="page-modern">
       {/* Hero */}
-      <section className="bg-midnight text-dawn py-20">
+      <section className="bg-midnight text-dawn py-20" aria-labelledby="about-heading">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="font-heading text-4xl sm:text-5xl font-bold">
+          <h1 id="about-heading" className="font-heading text-4xl sm:text-5xl font-bold">
             Illuminating Lives Through
             <span className="text-golden"> Authentic Stories</span>
           </h1>
@@ -191,7 +191,7 @@ export default function About() {
             <Link to="/signup" className="btn-primary">
               Get Started Free
             </Link>
-            <Link to="/discover" className="btn-secondary border-dawn text-dawn hover:bg-dawn hover:text-midnight">
+            <Link to="/discover" className="btn-secondary-dark">
               Explore Stories
             </Link>
           </div>

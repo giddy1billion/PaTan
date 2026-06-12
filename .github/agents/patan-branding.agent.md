@@ -57,25 +57,37 @@ Warm, Thoughtful, Hopeful, Authentic, Wise, Encouraging, Trustworthy, Reflective
 
 ```css
 :root {
-  /* Midnight Blue — Trust, Wisdom, Stability */
-  --color-midnight-blue: #0D2B45;
-  
-  /* Golden Light — Hope, Celebration, Transformation */
-  --color-golden-light: #F5B942;
-  
-  /* Deep Forest — Growth, Renewal, Life */
-  --color-deep-forest: #2E6F40;
+  /* Midnight Blue — Trust, Reflection, Depth */
+  --color-midnight: #0D2B45;
+
+  /* Golden Light — Hope, Joy, Transformation */
+  --color-golden: #F5B942;
+
+  /* Forest Green — Growth, Renewal, Life */
+  --color-forest: #2E6F40;
 }
 ```
 
-### Secondary Colors
+### Foundation Colors
 
 ```css
 :root {
-  --color-dawn-cream: #FDF9F2;
-  --color-mist-gray: #E8ECF0;
-  --color-night-sky: #1C2230;
-  --color-soft-gold: #F8D98B;
+  --color-page: #FFFFFF;
+  --color-surface: #F8FAFC;
+  --color-border: #E2E8F0;
+  --color-night: #1C2230;
+}
+```
+
+### Supporting Colors
+
+```css
+:root {
+  --color-golden-glow: #FDF3D6;
+  --color-forest-mist: #EAF5EC;
+  --color-sky-reflection: #EDF6FB;
+  --color-midnight-hover: #123A5A;
+  --color-golden-hover: #E4A72E;
 }
 ```
 
@@ -83,12 +95,29 @@ Warm, Thoughtful, Hopeful, Authentic, Wise, Encouraging, Trustworthy, Reflective
 
 ```css
 :root {
-  --color-success: #3FAE5A;
-  --color-warning: #F5B942;
-  --color-error: #D64545;
-  --color-info: #3D84F5;
+  --color-success: #2E6F40;
+  --color-warning: #F59E0B;
+  --color-error: #DC2626;
+  --color-info: #2563EB;
 }
 ```
+
+### Reaction Colors
+
+```css
+:root {
+  --color-celebrate: #F5B942;
+  --color-uplift: #2E6F40;
+  --color-empathy: #A855F7;
+}
+```
+
+### Brand Usage Ratio
+
+- 70% neutral colors (`#FFFFFF`, `#F8FAFC`, `#E2E8F0`)
+- 20% Midnight Blue (`#0D2B45`)
+- 7% Golden Light (`#F5B942`)
+- 3% Forest Green (`#2E6F40`)
 
 ## Typography
 

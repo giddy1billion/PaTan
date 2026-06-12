@@ -59,7 +59,7 @@ export default function StoryDetail() {
   const { storyId } = useParams();
 
   return (
-    <main id="main-content" className="bg-dawn">
+    <main id="main-content" className="page-modern bg-dawn">
       <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Category */}
         <div className="text-center">

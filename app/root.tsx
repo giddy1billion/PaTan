@@ -16,6 +16,9 @@ export const links: Route.LinksFunction = () => [
   
   // Favicons
   { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+  { rel: "icon", href: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+  { rel: "icon", href: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+  { rel: "shortcut icon", href: "/favicon.ico" },
   { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
   
   // Fonts - Preconnect

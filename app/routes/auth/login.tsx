@@ -1,5 +1,6 @@
-import type { MetaFunction } from 'react-router';
-import { Link, Form } from 'react-router';
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
+import { Link, Form, redirect, useSearchParams } from 'react-router';
+import { createUserSession, getUser } from '~/utils/auth.server';
 
 export const meta: MetaFunction = () => {
   return [
@@ -8,9 +9,45 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const user = await getUser(request);
+
+  if (user) {
+    return redirect('/discover');
+  }
+
+  return null;
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const email = String(formData.get('email') ?? '').trim().toLowerCase();
+  const password = String(formData.get('password') ?? '');
+  const remember = formData.get('remember') === 'on';
+  const redirectTo = String(formData.get('redirectTo') ?? '/discover');
+
+  if (!email || !password) {
+    return redirect('/login?error=missing-credentials');
+  }
+
+  // Placeholder auth until DB-backed auth is implemented.
+  return createUserSession({
+    request,
+    user: {
+      id: email,
+      email,
+    },
+    redirectTo,
+    remember,
+  });
+}
+
 export default function Login() {
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo') ?? '/discover';
+
   return (
-    <div className="min-h-screen bg-dawn flex flex-col">
+    <div className="min-h-screen page-modern flex flex-col">
       {/* Header */}
       <header className="p-4">
         <Link
@@ -29,17 +66,18 @@ export default function Login() {
       </header>
 
       {/* Main Content */}
-      <main id="main-content" className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-lg p-8">
+      <main id="main-content" className="page-modern flex-1 flex items-center justify-center p-4 sm:p-6">
+        <div className="w-full max-w-lg">
+          <div className="page-hero-modern p-6 sm:p-8">
             <h1 className="font-heading text-2xl font-bold text-midnight text-center">
               Welcome Back
             </h1>
-            <p className="mt-2 text-center text-night/60">
+            <p className="mt-2 text-center text-[#64748B]">
               Log in to continue your journey
             </p>
 
-            <Form method="post" className="mt-8 space-y-6">
+            <Form method="post" className="form-modern mt-8 space-y-6">
+              <input type="hidden" name="redirectTo" value={redirectTo} />
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-night">
                   Email address
@@ -62,7 +100,7 @@ export default function Login() {
                   </label>
                   <Link
                     to="/forgot-password"
-                    className="text-sm text-golden hover:text-soft-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
+                    className="text-sm text-[#2E6F40] hover:text-[#0D2B45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded"
                   >
                     Forgot password?
                   </Link>
@@ -105,7 +143,7 @@ export default function Login() {
                   <div className="w-full border-t border-mist" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-night/50">Or continue with</span>
+                  <span className="px-2 bg-white text-[#64748B]">Or continue with</span>
                 </div>
               </div>
 
@@ -137,8 +175,8 @@ export default function Login() {
             <p className="mt-8 text-center text-sm text-night/60">
               Don't have an account?{' '}
               <Link
-                to="/signup"
-                className="font-medium text-golden hover:text-soft-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
+                to={`/signup?redirectTo=${encodeURIComponent(redirectTo)}`}
+                className="font-medium text-[#2E6F40] hover:text-[#0D2B45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded"
               >
                 Sign up for free
               </Link>

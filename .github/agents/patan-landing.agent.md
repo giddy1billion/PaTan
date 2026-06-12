@@ -147,7 +147,9 @@ Create dedicated pages optimized for search intent:
 --color-midnight: #0D2B45;    /* Primary, headers */
 --color-golden: #F5B942;      /* CTAs, accents */
 --color-forest: #2E6F40;      /* Growth, success */
---color-dawn: #FDF9F2;        /* Backgrounds */
+--color-page: #FFFFFF;        /* Base backgrounds */
+--color-surface: #F8FAFC;     /* Cards/surfaces */
+--color-border: #E2E8F0;      /* Borders/dividers */
 
 /* Typography */
 --font-heading: 'Merriweather', Georgia, serif;
@@ -156,7 +158,7 @@ Create dedicated pages optimized for search intent:
 
 ## Visual Direction
 
-- **Hero background**: Gradient from Midnight Blue → Dawn Cream
+- **Hero background**: Gradient from Midnight Blue → White
 - **Hero visual**: Animated Tree of Light logo
 - **Floating story cards** with excerpts like:
   - "I never thought I would overcome this..."
@@ -189,9 +191,9 @@ Create dedicated pages optimized for search intent:
 ```tsx
 <article className="
   group
-  bg-white dark:bg-night 
+  bg-[#F8FAFC] dark:bg-night 
   rounded-2xl p-4 sm:p-6
-  border border-mist/50 dark:border-midnight/50
+  border border-[#E2E8F0] dark:border-midnight/50
   shadow-sm hover:shadow-lg
   hover:-translate-y-1
   transition-all duration-300
@@ -204,18 +206,18 @@ Create dedicated pages optimized for search intent:
     {category}
   </span>
   <h3 className="
-    text-lg sm:text-xl font-heading text-midnight dark:text-dawn
+    text-lg sm:text-xl font-heading text-midnight dark:text-white
     group-hover:text-golden transition-colors
     mb-2
   ">
     {title}
   </h3>
-  <p className="text-midnight/70 dark:text-dawn/70 text-sm sm:text-base line-clamp-3">
+  <p className="text-[#334155] dark:text-white/80 text-sm sm:text-base line-clamp-3">
     {excerpt}
   </p>
   <footer className="
     mt-4 flex items-center justify-between
-    text-sm text-midnight/50 dark:text-dawn/50
+    text-sm text-[#64748B] dark:text-white/60
   ">
     <span>{readingTime} min read</span>
     <span className="flex items-center gap-1">
@@ -245,10 +247,10 @@ Create dedicated pages optimized for search intent:
   className="
     inline-flex items-center justify-center
     min-h-[48px] px-6 sm:px-8
-    bg-golden text-midnight font-medium
+    bg-midnight text-white font-medium
     rounded-xl
-    hover:bg-soft-gold hover:-translate-y-0.5
-    hover:shadow-lg hover:shadow-golden/25
+    hover:bg-[#123A5A] hover:-translate-y-0.5
+    hover:shadow-lg hover:shadow-midnight/25
     active:translate-y-0 active:scale-[0.98]
     focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2
     transition-all duration-200
@@ -268,7 +270,7 @@ Create dedicated pages optimized for search intent:
 >
   <span className="
     block text-4xl sm:text-5xl lg:text-6xl
-    font-heading text-midnight dark:text-dawn
+    font-heading text-midnight dark:text-white
     tabular-nums
   ">
     <AnimatedCounter 
@@ -276,7 +278,7 @@ Create dedicated pages optimized for search intent:
       duration={2000}
     />
   </span>
-  <span className="text-midnight/60 dark:text-dawn/60">
+  <span className="text-[#64748B] dark:text-white/60">
     Stories Shared
   </span>
 </div>

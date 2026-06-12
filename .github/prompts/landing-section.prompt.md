@@ -44,7 +44,7 @@ Generate landing page section **${section}** for PaTan.
 - Spacing: 8px+ between touch targets
 
 ## Design Requirements
-- Use Tailwind with brand tokens (midnight, golden, forest, dawn)
+- Use Tailwind with brand tokens (page, surface, border, midnight, golden, forest)
 - Merriweather for headings, Inter for body
 - WCAG 2.2 AA compliant
 - Keyboard navigable
@@ -53,6 +53,7 @@ Generate landing page section **${section}** for PaTan.
 - Respect prefers-reduced-motion with `motion-reduce:` variants
 - Include aria-labels on interactive elements
 - Support dark mode
+- Apply brand CTA rules (Primary=Midnight+White, Secondary=Golden+Midnight)
 
 ## Brand Voice
 Compassionate, encouraging, genuine. No comparison language.

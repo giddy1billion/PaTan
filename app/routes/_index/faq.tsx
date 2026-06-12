@@ -32,7 +32,7 @@ const faqs = [
 ];
 
 export function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -40,62 +40,95 @@ export function FAQ() {
 
   return (
     <section
-      className="py-20 bg-dawn"
+      className="py-16 sm:py-20 lg:py-28 bg-gradient-to-b from-dawn via-mist/20 to-dawn"
       aria-labelledby="faq-heading"
     >
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+        {/* Section Header */}
+        <div className="text-center mb-12 sm:mb-16">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-midnight/10 text-midnight text-sm font-medium mb-4">
+            Got Questions?
+          </span>
           <h2
             id="faq-heading"
-            className="font-heading text-3xl sm:text-4xl font-bold text-midnight"
+            className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-midnight"
           >
             Frequently Asked Questions
           </h2>
         </div>
 
-        <div className="space-y-4">
+        {/* FAQ Accordion */}
+        <div className="space-y-3 sm:space-y-4">
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl border border-mist overflow-hidden"
+              className={`
+                bg-white rounded-2xl border overflow-hidden
+                transition-all duration-300
+                ${openIndex === index 
+                  ? 'border-golden/30 shadow-layered' 
+                  : 'border-mist/50 hover:border-mist'
+                }
+              `}
             >
               <button
                 type="button"
-                className="w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-mist/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-golden"
+                id={`faq-question-${index}`}
+                className="w-full px-5 sm:px-6 py-4 sm:py-5 text-left flex items-center justify-between gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-golden min-h-[56px]"
                 onClick={() => toggleFAQ(index)}
                 aria-expanded={openIndex === index}
                 aria-controls={`faq-answer-${index}`}
               >
-                <span className="font-medium text-midnight">
+                <span className={`font-medium text-sm sm:text-base ${openIndex === index ? 'text-golden-accessible' : 'text-midnight'} transition-colors`}>
                   {faq.question}
                 </span>
-                <svg
-                  className={`w-5 h-5 text-night/50 flex-shrink-0 transition-transform ${
-                    openIndex === index ? 'rotate-180' : ''
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
+                <span 
+                  className={`
+                    flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 
+                    rounded-xl flex items-center justify-center
+                    transition-all duration-300
+                    ${openIndex === index 
+                      ? 'bg-golden/10 text-golden-accessible rotate-180' 
+                      : 'bg-mist/50 text-subtle'
+                    }
+                  `}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
               </button>
               
               <div
                 id={`faq-answer-${index}`}
                 role="region"
                 aria-labelledby={`faq-question-${index}`}
-                className={`overflow-hidden transition-all duration-300 ${
-                  openIndex === index ? 'max-h-96' : 'max-h-0'
-                }`}
+                className={`
+                  grid transition-all duration-300 ease-out
+                  ${openIndex === index ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}
+                `}
               >
-                <div className="px-6 pb-4 text-night/70">
-                  {faq.answer}
+                <div className="overflow-hidden">
+                  <div className="px-5 sm:px-6 pb-5 sm:pb-6 text-muted text-sm sm:text-base leading-relaxed">
+                    {faq.answer}
+                  </div>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Additional help */}
+        <div className="mt-12 sm:mt-16 text-center">
+          <p className="text-muted text-sm sm:text-base">
+            Still have questions?{' '}
+            <a 
+              href="/contact" 
+              className="text-golden-accessible hover:underline font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 rounded"
+            >
+              Contact our support team
+            </a>
+          </p>
         </div>
       </div>
     </section>

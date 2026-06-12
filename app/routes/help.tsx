@@ -73,11 +73,11 @@ const categories = [
 
 export default function Help() {
   return (
-    <main id="main-content">
+    <main id="main-content" className="page-modern">
       {/* Hero */}
-      <section className="bg-midnight text-dawn py-16">
+      <section className="bg-midnight text-dawn py-16" aria-labelledby="help-heading">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="font-heading text-3xl sm:text-4xl font-bold">
+          <h1 id="help-heading" className="font-heading text-3xl sm:text-4xl font-bold">
             How Can We Help?
           </h1>
           <div className="mt-8 max-w-xl mx-auto">
