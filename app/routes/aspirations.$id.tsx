@@ -12,6 +12,7 @@ import {
 } from "react-router";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
+import { createNotification, createNotifications } from "~/utils/notifications.server";
 
 type ActionData = {
   error?: string;
@@ -291,18 +292,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
           },
         },
       }),
-      db.notification.create({
-        data: {
-          userId: aspiration.authorId,
-          actorId: sessionUser.id,
-          type: "ASPIRATION_SUPPORT",
-          title: "New aspiration support",
-          body: supportMessage || "Someone supported your aspiration.",
-          resourceId: aspirationId,
-          resourceType: "aspiration",
-        },
-      }),
     ]);
+
+    await createNotification({
+      userId: aspiration.authorId,
+      actorId: sessionUser.id,
+      type: "ASPIRATION_SUPPORT",
+      title: "New aspiration support",
+      body: supportMessage || "Someone supported your aspiration.",
+      resourceId: aspirationId,
+      resourceType: "aspiration",
+    });
 
     return { success: "Support added successfully.", values: { supportMessage: "" } } satisfies ActionData;
   }
@@ -377,16 +377,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
     });
 
     if (supporters.length > 0) {
-      await db.notification.createMany({
-        data: supporters.map((supporter) => ({
-          userId: supporter.userId,
-          actorId: sessionUser.id,
-          type: "STORY_MILESTONE",
-          title: "Aspiration milestone updated",
-          body: `${milestone.title} was ${nextCompleted ? "completed" : "reopened"}.`,
-          resourceId: aspirationId,
-          resourceType: "aspiration",
-        })),
+      await createNotifications({
+        userIds: supporters.map((supporter) => supporter.userId),
+        actorId: sessionUser.id,
+        type: "STORY_MILESTONE",
+        title: "Aspiration milestone updated",
+        body: `${milestone.title} was ${nextCompleted ? "completed" : "reopened"}.`,
+        resourceId: aspirationId,
+        resourceType: "aspiration",
       });
     }
 
@@ -428,16 +426,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
     });
 
     if (supporters.length > 0) {
-      await db.notification.createMany({
-        data: supporters.map((supporter) => ({
-          userId: supporter.userId,
-          actorId: sessionUser.id,
-          type: "COMMUNITY_UPDATE",
-          title: "Aspiration update",
-          body: updateMessage.slice(0, 180),
-          resourceId: aspirationId,
-          resourceType: "aspiration",
-        })),
+      await createNotifications({
+        userIds: supporters.map((supporter) => supporter.userId),
+        actorId: sessionUser.id,
+        type: "COMMUNITY_UPDATE",
+        title: "Aspiration update",
+        body: updateMessage.slice(0, 180),
+        resourceId: aspirationId,
+        resourceType: "aspiration",
       });
     }
 

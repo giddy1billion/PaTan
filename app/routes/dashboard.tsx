@@ -13,6 +13,7 @@ import {
 } from "react-router";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
+import { createNotification } from "~/utils/notifications.server";
 import {
   getDashboardSummary,
   getSuggestedFollows,
@@ -122,25 +123,22 @@ export async function action({ request }: ActionFunctionArgs) {
       return { success: "You already follow this person." } satisfies ActionData;
     }
 
-    await db.$transaction([
-      db.follow.create({
-        data: {
-          followerId: sessionUser.id,
-          followingId: targetUserId,
-        },
-      }),
-      db.notification.create({
-        data: {
-          userId: targetUserId,
-          actorId: sessionUser.id,
-          type: "NEW_FOLLOWER",
-          title: "You have a new follower",
-          body: "Someone followed your journey.",
-          resourceId: sessionUser.id,
-          resourceType: "user",
-        },
-      }),
-    ]);
+    await db.follow.create({
+      data: {
+        followerId: sessionUser.id,
+        followingId: targetUserId,
+      },
+    });
+
+    await createNotification({
+      userId: targetUserId,
+      actorId: sessionUser.id,
+      type: "NEW_FOLLOWER",
+      title: "You have a new follower",
+      body: "Someone followed your journey.",
+      resourceId: sessionUser.id,
+      resourceType: "user",
+    });
 
     return { success: "You are now following this person." } satisfies ActionData;
   }

@@ -417,6 +417,20 @@ export default function NotificationsRoute() {
                           >
                             Open
                           </Link>
+                        ) : notification.resourceType === "message" && notification.resourceId ? (
+                          <Link
+                            to={`/messages?with=${encodeURIComponent(notification.resourceId)}`}
+                            className="min-h-[44px] inline-flex items-center rounded-xl border border-midnight/15 px-3 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                          >
+                            Open conversation
+                          </Link>
+                        ) : notification.resourceType === "user" && notification.actor?.username ? (
+                          <Link
+                            to={`/u/${notification.actor.username}`}
+                            className="min-h-[44px] inline-flex items-center rounded-xl border border-midnight/15 px-3 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                          >
+                            View profile
+                          </Link>
                         ) : null}
 
                         {!notification.isRead ? (

@@ -55,7 +55,7 @@ describe("Dashboard relationship actions", () => {
       provider: "local",
     });
 
-    vi.mocked(db.$transaction).mockImplementation(async (operations: any[]) => Promise.all(operations));
+    vi.mocked(db.$transaction as any).mockImplementation(async (operations: any[]) => Promise.all(operations));
   });
 
   it("follows a suggested person and creates a notification", async () => {

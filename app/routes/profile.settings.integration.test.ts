@@ -81,6 +81,12 @@ describe("Profile settings integration", () => {
       stories: true,
       aspirations: true,
     });
+    expect((result as any).notificationSettings).toEqual({
+      emailNotifications: true,
+      pushNotifications: true,
+      smsNotifications: false,
+      digestFrequency: "daily",
+    });
 
     // Paired assertion: loader defaults must be safely consumable by the route component.
     expect(() => {
@@ -138,7 +144,7 @@ describe("Profile settings integration", () => {
     } as any);
 
     expect(db.user.findUnique).toHaveBeenCalledTimes(1);
-    expect(db.userPreference.findUnique).toHaveBeenCalledTimes(2);
+    expect(db.userPreference.findUnique).toHaveBeenCalledTimes(3);
     expect((result as any).profile.username).toBe("userone");
     expect((result as any).safety).toEqual({
       anonymousPublishingDefault: false,
@@ -152,6 +158,12 @@ describe("Profile settings integration", () => {
       interests: true,
       stories: true,
       aspirations: true,
+    });
+    expect((result as any).notificationSettings).toEqual({
+      emailNotifications: true,
+      pushNotifications: true,
+      smsNotifications: false,
+      digestFrequency: "daily",
     });
   });
 

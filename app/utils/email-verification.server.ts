@@ -104,13 +104,18 @@ type VerificationCandidateUser = {
   id: string;
   email: string | null;
   emailVerified: Date | null;
-  deletedAt: Date | null;
+  deletedAt?: Date | null;
 };
 
 type EmailVerificationWorkerState = {
   started: boolean;
   active: boolean;
   timer: ReturnType<typeof setInterval> | null;
+  lastRunStartedAt: string | null;
+  lastRunFinishedAt: string | null;
+  lastRunDurationMs: number | null;
+  lastRunOutcome: "success" | "failed" | null;
+  lastRunError: string | null;
 };
 
 type VerificationRetryCountRow = {
@@ -147,6 +152,11 @@ export type EmailVerificationRetryWorkerStatus = {
   concurrency: number;
   deliveryTimeoutMs: number;
   runTimeoutMs: number;
+  lastRunStartedAt: string | null;
+  lastRunFinishedAt: string | null;
+  lastRunDurationMs: number | null;
+  lastRunOutcome: "success" | "failed" | null;
+  lastRunError: string | null;
 };
 
 export type EmailVerificationRetryQueueStats = {
@@ -184,6 +194,11 @@ if (!globalState.__emailVerificationWorkerState) {
     started: false,
     active: false,
     timer: null,
+    lastRunStartedAt: null,
+    lastRunFinishedAt: null,
+    lastRunDurationMs: null,
+    lastRunOutcome: null,
+    lastRunError: null,
   };
 }
 
@@ -207,6 +222,14 @@ function parseCount(value: string | null | undefined) {
   }
 
   return parsed;
+}
+
+function toErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return "unknown-error";
 }
 
 function getAppOrigin(requestUrl?: string) {
@@ -634,15 +657,28 @@ export function startEmailVerificationRetryWorker() {
       return;
     }
 
+    const runStartedAtMs = Date.now();
     state.active = true;
+    state.lastRunStartedAt = new Date(runStartedAtMs).toISOString();
+    state.lastRunFinishedAt = null;
+    state.lastRunDurationMs = null;
+    state.lastRunOutcome = null;
+    state.lastRunError = null;
+
     try {
       await runWithTimeout(
         retryPendingVerificationEmails(),
         EMAIL_VERIFICATION_WORKER_RUN_TIMEOUT_MS,
       );
+
+      state.lastRunOutcome = "success";
     } catch (error) {
+      state.lastRunOutcome = "failed";
+      state.lastRunError = toErrorMessage(error);
       console.warn("[email-verification-retry-worker] run failed", error);
     } finally {
+      state.lastRunFinishedAt = new Date().toISOString();
+      state.lastRunDurationMs = Date.now() - runStartedAtMs;
       state.active = false;
     }
   };
@@ -671,6 +707,11 @@ export function stopEmailVerificationRetryWorkerForTests() {
   state.timer = null;
   state.started = false;
   state.active = false;
+  state.lastRunStartedAt = null;
+  state.lastRunFinishedAt = null;
+  state.lastRunDurationMs = null;
+  state.lastRunOutcome = null;
+  state.lastRunError = null;
 }
 
 export function getEmailVerificationRetryWorkerStatus(): EmailVerificationRetryWorkerStatus {
@@ -686,6 +727,11 @@ export function getEmailVerificationRetryWorkerStatus(): EmailVerificationRetryW
     concurrency: EMAIL_VERIFICATION_RETRY_CONCURRENCY,
     deliveryTimeoutMs: EMAIL_VERIFICATION_DELIVERY_TIMEOUT_MS,
     runTimeoutMs: EMAIL_VERIFICATION_WORKER_RUN_TIMEOUT_MS,
+    lastRunStartedAt: state?.lastRunStartedAt ?? null,
+    lastRunFinishedAt: state?.lastRunFinishedAt ?? null,
+    lastRunDurationMs: state?.lastRunDurationMs ?? null,
+    lastRunOutcome: state?.lastRunOutcome ?? null,
+    lastRunError: state?.lastRunError ?? null,
   };
 }
 
@@ -880,7 +926,7 @@ export async function resendEmailVerificationsForExistingUsers(
       break;
     }
 
-    const users = await db.user.findMany({
+    const users: VerificationCandidateUser[] = await db.user.findMany({
       where: {
         deletedAt: null,
         email: {

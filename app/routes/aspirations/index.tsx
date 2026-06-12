@@ -13,6 +13,7 @@ import {
 } from "react-router";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
+import { createNotification } from "~/utils/notifications.server";
 
 type ActionData = {
   error?: string;
@@ -325,18 +326,17 @@ export async function action({ request }: ActionFunctionArgs) {
         },
       },
     }),
-    db.notification.create({
-      data: {
-        userId: aspiration.authorId,
-        actorId: sessionUser.id,
-        type: "ASPIRATION_SUPPORT",
-        title: "New aspiration support",
-        body: message || "Someone supported your aspiration.",
-        resourceId: aspiration.id,
-        resourceType: "aspiration",
-      },
-    }),
   ]);
+
+  await createNotification({
+    userId: aspiration.authorId,
+    actorId: sessionUser.id,
+    type: "ASPIRATION_SUPPORT",
+    title: "New aspiration support",
+    body: message || "Someone supported your aspiration.",
+    resourceId: aspiration.id,
+    resourceType: "aspiration",
+  });
 
   return { success: "Support added. Thank you for encouraging this journey." } satisfies ActionData;
 }

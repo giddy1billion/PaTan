@@ -7,10 +7,13 @@ import { Form, Link, redirect, useActionData, useLoaderData } from "react-router
 import { useState } from "react";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
+import { createNotification } from "~/utils/notifications.server";
 import { getProfileSafetySettings } from "~/utils/users.server";
 
 type ActionData = {
   error?: string;
+  success?: string;
+  aiSuggestion?: string;
 };
 
 function normalizeTag(input: string) {
@@ -56,6 +59,25 @@ function parseTags(raw: string) {
 
 function estimateReadingTime(wordCount: number) {
   return Math.max(1, Math.ceil(wordCount / 200));
+}
+
+function buildAiSuggestion(suggestionType: string, title: string, content: string) {
+  const storyLabel = title.trim() || "your story";
+  const preview = content.slice(0, 220).trim();
+
+  if (suggestionType === "grammar") {
+    return `Refine sentence clarity in ${storyLabel} by shortening long sentences and replacing repeated phrases. Keep the same voice while tightening wording around: "${preview}".`;
+  }
+
+  if (suggestionType === "structure") {
+    return `Structure ${storyLabel} into three parts: what happened, what changed, and what you learned. Add a short transition between each part so readers can follow your journey.`;
+  }
+
+  if (suggestionType === "title") {
+    return `Title ideas for ${storyLabel}: "Light Through the Hard Days", "How Hope Found Me Again", and "The Turning Point I Did Not Expect".`;
+  }
+
+  return `Reflection prompt for ${storyLabel}: What moment made you realize growth was possible, and what would you say to someone facing the same season today?`;
 }
 
 async function generateUniqueStorySlug(title: string) {
@@ -105,6 +127,33 @@ export async function action({ request }: ActionFunctionArgs) {
   const privacyInput = String(formData.get("privacy") ?? "public");
   const isAnonymous = String(formData.get("anonymous") ?? "") === "on";
   const hasContentWarning = String(formData.get("contentWarning") ?? "") === "on";
+  const suggestionType = String(formData.get("suggestionType") ?? "reflection").trim().toLowerCase();
+
+  if (intent === "ai-suggest") {
+    if (!content) {
+      return {
+        error: "Add a few sentences so AI can tailor a useful suggestion.",
+      } satisfies ActionData;
+    }
+
+    const suggestion = buildAiSuggestion(suggestionType, title, content);
+
+    await createNotification({
+      userId: sessionUser.id,
+      type: "AI_SUGGESTION",
+      title: "AI writing suggestion ready",
+      body: suggestion.slice(0, 180),
+      resourceType: "story_draft",
+      data: {
+        suggestionType,
+      },
+    });
+
+    return {
+      success: "AI suggestion generated.",
+      aiSuggestion: suggestion,
+    } satisfies ActionData;
+  }
 
   if (!title || !content || !categoryName) {
     return {
@@ -286,6 +335,16 @@ export default function NewStory() {
             </div>
           ) : null}
 
+          {actionData?.success ? (
+            <div
+              className="rounded-xl border border-forest/30 bg-[#ECF9F0] px-4 py-3 text-sm text-forest"
+              role="status"
+              aria-live="polite"
+            >
+              {actionData.success}
+            </div>
+          ) : null}
+
           <section
             className="rounded-2xl border border-[#E2E8F0] bg-white p-5 sm:p-7 shadow-sm space-y-6"
             aria-labelledby="story-basics-heading"
@@ -389,7 +448,7 @@ export default function NewStory() {
             />
 
             {/* AI Panel */}
-            {showAIPanel && (
+            {(showAIPanel || actionData?.aiSuggestion) && (
               <div
                 id="ai-assistant-panel"
                 className="mt-4 p-4 sm:p-5 bg-[#EDF6FB] rounded-xl border border-[#B8E3F3]"
@@ -411,32 +470,57 @@ export default function NewStory() {
                 <p className="mt-2 text-sm text-[#334155]">
                   Need help expressing your story? Our AI can assist with:
                 </p>
+                <input type="hidden" name="action" value="ai-suggest" />
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button
-                    type="button"
+                    type="submit"
+                    name="suggestionType"
+                    value="grammar"
+                    formNoValidate
+                    aria-label="Get grammar suggestion"
                     className="px-3 py-1.5 text-xs bg-white border border-[#E2E8F0] rounded-full hover:bg-[#F8FAFC] transition-colors"
                   >
                     Improve grammar
                   </button>
                   <button
-                    type="button"
+                    type="submit"
+                    name="suggestionType"
+                    value="structure"
+                    formNoValidate
+                    aria-label="Get structure suggestion"
                     className="px-3 py-1.5 text-xs bg-white border border-[#E2E8F0] rounded-full hover:bg-[#F8FAFC] transition-colors"
                   >
                     Suggest structure
                   </button>
                   <button
-                    type="button"
+                    type="submit"
+                    name="suggestionType"
+                    value="title"
+                    formNoValidate
+                    aria-label="Get title ideas"
                     className="px-3 py-1.5 text-xs bg-white border border-[#E2E8F0] rounded-full hover:bg-[#F8FAFC] transition-colors"
                   >
                     Generate title ideas
                   </button>
                   <button
-                    type="button"
+                    type="submit"
+                    name="suggestionType"
+                    value="reflection"
+                    formNoValidate
+                    aria-label="Get reflection prompts"
                     className="px-3 py-1.5 text-xs bg-white border border-[#E2E8F0] rounded-full hover:bg-[#F8FAFC] transition-colors"
                   >
                     Add reflection prompts
                   </button>
                 </div>
+
+                {actionData?.aiSuggestion ? (
+                  <div className="mt-4 rounded-xl border border-[#B8E3F3] bg-white px-4 py-3">
+                    <p className="text-xs uppercase tracking-wide text-[#64748B] font-semibold">Suggested guidance</p>
+                    <p className="mt-1 text-sm text-[#334155] leading-relaxed">{actionData.aiSuggestion}</p>
+                  </div>
+                ) : null}
+
                 <p className="mt-3 text-xs text-[#64748B]">
                   AI suggestions are optional. Your authentic voice is what
                   matters most.

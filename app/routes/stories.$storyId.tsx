@@ -3,6 +3,11 @@ import { Form, Link, useActionData, useLoaderData, useNavigation, useRouteLoader
 import { requireUser } from '~/utils/auth.server';
 import { verifyCsrfToken } from '~/utils/csrf.server';
 import { db } from '~/utils/db.server';
+import {
+  createMentionNotifications,
+  createNotification,
+  resolveMentionedUsers,
+} from '~/utils/notifications.server';
 
 type ActionData = {
   error?: string;
@@ -11,6 +16,30 @@ type ActionData = {
     content: string;
   };
 };
+
+type ReactionType = 'CELEBRATE' | 'UPLIFT' | 'EMPATHY' | 'GRATITUDE' | 'INSPIRE';
+
+const reactionOptions: Array<{ type: ReactionType; label: string }> = [
+  { type: 'CELEBRATE', label: 'Celebrate' },
+  { type: 'UPLIFT', label: 'Uplift' },
+  { type: 'EMPATHY', label: 'Empathy' },
+  { type: 'GRATITUDE', label: 'Gratitude' },
+  { type: 'INSPIRE', label: 'Inspire' },
+];
+
+function parseReactionType(input: string): ReactionType | null {
+  if (
+    input === 'CELEBRATE' ||
+    input === 'UPLIFT' ||
+    input === 'EMPATHY' ||
+    input === 'GRATITUDE' ||
+    input === 'INSPIRE'
+  ) {
+    return input;
+  }
+
+  return null;
+}
 
 function formatDate(value: Date | null) {
   if (!value) {
@@ -76,6 +105,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     select: {
       id: true,
       title: true,
+      authorId: true,
       content: true,
       excerpt: true,
       readingTimeMinutes: true,
@@ -112,7 +142,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw new Response('Story not found', { status: 404 });
   }
 
-  const [reflections, storyDraftsCount, activeAspirationsCount, savedStoriesCount, authoredStoriesCount, privateReflectionCount, recentAspirations, recentPrivateReflections] = await Promise.all([
+  const [reflections, storyDraftsCount, activeAspirationsCount, savedStoriesCount, authoredStoriesCount, privateReflectionCount, recentAspirations, recentPrivateReflections, userReaction] = await Promise.all([
     db.comment.findMany({
       where: {
         storyId: story.id,
@@ -197,11 +227,21 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         updatedAt: true,
       },
     }),
+    db.reaction.findFirst({
+      where: {
+        storyId: story.id,
+        userId: sessionUser.id,
+      },
+      select: {
+        type: true,
+      },
+    }),
   ]);
 
   return {
     story,
     reflections,
+    userReactionType: userReaction?.type ?? null,
     workspace: {
       storyDraftsCount,
       activeAspirationsCount,
@@ -231,6 +271,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const intent = String(formData.get('intent') ?? 'share-reflection');
   const csrfToken = String(formData.get('csrfToken') ?? '');
   const content = String(formData.get('content') ?? '').trim();
+  const reactionTypeInput = String(formData.get('reactionType') ?? '').trim().toUpperCase();
 
   const hasValidCsrf = await verifyCsrfToken({
     request,
@@ -270,12 +311,138 @@ export async function action({ request, params }: ActionFunctionArgs) {
     select: {
       id: true,
       title: true,
+      authorId: true,
     },
   });
 
   if (!story) {
     return {
       error: 'This story is no longer available for reflections.',
+      values: { content },
+    } satisfies ActionData;
+  }
+
+  if (intent === 'react-story') {
+    const reactionType = parseReactionType(reactionTypeInput);
+
+    if (!reactionType) {
+      return {
+        error: 'Select a valid reaction before submitting.',
+        values: { content: '' },
+      } satisfies ActionData;
+    }
+
+    const existingReactions = await db.reaction.findMany({
+      where: {
+        storyId: story.id,
+        userId: sessionUser.id,
+      },
+      select: {
+        id: true,
+        type: true,
+      },
+    });
+
+    const hasSameReaction = existingReactions.some((entry) => entry.type === reactionType);
+
+    if (hasSameReaction) {
+      await db.$transaction([
+        db.reaction.deleteMany({
+          where: {
+            storyId: story.id,
+            userId: sessionUser.id,
+            type: reactionType,
+          },
+        }),
+        db.story.updateMany({
+          where: {
+            id: story.id,
+            reactionCount: {
+              gt: 0,
+            },
+          },
+          data: {
+            reactionCount: {
+              decrement: 1,
+            },
+          },
+        }),
+      ]);
+
+      return {
+        success: 'Your reaction was removed.',
+        values: { content: '' },
+      } satisfies ActionData;
+    }
+
+    const txOps = [] as Array<ReturnType<typeof db.reaction.create> | ReturnType<typeof db.reaction.deleteMany> | ReturnType<typeof db.story.update>>;
+
+    if (existingReactions.length > 0) {
+      txOps.push(
+        db.reaction.deleteMany({
+          where: {
+            storyId: story.id,
+            userId: sessionUser.id,
+          },
+        }),
+      );
+    } else {
+      txOps.push(
+        db.story.update({
+          where: { id: story.id },
+          data: {
+            reactionCount: {
+              increment: 1,
+            },
+          },
+        }),
+      );
+    }
+
+    txOps.push(
+      db.reaction.create({
+        data: {
+          storyId: story.id,
+          userId: sessionUser.id,
+          type: reactionType,
+        },
+      }),
+    );
+
+    await db.$transaction(txOps);
+
+    if (story.authorId !== sessionUser.id) {
+      await createNotification({
+        userId: story.authorId,
+        actorId: sessionUser.id,
+        type: 'STORY_REACTION',
+        title: 'Your story received a reaction',
+        body: `Someone reacted to ${story.title}.`,
+        resourceId: story.id,
+        resourceType: 'story',
+        data: {
+          reactionType,
+          storyId: story.id,
+        },
+      });
+    }
+
+    return {
+      success: 'Reaction saved.',
+      values: { content: '' },
+    } satisfies ActionData;
+  }
+
+  if (!content) {
+    return {
+      error: 'Please write your reflection before submitting.',
+      values: { content },
+    } satisfies ActionData;
+  }
+
+  if (content.length > 1200) {
+    return {
+      error: 'Reflection must be 1200 characters or fewer.',
       values: { content },
     } satisfies ActionData;
   }
@@ -299,13 +466,55 @@ export async function action({ request, params }: ActionFunctionArgs) {
     } satisfies ActionData;
   }
 
-  await db.comment.create({
-    data: {
-      storyId: story.id,
-      authorId: sessionUser.id,
-      content,
-    },
-  });
+  const mentionedUsers = await resolveMentionedUsers(content, [sessionUser.id, story.authorId]);
+
+  await db.$transaction([
+    db.comment.create({
+      data: {
+        storyId: story.id,
+        authorId: sessionUser.id,
+        content,
+      },
+    }),
+    db.story.update({
+      where: { id: story.id },
+      data: {
+        commentCount: {
+          increment: 1,
+        },
+      },
+    }),
+  ]);
+
+  if (story.authorId !== sessionUser.id) {
+    await createNotification({
+      userId: story.authorId,
+      actorId: sessionUser.id,
+      type: 'STORY_COMMENT',
+      title: 'New story reflection',
+      body: content.slice(0, 180),
+      resourceId: story.id,
+      resourceType: 'story',
+      data: {
+        storyId: story.id,
+      },
+    });
+  }
+
+  if (mentionedUsers.length > 0) {
+    await createMentionNotifications({
+      mentionedUserIds: mentionedUsers.map((user) => user.id),
+      actorId: sessionUser.id,
+      title: 'You were mentioned in a story reflection',
+      body: content.slice(0, 180),
+      resourceId: story.id,
+      resourceType: 'story',
+      data: {
+        storyId: story.id,
+      },
+      excludeUserIds: [story.authorId],
+    });
+  }
 
   return {
     success: 'Reflection shared successfully.',
@@ -317,7 +526,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function StoryDetailRoute() {
   const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>('root');
-  const { story, reflections, workspace } = useLoaderData<typeof loader>();
+  const { story, reflections, userReactionType, workspace } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
 
@@ -387,7 +596,7 @@ export default function StoryDetailRoute() {
             <div className="mt-8 rounded-2xl border border-midnight/10 bg-surface p-4">
               <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-night/70">
                 <span>{story.reactionCount} reactions</span>
-                <span>{story.commentCount + (actionData?.success && actionData.success.includes('shared') ? 1 : 0)} reflections</span>
+                <span>{story.commentCount} reflections</span>
                 <Link
                   to={`/u/${story.author.username}`}
                   className="font-semibold text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
@@ -395,6 +604,27 @@ export default function StoryDetailRoute() {
                   View author profile
                 </Link>
               </div>
+
+              <Form method="post" className="mt-3 flex flex-wrap gap-2" aria-label="Story reactions">
+                <input type="hidden" name="intent" value="react-story" />
+                <input type="hidden" name={csrfFieldName} value={csrfToken} />
+                {reactionOptions.map((option) => {
+                  const isActive = userReactionType === option.type;
+                  return (
+                    <button
+                      key={option.type}
+                      type="submit"
+                      name="reactionType"
+                      value={option.type}
+                      className={`min-h-[44px] rounded-xl px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${isActive ? 'bg-golden text-midnight' : 'border border-midnight/15 bg-white text-midnight hover:bg-surface'}`}
+                      aria-pressed={isActive}
+                      disabled={isSubmitting}
+                    >
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </Form>
             </div>
 
             <section className="mt-10" aria-labelledby="reflections-heading">

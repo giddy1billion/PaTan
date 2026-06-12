@@ -975,6 +975,16 @@ type SafetySettingsInput = {
   defaultAspirationVisibility: ProfileStoryVisibility;
 };
 
+export type NotificationDigestFrequency = "realtime" | "daily" | "weekly";
+
+type NotificationSettingsInput = {
+  userId: string;
+  emailNotifications: boolean;
+  pushNotifications: boolean;
+  smsNotifications: boolean;
+  digestFrequency: NotificationDigestFrequency;
+};
+
 function isPreferenceSchemaCompatibilityError(error: unknown) {
   if (!(error instanceof Error)) {
     return false;
@@ -996,10 +1006,113 @@ function isPreferenceSchemaCompatibilityError(error: unknown) {
       message.includes("anonymous_publishing_default") ||
       message.includes("default_story_visibility") ||
       message.includes("default_aspiration_visibility") ||
+      message.includes("email_notifications") ||
+      message.includes("push_notifications") ||
+      message.includes("sms_notifications") ||
+      message.includes("digest_frequency") ||
       message.includes("preferred_categories") ||
       message.includes("user_preferences")
     )
   );
+}
+
+function normalizeDigestFrequency(value: string | null | undefined): NotificationDigestFrequency {
+  if (value === "realtime" || value === "weekly") {
+    return value;
+  }
+
+  return "daily";
+}
+
+export async function getNotificationSettings(userId: string) {
+  let preferences:
+    | {
+        emailNotifications: boolean;
+        pushNotifications: boolean;
+        smsNotifications: boolean;
+        digestFrequency: string;
+      }
+    | null = null;
+
+  try {
+    preferences = await db.userPreference.findUnique({
+      where: { userId },
+      select: {
+        emailNotifications: true,
+        pushNotifications: true,
+        smsNotifications: true,
+        digestFrequency: true,
+      },
+    });
+  } catch (error: unknown) {
+    if (!isPreferenceSchemaCompatibilityError(error)) {
+      throw error;
+    }
+  }
+
+  if (!preferences) {
+    return {
+      emailNotifications: true,
+      pushNotifications: true,
+      smsNotifications: false,
+      digestFrequency: "daily" as NotificationDigestFrequency,
+    };
+  }
+
+  return {
+    emailNotifications: Boolean(preferences.emailNotifications),
+    pushNotifications: Boolean(preferences.pushNotifications),
+    smsNotifications: Boolean(preferences.smsNotifications),
+    digestFrequency: normalizeDigestFrequency(preferences.digestFrequency),
+  };
+}
+
+export async function upsertNotificationSettings(input: NotificationSettingsInput) {
+  try {
+    return await db.userPreference.upsert({
+      where: {
+        userId: input.userId,
+      },
+      create: {
+        userId: input.userId,
+        emailNotifications: input.emailNotifications,
+        pushNotifications: input.pushNotifications,
+        smsNotifications: input.smsNotifications,
+        digestFrequency: input.digestFrequency,
+        preferredCategories: [],
+        emotionalTonePreference: [],
+        followedTags: [],
+        blockedTags: [],
+      },
+      update: {
+        emailNotifications: input.emailNotifications,
+        pushNotifications: input.pushNotifications,
+        smsNotifications: input.smsNotifications,
+        digestFrequency: input.digestFrequency,
+      },
+      select: {
+        userId: true,
+        emailNotifications: true,
+        pushNotifications: true,
+        smsNotifications: true,
+        digestFrequency: true,
+        updatedAt: true,
+      },
+    });
+  } catch (error: unknown) {
+    if (!isPreferenceSchemaCompatibilityError(error)) {
+      throw error;
+    }
+
+    return {
+      userId: input.userId,
+      emailNotifications: input.emailNotifications,
+      pushNotifications: input.pushNotifications,
+      smsNotifications: input.smsNotifications,
+      digestFrequency: input.digestFrequency,
+      updatedAt: new Date(),
+    };
+  }
 }
 
 export async function getProfileSafetySettings(userId: string) {

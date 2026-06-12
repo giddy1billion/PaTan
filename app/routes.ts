@@ -38,6 +38,7 @@ export default [
   layout("routes/authenticated-layout.tsx", [
     route("dashboard", "routes/dashboard.tsx"),
     route("notifications", "routes/notifications.tsx"),
+    route("messages", "routes/messages.tsx"),
     route("moderation/reports", "routes/moderation.reports.tsx"),
     route("profile", "routes/profile.tsx"),
       route("profile/settings", "routes/profile.edit.tsx"),
@@ -67,6 +68,7 @@ export default [
   route("oauth/callback", "routes/auth/oauth.callback.tsx"),
   route("oauth/:provider", "routes/auth/oauth.$provider.tsx"),
   route("api/health", "routes/api.health.ts"),
+  route("api/admin/email-verification-retry-health", "routes/api.admin.email-verification-retry-health.ts"),
   route("auth/verify-email", "routes/auth/verify-email.tsx"),
   route("verify-email", "routes/auth/verify-email-status.tsx"),
   route("auth/mfa", "routes/auth/mfa.tsx"),

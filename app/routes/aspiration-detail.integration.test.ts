@@ -55,7 +55,7 @@ describe("Aspiration detail actions", () => {
       provider: "local",
     });
 
-    vi.mocked(db.$transaction).mockImplementation(async (operations: any[]) => Promise.all(operations));
+    vi.mocked(db.$transaction as any).mockImplementation(async (operations: any[]) => Promise.all(operations));
   });
 
   it("supports an aspiration and notifies the owner", async () => {

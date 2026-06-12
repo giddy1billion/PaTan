@@ -51,7 +51,7 @@ describe("Moderation report lifecycle", () => {
     });
 
     vi.mocked(db.user.findUnique).mockResolvedValue({ role: "MODERATOR" } as any);
-    vi.mocked(db.$transaction).mockImplementation(async (operations: any[]) => Promise.all(operations));
+    vi.mocked(db.$transaction as any).mockImplementation(async (operations: any[]) => Promise.all(operations));
   });
 
   it("moves a report to resolved and writes moderation log", async () => {

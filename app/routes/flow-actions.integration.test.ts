@@ -21,6 +21,7 @@ vi.mock("~/utils/db.server", () => ({
   db: {
     notification: {
       updateMany: vi.fn(),
+      create: vi.fn(),
     },
     category: {
       findFirst: vi.fn(),
@@ -179,6 +180,40 @@ describe("Flow action behavior checks", () => {
     expect(db.storyTag.upsert).toHaveBeenCalled();
     expect(result).toBeInstanceOf(Response);
     expect((result as Response).headers.get("Location")).toBe("/discover?published=story");
+  });
+
+  it("generates an AI suggestion and creates an AI notification", async () => {
+    vi.mocked(db.notification.create).mockResolvedValue({ id: "notif-ai-1" } as any);
+
+    const request = postRequest("http://localhost/stories/new", {
+      action: "ai-suggest",
+      suggestionType: "structure",
+      title: "Finding hope",
+      content: "I felt overwhelmed at first, then I started rebuilding my routines.",
+    });
+
+    const result = await storyAction({
+      request,
+      params: {},
+      context: {},
+    } as any);
+
+    expect(db.notification.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          userId: "user-1",
+          type: "AI_SUGGESTION",
+          resourceType: "story_draft",
+        }),
+      }),
+    );
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: "AI suggestion generated.",
+        aiSuggestion: expect.any(String),
+      }),
+    );
   });
 
   it("creates an anonymous aspiration with milestones", async () => {

@@ -14,6 +14,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
+import { createNotification } from "~/utils/notifications.server";
 
 type ActionData = {
   error?: string;
@@ -252,16 +253,14 @@ export async function action({ request }: ActionFunctionArgs) {
   ]);
 
   if (report.reporterId !== user.id) {
-    await db.notification.create({
-      data: {
-        userId: report.reporterId,
-        actorId: user.id,
-        type: "COMMUNITY_UPDATE",
-        title: "Report status updated",
-        body: `Your report is now ${nextStatus.toLowerCase().replace("_", " ")}.`,
-        resourceId: reportId,
-        resourceType: "report",
-      },
+    await createNotification({
+      userId: report.reporterId,
+      actorId: user.id,
+      type: "COMMUNITY_UPDATE",
+      title: "Report status updated",
+      body: `Your report is now ${nextStatus.toLowerCase().replace("_", " ")}.`,
+      resourceId: reportId,
+      resourceType: "report",
     });
   }
 

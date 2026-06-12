@@ -14,8 +14,10 @@ import { requireUser } from "~/utils/auth.server";
 import {
   getPublicProfileVisibilitySettings,
   getProfileForEdit,
+  getNotificationSettings,
   getProfileSafetySettings,
   upsertPublicProfileVisibilitySettings,
+  upsertNotificationSettings,
   updateProfile,
   upsertProfileSafetySettings,
 } from "~/utils/users.server";
@@ -40,6 +42,10 @@ type ActionData = {
     showInterests: string;
     showStories: string;
     showAspirations: string;
+    emailNotifications: string;
+    pushNotifications: string;
+    smsNotifications: string;
+    digestFrequency: string;
   };
 };
 const VISIBILITY_OPTIONS: Array<{
@@ -72,6 +78,14 @@ function parseVisibility(input: string): VisibilityValue {
   }
   return "PUBLIC";
 }
+
+function parseDigestFrequency(input: string) {
+  if (input === "realtime" || input === "weekly") {
+    return input;
+  }
+
+  return "daily";
+}
 function parseInterests(raw: string) {
   return raw
     .split(",")
@@ -91,15 +105,16 @@ export const meta: MetaFunction = () => {
 };
 export async function loader({ request }: LoaderFunctionArgs) {
   const sessionUser = await requireUser(request);
-  const [profile, safety, visibility] = await Promise.all([
+  const [profile, safety, visibility, notificationSettings] = await Promise.all([
     getProfileForEdit(sessionUser.id),
     getProfileSafetySettings(sessionUser.id),
     getPublicProfileVisibilitySettings(sessionUser.id),
+    getNotificationSettings(sessionUser.id),
   ]);
   if (!profile) {
     throw new Response("Profile not found", { status: 404 });
   }
-  return { profile, safety, visibility };
+  return { profile, safety, visibility, notificationSettings };
 }
 export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
@@ -127,6 +142,10 @@ export async function action({ request }: ActionFunctionArgs) {
     showInterests: String(formData.get("showInterests") ?? ""),
     showStories: String(formData.get("showStories") ?? ""),
     showAspirations: String(formData.get("showAspirations") ?? ""),
+    emailNotifications: String(formData.get("emailNotifications") ?? ""),
+    pushNotifications: String(formData.get("pushNotifications") ?? ""),
+    smsNotifications: String(formData.get("smsNotifications") ?? ""),
+    digestFrequency: String(formData.get("digestFrequency") ?? "daily"),
   };
   const bio = values.bio.trim();
   if (bio.length > 240) {
@@ -166,6 +185,13 @@ export async function action({ request }: ActionFunctionArgs) {
         aspirations: values.showAspirations === "on",
       },
     });
+    await upsertNotificationSettings({
+      userId: sessionUser.id,
+      emailNotifications: values.emailNotifications === "on",
+      pushNotifications: values.pushNotifications === "on",
+      smsNotifications: values.smsNotifications === "on",
+      digestFrequency: parseDigestFrequency(values.digestFrequency),
+    });
   } catch {
     return {
       error: "We could not save your profile right now. Please try again.",
@@ -175,7 +201,7 @@ export async function action({ request }: ActionFunctionArgs) {
   return { success: "Profile updated successfully." } satisfies ActionData;
 }
 export default function ProfileEditRoute() {
-  const { profile, safety, visibility } = useLoaderData<typeof loader>();
+  const { profile, safety, visibility, notificationSettings } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
@@ -217,6 +243,20 @@ export default function ProfileEditRoute() {
     aspirations:
       (actionData?.values?.showAspirations ??
         (visibility.aspirations ? "on" : "off")) === "on",
+  };
+  const channelSettings = {
+    email:
+      (actionData?.values?.emailNotifications ??
+        (notificationSettings.emailNotifications ? "on" : "off")) === "on",
+    push:
+      (actionData?.values?.pushNotifications ??
+        (notificationSettings.pushNotifications ? "on" : "off")) === "on",
+    sms:
+      (actionData?.values?.smsNotifications ??
+        (notificationSettings.smsNotifications ? "on" : "off")) === "on",
+    digestFrequency: parseDigestFrequency(
+      actionData?.values?.digestFrequency ?? notificationSettings.digestFrequency,
+    ),
   };
   const joinedLocation = [city.trim(), country.trim()]
     .filter(Boolean)
@@ -695,6 +735,75 @@ export default function ProfileEditRoute() {
                     </p>{" "}
                   </label>{" "}
                 </div>{" "}
+              </section>{" "}
+              <section
+                className="rounded-2xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm"
+                aria-labelledby="notification-preferences-heading"
+                aria-busy={isSubmitting}
+              >
+                <h2
+                  id="notification-preferences-heading"
+                  className="font-heading text-xl text-midnight"
+                >
+                  Notification delivery preferences
+                </h2>
+                <p className="mt-1 text-sm text-night/70">
+                  Choose how PaTan delivers updates for reactions, comments, support, messages, and mentions.
+                </p>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <label className="rounded-xl border border-midnight/10 px-4 py-3 min-h-[44px]">
+                    <input
+                      type="checkbox"
+                      name="emailNotifications"
+                      defaultChecked={channelSettings.email}
+                      className="mr-2 h-4 w-4 border-mist text-golden focus:ring-golden"
+                    />
+                    <span className="text-sm font-medium text-midnight">Email notifications</span>
+                    <p className="mt-1 text-xs text-night/60">Send eligible updates to your email inbox.</p>
+                  </label>
+
+                  <label className="rounded-xl border border-midnight/10 px-4 py-3 min-h-[44px]">
+                    <input
+                      type="checkbox"
+                      name="pushNotifications"
+                      defaultChecked={channelSettings.push}
+                      className="mr-2 h-4 w-4 border-mist text-golden focus:ring-golden"
+                    />
+                    <span className="text-sm font-medium text-midnight">Push notifications</span>
+                    <p className="mt-1 text-xs text-night/60">Send immediate push alerts for eligible activity.</p>
+                  </label>
+
+                  <label className="rounded-xl border border-midnight/10 px-4 py-3 min-h-[44px] sm:col-span-2">
+                    <input
+                      type="checkbox"
+                      name="smsNotifications"
+                      defaultChecked={channelSettings.sms}
+                      className="mr-2 h-4 w-4 border-mist text-golden focus:ring-golden"
+                    />
+                    <span className="text-sm font-medium text-midnight">SMS notifications</span>
+                    <p className="mt-1 text-xs text-night/60">Reserved for channels that explicitly support SMS delivery.</p>
+                  </label>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="digestFrequency"
+                      className="block text-sm font-medium text-night"
+                    >
+                      Email digest frequency
+                    </label>
+                    <select
+                      id="digestFrequency"
+                      name="digestFrequency"
+                      defaultValue={channelSettings.digestFrequency}
+                      className="mt-1 block w-full min-h-[44px] rounded-xl border border-mist px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent"
+                    >
+                      <option value="realtime">Realtime emails</option>
+                      <option value="daily">Daily digest</option>
+                      <option value="weekly">Weekly digest</option>
+                    </select>
+                  </div>
+                </div>
               </section>{" "}
               <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
                 {" "}
