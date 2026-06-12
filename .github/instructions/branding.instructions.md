@@ -11,6 +11,13 @@ description: "PaTan™ brand design tokens: colors, typography, spacing, animati
 - Use commas, periods, parentheses, or a colon instead.
 - Apply this rule to UI copy, comments, labels, and documentation.
 
+## Production Implementation Standard
+
+- Brand updates must be integration-ready across shared tokens and component usage, not lightweight one-off overrides.
+- Implement reusable token-driven changes that can be adopted consistently in production.
+- Do not leave temporary color aliases, undocumented fallback values, or non-system shortcuts.
+- Validate contrast and state consistency for real UI contexts before considering work complete.
+
 Based on the **Tree of Light identity**: Reflection, Hope, Trust, Growth, and Human Connection.
 
 ## The Four Pillars Rule

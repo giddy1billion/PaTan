@@ -10,6 +10,8 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   "weak-password": "Choose a stronger password with at least 12 characters, mixed case, numbers, and symbols.",
   "breached-password": "That password has appeared in known breaches. Choose a different one.",
   "email-not-verified": "Verify your email before logging in. We sent you a fresh verification link.",
+  "email-verification-resent": "If the account is pending verification, we sent a fresh verification link.",
+  "invalid-email-verification-request": "Enter a valid email address to resend your verification link.",
   "verify-email-sent": "Account created. Check your email for a verification link before logging in.",
   "email-verified": "Email verified successfully. You can now log in.",
   "invalid-email-verification": "This verification link is invalid or expired.",

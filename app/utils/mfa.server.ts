@@ -151,9 +151,10 @@ export async function createMfaChallenge({
     to: email,
     subject: "Your PaTan verification code",
     category: "mfa",
-    text: `Your verification code is ${code}. It expires in 10 minutes.`,
+    text: "Use this verification code to complete your sign-in.",
     metadata: {
       userId,
+      code,
       challengeId,
       expiresAt: expiresAt.toISOString(),
       riskScore,

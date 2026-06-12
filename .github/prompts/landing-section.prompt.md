@@ -1,8 +1,14 @@
 ---
-description: "Generate a specific PaTan™ landing page section with brand styling, accessibility, and mobile-first responsiveness"
+description: "Generate a specific PaTan™ landing page section with production-level brand styling, accessibility, responsiveness, and integration quality"
 ---
 
 Generate landing page section **${section}** for PaTan™.
+
+## Production Delivery Standard
+- Generate production-ready section implementations, not lightweight visual patch snippets.
+- Include complete interaction states, accessibility semantics, and responsive behavior.
+- Do not return placeholder content, mock-only data handling, or TODO stubs as final output.
+- Ensure section output can integrate cleanly with route-level data and conversion flows.
 
 ## Section Options
 - navigation: Sticky nav with logo, menu, Login/Get Started

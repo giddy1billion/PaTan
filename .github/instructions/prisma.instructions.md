@@ -11,6 +11,13 @@ description: "Prisma conventions for PaTan™: schema design, relations, naming,
 - Use commas, periods, parentheses, or a colon instead.
 - Apply this rule to schema docs, code comments, and developer guidance.
 
+## Production Implementation Standard
+
+- Schema changes must be production-safe and integration-complete, not lightweight schema patching.
+- Include relation integrity, indexing strategy, migration safety, and backward compatibility planning.
+- Do not leave placeholder models, temporary enum values, or undocumented migration assumptions.
+- Validate end-to-end impact on loaders, actions, services, and generated client usage.
+
 ## Naming
 
 - **Models**: PascalCase singular (`User`, `Story`, `Aspiration`)

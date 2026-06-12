@@ -1,8 +1,14 @@
 ---
-description: "Generate PaTan™ design tokens for CSS, Tailwind, or Figma"
+description: "Generate PaTan™ design tokens for CSS, Tailwind, or Figma with production-ready integration quality"
 ---
 
 Generate design tokens for PaTan™ using the official brand system.
+
+## Production Delivery Standard
+- Produce integration-ready token outputs that can be used directly in production systems.
+- Include complete token sets and naming consistency across requested output formats.
+- Do not return placeholder values, temporary aliases, or incomplete token groupings.
+- Ensure generated tokens support maintainable adoption across shared UI surfaces.
 
 ## Output Format: ${format:CSS Variables|Tailwind Config|Figma Tokens JSON}
 

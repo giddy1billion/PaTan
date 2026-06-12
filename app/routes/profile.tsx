@@ -18,6 +18,7 @@ import { logAuthSecurityEvent } from "~/utils/auth-security.server";
 import { verifyCsrfToken } from "~/utils/csrf.server";
 import { db } from "~/utils/db.server";
 import { issueEmailVerification } from "~/utils/email-verification.server";
+import { enforceAuthRateLimit } from "~/utils/rate-limit.server";
 export const meta: MetaFunction = () => {
   return [
     { title: "Your Profile | PaTan" },
@@ -100,9 +101,6 @@ export async function action({ request }: ActionFunctionArgs) {
     });
     return redirect("/profile?error=invalid-csrf");
   }
-  if (intent !== "toggle-mfa") {
-    return redirect("/profile");
-  }
   const current = await db.user.findUnique({
     where: { id: user.id },
     select: { id: true, email: true, emailVerified: true, mfaEnabled: true },
@@ -110,6 +108,59 @@ export async function action({ request }: ActionFunctionArgs) {
   if (!current || !current.email) {
     return redirect("/profile?error=signup-failed");
   }
+
+  const rateLimit = await enforceAuthRateLimit({
+    request,
+    scope: "mfa",
+    identifier: current.email,
+  });
+  if (!rateLimit.allowed) {
+    await logAuthSecurityEvent({
+      request,
+      eventType: "rate_limit_block",
+      severity: "warn",
+      outcome: "blocked",
+      userId: current.id,
+      email: current.email,
+      route: "/profile",
+    });
+    return redirect("/profile?error=rate-limited", {
+      headers: rateLimit.headers,
+    });
+  }
+
+  if (intent === "send-email-verification") {
+    if (current.emailVerified) {
+      return redirect("/profile?security=email-already-verified", {
+        headers: rateLimit.headers,
+      });
+    }
+
+    await issueEmailVerification({
+      userId: current.id,
+      email: current.email,
+      requestUrl: request.url,
+    });
+
+    await logAuthSecurityEvent({
+      request,
+      eventType: "email_verification_sent",
+      severity: "info",
+      outcome: "profile-requested",
+      userId: current.id,
+      email: current.email,
+      route: "/profile",
+    });
+
+    return redirect("/profile?security=verification-email-sent", {
+      headers: rateLimit.headers,
+    });
+  }
+
+  if (intent !== "toggle-mfa") {
+    return redirect("/profile");
+  }
+
   const requestedMfaEnabled =
     String(formData.get("mfaEnabled") ?? "") === "true";
   if (requestedMfaEnabled && !current.emailVerified) {
@@ -127,7 +178,9 @@ export async function action({ request }: ActionFunctionArgs) {
       email: current.email,
       route: "/profile",
     });
-    return redirect("/profile?error=email-not-verified");
+    return redirect("/profile?error=email-not-verified&security=verification-email-sent", {
+      headers: rateLimit.headers,
+    });
   }
   await db.user.update({
     where: { id: current.id },
@@ -148,6 +201,7 @@ export async function action({ request }: ActionFunctionArgs) {
     requestedMfaEnabled
       ? "/profile?security=mfa-enabled"
       : "/profile?security=mfa-disabled",
+    { headers: rateLimit.headers },
   );
 }
 export default function ProfileRoute() {
@@ -173,6 +227,12 @@ export default function ProfileRoute() {
       ? "Multi-factor authentication has been enabled for high-risk sign-ins."
       : securityMessageKey === "mfa-disabled"
         ? "Multi-factor authentication has been disabled."
+        : securityMessageKey === "verification-email-sent"
+          ? "A verification link has been sent to your email address."
+          : securityMessageKey === "email-already-verified"
+            ? "Your email is already verified."
+            : securityMessageKey === "email-verified"
+              ? "Your email was verified successfully."
         : null;
   return (
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
@@ -404,8 +464,17 @@ export default function ProfileRoute() {
                   <dt className="text-night/60">Email verification</dt>{" "}
                   <dd className="mt-1 font-medium text-midnight">
                     {" "}
-                    {profile.emailVerified ? "Verified" : "Not verified"}{" "}
+                    {profile.email
+                      ? profile.emailVerified
+                        ? "Verified"
+                        : "Not verified"
+                      : "No email on file"}{" "}
                   </dd>{" "}
+                  {!profile.emailVerified && profile.email ? (
+                    <p className="mt-2 text-xs text-night/70">
+                      Verify your email to unlock high-risk MFA protection.
+                    </p>
+                  ) : null}
                 </div>{" "}
                 <div className="rounded-xl border border-midnight/10 p-3">
                   {" "}
@@ -416,6 +485,22 @@ export default function ProfileRoute() {
                   </dd>{" "}
                 </div>{" "}
               </dl>{" "}
+              {!profile.emailVerified && profile.email ? (
+                <Form method="post" className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-midnight/10 bg-surface/40 px-3 py-3">
+                  <input type="hidden" name="intent" value="send-email-verification" />
+                  <input type="hidden" name={csrfFieldName} value={csrfToken} />
+                  <p className="text-sm text-night/70">
+                    Send a fresh verification link to {profile.email}.
+                  </p>
+                  <button
+                    type="submit"
+                    className="min-h-[44px] shrink-0 rounded-xl border border-midnight/15 bg-white px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
+                    aria-label="Send verification email"
+                  >
+                    Send link
+                  </button>
+                </Form>
+              ) : null}
               <Form
                 method="post"
                 className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"

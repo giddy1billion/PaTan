@@ -49,6 +49,19 @@ For Google and Facebook OAuth login, create a local `.env` file from `.env.examp
 For production, set both redirect URIs to `https://PaTan™.site/oauth/callback`.
 For local development, you can use `http://localhost:5173/oauth/callback`.
 
+### Security Email Environment Variables
+
+For account verification, MFA, and password reset emails, set:
+
+- `RESEND_API_KEY`
+- `AUTH_EMAIL_FROM` (example: `PaTan Security <security@notifications.patan.app>`)
+
+Optional fallback delivery if Resend is unavailable:
+
+- `AUTH_EMAIL_WEBHOOK_URL`
+- `AUTH_EMAIL_WEBHOOK_SECRET`
+- `AUTH_EMAIL_WEBHOOK_KEY_ID`
+
 ### Webhook Signature Verification
 
 Outbound security webhooks include these headers:

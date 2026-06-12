@@ -6,6 +6,8 @@ import type {
 import { Link, Form, redirect, useSearchParams } from "react-router";
 import { createUserSession, getUser } from "~/utils/auth.server";
 import { getAuthErrorMessage } from "~/utils/auth-errors";
+import { logAuthSecurityEvent } from "~/utils/auth-security.server";
+import { issueEmailVerification } from "~/utils/email-verification.server";
 import {
   createLocalUser,
   getPostAuthRedirectForUser,
@@ -58,10 +60,65 @@ export async function action({ request }: ActionFunctionArgs) {
   let user;
   try {
     user = await createLocalUser({ firstName, lastName, email, password });
+
+    try {
+      await issueEmailVerification({
+        userId: user.id,
+        email: user.email,
+        requestUrl: request.url,
+      });
+
+      await logAuthSecurityEvent({
+        request,
+        eventType: "email_verification_sent",
+        severity: "info",
+        outcome: "signup-created",
+        userId: user.id,
+        email: user.email,
+        route: "/signup",
+      });
+    } catch {
+      await logAuthSecurityEvent({
+        request,
+        eventType: "email_verification_sent",
+        severity: "warn",
+        outcome: "signup-email-delivery-failed",
+        userId: user.id,
+        email: user.email,
+        route: "/signup",
+      });
+    }
+
+    await logAuthSecurityEvent({
+      request,
+      eventType: "signup_success",
+      severity: "info",
+      outcome: "created",
+      userId: user.id,
+      email: user.email,
+      route: "/signup",
+    });
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "email-taken") {
+      await logAuthSecurityEvent({
+        request,
+        eventType: "signup_failure",
+        severity: "warn",
+        outcome: "email-taken",
+        email,
+        route: "/signup",
+      });
       return redirect("/signup?error=email-taken");
     }
+
+    await logAuthSecurityEvent({
+      request,
+      eventType: "signup_failure",
+      severity: "warn",
+      outcome: "signup-failed",
+      email,
+      route: "/signup",
+    });
     return redirect("/signup?error=signup-failed");
   }
 

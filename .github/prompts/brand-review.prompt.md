@@ -1,8 +1,14 @@
 ---
-description: "Review UI component or page for PaTan™ brand compliance"
+description: "Review UI component or page for PaTan™ production-level brand compliance"
 ---
 
 Review the following for PaTan™ brand compliance:
+
+## Production Delivery Standard
+- Audit for production readiness, not lightweight style patch compliance only.
+- Validate integrated behavior across responsive states, accessibility, and interaction states.
+- Do not accept placeholder tokens, temporary overrides, or incomplete design-system wiring.
+- Report fixes that are deployable and reusable across the shared UI system.
 
 ## File or Component: ${target}
 

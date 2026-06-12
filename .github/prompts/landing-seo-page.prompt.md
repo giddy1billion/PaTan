@@ -1,8 +1,14 @@
 ---
-description: "Generate an SEO-optimized story category landing page for PaTan™"
+description: "Generate an SEO-optimized story category landing page for PaTan™ with production-ready integration"
 ---
 
 Create an SEO landing page for the **${category}** story category.
+
+## Production Delivery Standard
+- Deliver complete production-ready page implementations, not lightweight SEO-only patches.
+- Include end-to-end route wiring, metadata, structured data, and data-loading integration.
+- Do not return placeholder content blocks, mock-only loaders, or temporary implementation notes.
+- Ensure output is deployable with accessibility, performance, and canonical SEO integrity.
 
 ## Available Categories
 - stories-of-hope

@@ -1,8 +1,14 @@
 ---
-description: "Generate the complete PaTan™ homepage with all 13 sections"
+description: "Generate the complete PaTan™ homepage with all 13 sections as a production-ready integrated implementation"
 ---
 
 Build the complete PaTan™ homepage following the information architecture.
+
+## Production Delivery Standard
+- Deliver end-to-end integrated homepage implementation, not lightweight section patches.
+- Include complete route, loader, component wiring, and state handling for the generated output.
+- Do not return placeholder sections, mock-only data plumbing, or temporary TODO markers.
+- Ensure output is deployable with validated performance, accessibility, and conversion flow integrity.
 
 ## Sections to Generate
 

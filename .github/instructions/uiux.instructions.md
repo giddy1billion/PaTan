@@ -11,6 +11,13 @@ description: "Modern UI/UX design patterns with mobile-first responsiveness, mic
 - Use commas, periods, parentheses, or a colon instead.
 - Apply this rule to UI copy, comments, labels, and design documentation.
 
+## Production Implementation Standard
+
+- UI work must be shipped as production-ready, integrated experiences, not lightweight visual patches.
+- Implement complete interactive states, data states, and responsive behavior for touched components.
+- Do not leave placeholder content, incomplete layout variants, or unverified edge-state handling.
+- Validate integrated behavior across accessibility, performance, and routing contexts.
+
 Expert-level design patterns from 20+ years of UI/UX and frontend engineering experience. Every component must feel premium, performant, and emotionally resonant.
 
 ## Core Design Philosophy
@@ -625,9 +632,11 @@ Before shipping any component, verify:
 - ALWAYS start with mobile styles, then add responsive breakpoints
 - ALWAYS use design tokens, never hardcoded values
 - ALWAYS include hover, focus, and active states
+- ALWAYS include loading, error, and empty states for data-driven UI surfaces
 - ALWAYS support dark mode
 - ALWAYS respect reduced motion preferences
 - ALWAYS optimize for Core Web Vitals (LCP < 2.5s, CLS < 0.1)
+- ALWAYS deliver end-to-end component integration quality, not isolated patch quality
 - NEVER use fixed pixel widths for layouts
 - NEVER remove focus outlines without replacement
 - NEVER skip heading levels

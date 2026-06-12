@@ -3,9 +3,20 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "react-router";
-import { Link, Form, redirect, useSearchParams } from "react-router";
+import {
+  Link,
+  Form,
+  redirect,
+  useRouteLoaderData,
+  useSearchParams,
+} from "react-router";
 import { createUserSession, getUser } from "~/utils/auth.server";
 import { getAuthErrorMessage } from "~/utils/auth-errors";
+import { logAuthSecurityEvent } from "~/utils/auth-security.server";
+import { verifyCsrfToken } from "~/utils/csrf.server";
+import { db } from "~/utils/db.server";
+import { issueEmailVerification } from "~/utils/email-verification.server";
+import { enforceAuthRateLimit } from "~/utils/rate-limit.server";
 import {
   getPostAuthRedirectForUser,
   verifyLocalUser,
@@ -38,39 +49,194 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
+  const intent = String(formData.get("intent") ?? "login");
   const email = String(formData.get("email") ?? "")
     .trim()
     .toLowerCase();
   const password = String(formData.get("password") ?? "");
+  const csrfToken = String(formData.get("csrfToken") ?? "");
   const remember = formData.get("remember") === "on";
   const redirectTo = String(formData.get("redirectTo") ?? "/discover");
 
-  if (!email || !password) {
-    return redirect("/login?error=missing-credentials");
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+  if (!hasValidCsrf) {
+    await logAuthSecurityEvent({
+      request,
+      eventType: "csrf_failure",
+      severity: "warn",
+      outcome: "blocked",
+      route: "/login",
+      email: email || undefined,
+    });
+    return redirect("/login?error=invalid-csrf");
   }
 
-  const user = await verifyLocalUser({ email, password });
-  if (!user) {
-    return redirect("/login?error=invalid-credentials");
+  const rateLimit = await enforceAuthRateLimit({
+    request,
+    scope: "login",
+    identifier: email || undefined,
+  });
+  if (!rateLimit.allowed) {
+    await logAuthSecurityEvent({
+      request,
+      eventType: "rate_limit_block",
+      severity: "warn",
+      outcome: "blocked",
+      route: "/login",
+      email: email || undefined,
+    });
+    return redirect("/login?error=rate-limited", {
+      headers: rateLimit.headers,
+    });
+  }
+
+  if (intent === "resend-verification") {
+    if (!email) {
+      return redirect("/login?error=invalid-email-verification-request", {
+        headers: rateLimit.headers,
+      });
+    }
+
+    const candidate = await db.user.findFirst({
+      where: {
+        email,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        email: true,
+        emailVerified: true,
+      },
+    });
+
+    if (candidate?.email && !candidate.emailVerified) {
+      await issueEmailVerification({
+        userId: candidate.id,
+        email: candidate.email,
+        requestUrl: request.url,
+      });
+
+      await logAuthSecurityEvent({
+        request,
+        eventType: "email_verification_sent",
+        severity: "info",
+        outcome: "login-resend",
+        userId: candidate.id,
+        email: candidate.email,
+        route: "/login",
+      });
+    }
+
+    return redirect(
+      `/login?error=email-verification-resent&email=${encodeURIComponent(email)}`,
+      {
+        headers: rateLimit.headers,
+      },
+    );
+  }
+
+  if (!email || !password) {
+    await logAuthSecurityEvent({
+      request,
+      eventType: "login_failure",
+      severity: "warn",
+      outcome: "missing-credentials",
+      route: "/login",
+      email: email || undefined,
+    });
+    return redirect("/login?error=missing-credentials", {
+      headers: rateLimit.headers,
+    });
+  }
+
+  const verification = await verifyLocalUser({ email, password });
+  if (verification.status === "invalid") {
+    await logAuthSecurityEvent({
+      request,
+      eventType: "login_failure",
+      severity: "warn",
+      outcome: "invalid-credentials",
+      route: "/login",
+      email,
+    });
+    return redirect("/login?error=invalid-credentials", {
+      headers: rateLimit.headers,
+    });
+  }
+
+  if (verification.status === "unverified") {
+    await issueEmailVerification({
+      userId: verification.userId,
+      email: verification.email,
+      requestUrl: request.url,
+    });
+
+    await logAuthSecurityEvent({
+      request,
+      eventType: "email_verification_sent",
+      severity: "info",
+      outcome: "login-prerequisite",
+      userId: verification.userId,
+      email: verification.email,
+      route: "/login",
+    });
+
+    await logAuthSecurityEvent({
+      request,
+      eventType: "login_failure",
+      severity: "warn",
+      outcome: "email-not-verified",
+      userId: verification.userId,
+      email: verification.email,
+      route: "/login",
+    });
+
+    return redirect(
+      `/login?error=email-not-verified&email=${encodeURIComponent(verification.email)}`,
+      {
+        headers: rateLimit.headers,
+      },
+    );
   }
 
   const postAuthRedirect = await getPostAuthRedirectForUser(
-    user.id,
+    verification.user.id,
     redirectTo,
   );
 
+  await logAuthSecurityEvent({
+    request,
+    eventType: "login_success",
+    severity: "info",
+    outcome: "authenticated",
+    userId: verification.user.id,
+    email: verification.user.email,
+    route: "/login",
+  });
+
   return createUserSession({
     request,
-    user,
+    user: verification.user,
     redirectTo: postAuthRedirect,
     remember,
+    headers: rateLimit.headers,
   });
 }
 
 export default function Login() {
   const [searchParams] = useSearchParams();
+  const rootData = useRouteLoaderData<{
+    csrfToken?: string;
+    csrfFieldName?: string;
+  }>("root");
   const redirectTo = searchParams.get("redirectTo") ?? "/discover";
   const authError = getAuthErrorMessage(searchParams.get("error"));
+  const emailHint = (searchParams.get("email") ?? "").trim().toLowerCase();
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
   const oauthGoogleUrl = `/oauth/google?mode=login&redirectTo=${encodeURIComponent(redirectTo)}`;
   const oauthFacebookUrl = `/oauth/facebook?mode=login&redirectTo=${encodeURIComponent(redirectTo)}`;
 
@@ -120,7 +286,9 @@ export default function Login() {
             ) : null}
 
             <Form method="post" className="form-modern mt-8 space-y-6">
+              <input type="hidden" name="intent" value="login" />
               <input type="hidden" name="redirectTo" value={redirectTo} />
+              <input type="hidden" name={csrfFieldName} value={csrfToken} />
               <div>
                 <label
                   htmlFor="email"
@@ -187,6 +355,24 @@ export default function Login() {
                 Log In
               </button>
             </Form>
+
+            {searchParams.get("error") === "email-not-verified" ? (
+              <Form method="post" className="mt-3 space-y-2" aria-live="polite">
+                <input type="hidden" name="intent" value="resend-verification" />
+                <input type="hidden" name="email" value={emailHint} />
+                <input type="hidden" name={csrfFieldName} value={csrfToken} />
+                <button
+                  type="submit"
+                  className="w-full btn-tertiary py-3 text-base border border-mist rounded-lg"
+                  disabled={!emailHint}
+                >
+                  Send verification link again
+                </button>
+                <p className="text-xs text-night/60 text-center">
+                  Use the latest email we send, older links are replaced for security.
+                </p>
+              </Form>
+            ) : null}
 
             {/* Social Login */}
             <div className="mt-6">

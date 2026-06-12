@@ -1,8 +1,14 @@
 ---
-description: "Generate the emotional personalization onboarding flow for PaTan™ homepage"
+description: "Generate the emotional personalization onboarding flow for PaTan™ homepage with production-ready integration"
 ---
 
 Create the emotional personalization component for first-time PaTan™ visitors.
+
+## Production Delivery Standard
+- Implement a complete, production-ready personalization flow, not lightweight modal-only patches.
+- Include persistence, data filtering hooks, fallback behavior, and accessible interaction handling.
+- Do not return placeholder preference logic, mock-only state, or temporary UX scaffolding.
+- Ensure output is integration-ready for real routing, data, and lifecycle behavior.
 
 ## Flow
 

@@ -140,7 +140,11 @@ export async function verifyLocalUser({
 }: {
   email: string;
   password: string;
-}): Promise<SessionUser | null> {
+}): Promise<
+  | { status: "invalid" }
+  | { status: "unverified"; userId: string; email: string }
+  | { status: "verified"; user: SessionUser }
+> {
   const normalizedEmail = email.trim().toLowerCase();
 
   const user = await db.user.findFirst({
@@ -151,17 +155,28 @@ export async function verifyLocalUser({
   });
 
   if (!user || !user.passwordHash) {
-    return null;
+    return { status: "invalid" };
   }
 
   const isValid = verifyPassword(password, user.passwordHash);
   if (!isValid) {
-    return null;
+    return { status: "invalid" };
+  }
+
+  if (!user.emailVerified) {
+    return {
+      status: "unverified",
+      userId: user.id,
+      email: normalizedEmail,
+    };
   }
 
   return {
-    ...toSessionUser(user),
-    provider: "local",
+    status: "verified",
+    user: {
+      ...toSessionUser(user),
+      provider: "local",
+    },
   };
 }
 
@@ -922,15 +937,56 @@ type SafetySettingsInput = {
   defaultAspirationVisibility: ProfileStoryVisibility;
 };
 
+function isPreferenceSchemaCompatibilityError(error: unknown) {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  const message = error.message.toLowerCase();
+
+  // Prisma P2022 indicates a missing column, common during rolling deploys.
+  if (message.includes("p2022") || message.includes("p2021")) {
+    return true;
+  }
+
+  return (
+    (
+      message.includes("column") ||
+      message.includes("table")
+    ) &&
+    (
+      message.includes("anonymous_publishing_default") ||
+      message.includes("default_story_visibility") ||
+      message.includes("default_aspiration_visibility") ||
+      message.includes("preferred_categories") ||
+      message.includes("user_preferences")
+    )
+  );
+}
+
 export async function getProfileSafetySettings(userId: string) {
-  const preferences = await db.userPreference.findUnique({
-    where: { userId },
-    select: {
-      anonymousPublishingDefault: true,
-      defaultStoryVisibility: true,
-      defaultAspirationVisibility: true,
-    },
-  });
+  let preferences:
+    | {
+        anonymousPublishingDefault: boolean;
+        defaultStoryVisibility: string;
+        defaultAspirationVisibility: string;
+      }
+    | null = null;
+
+  try {
+    preferences = await db.userPreference.findUnique({
+      where: { userId },
+      select: {
+        anonymousPublishingDefault: true,
+        defaultStoryVisibility: true,
+        defaultAspirationVisibility: true,
+      },
+    });
+  } catch (error: unknown) {
+    if (!isPreferenceSchemaCompatibilityError(error)) {
+      throw error;
+    }
+  }
 
   if (!preferences) {
     return {
@@ -940,50 +996,82 @@ export async function getProfileSafetySettings(userId: string) {
     };
   }
 
+  const normalizeVisibility = (value: string | null | undefined): ProfileStoryVisibility => {
+    if (value === "FOLLOWERS_ONLY" || value === "PRIVATE") {
+      return value;
+    }
+
+    return "PUBLIC";
+  };
+
   return {
     anonymousPublishingDefault: Boolean(preferences.anonymousPublishingDefault),
-    defaultStoryVisibility: (preferences.defaultStoryVisibility ?? "PUBLIC") as ProfileStoryVisibility,
-    defaultAspirationVisibility: (preferences.defaultAspirationVisibility ?? "PUBLIC") as ProfileStoryVisibility,
+    defaultStoryVisibility: normalizeVisibility(preferences.defaultStoryVisibility),
+    defaultAspirationVisibility: normalizeVisibility(preferences.defaultAspirationVisibility),
   };
 }
 
 export async function upsertProfileSafetySettings(input: SafetySettingsInput) {
-  return db.userPreference.upsert({
-    where: {
-      userId: input.userId,
-    },
-    create: {
+  try {
+    return await db.userPreference.upsert({
+      where: {
+        userId: input.userId,
+      },
+      create: {
+        userId: input.userId,
+        anonymousPublishingDefault: input.anonymousPublishingDefault,
+        defaultStoryVisibility: input.defaultStoryVisibility,
+        defaultAspirationVisibility: input.defaultAspirationVisibility,
+        preferredCategories: [],
+        emotionalTonePreference: [],
+        followedTags: [],
+        blockedTags: [],
+      },
+      update: {
+        anonymousPublishingDefault: input.anonymousPublishingDefault,
+        defaultStoryVisibility: input.defaultStoryVisibility,
+        defaultAspirationVisibility: input.defaultAspirationVisibility,
+      },
+      select: {
+        userId: true,
+        anonymousPublishingDefault: true,
+        defaultStoryVisibility: true,
+        defaultAspirationVisibility: true,
+        updatedAt: true,
+      },
+    });
+  } catch (error: unknown) {
+    if (!isPreferenceSchemaCompatibilityError(error)) {
+      throw error;
+    }
+
+    return {
       userId: input.userId,
       anonymousPublishingDefault: input.anonymousPublishingDefault,
       defaultStoryVisibility: input.defaultStoryVisibility,
       defaultAspirationVisibility: input.defaultAspirationVisibility,
-      preferredCategories: [],
-      emotionalTonePreference: [],
-      followedTags: [],
-      blockedTags: [],
-    },
-    update: {
-      anonymousPublishingDefault: input.anonymousPublishingDefault,
-      defaultStoryVisibility: input.defaultStoryVisibility,
-      defaultAspirationVisibility: input.defaultAspirationVisibility,
-    },
-    select: {
-      userId: true,
-      anonymousPublishingDefault: true,
-      defaultStoryVisibility: true,
-      defaultAspirationVisibility: true,
-      updatedAt: true,
-    },
-  });
+      updatedAt: new Date(),
+    };
+  }
 }
 
 export async function getPublicProfileVisibilitySettings(userId: string) {
-  const preferences = await db.userPreference.findUnique({
-    where: { userId },
-    select: {
-      preferredCategories: true,
-    },
-  });
+  let preferences: { preferredCategories: string[] } | null = null;
+
+  try {
+    preferences = await db.userPreference.findUnique({
+      where: { userId },
+      select: {
+        preferredCategories: true,
+      },
+    });
+  } catch (error: unknown) {
+    if (!isPreferenceSchemaCompatibilityError(error)) {
+      throw error;
+    }
+
+    return { ...DEFAULT_PUBLIC_PROFILE_VISIBILITY_SETTINGS };
+  }
 
   return parsePublicProfileVisibilityFromPreferredCategories(
     preferences?.preferredCategories,
@@ -997,12 +1085,20 @@ export async function upsertPublicProfileVisibilitySettings({
   userId: string;
   visibility: Partial<PublicProfileVisibilitySettings>;
 }) {
-  const existing = await db.userPreference.findUnique({
-    where: { userId },
-    select: {
-      preferredCategories: true,
-    },
-  });
+  let existing: { preferredCategories: string[] } | null = null;
+
+  try {
+    existing = await db.userPreference.findUnique({
+      where: { userId },
+      select: {
+        preferredCategories: true,
+      },
+    });
+  } catch (error: unknown) {
+    if (!isPreferenceSchemaCompatibilityError(error)) {
+      throw error;
+    }
+  }
 
   const normalizedVisibility = normalizePublicProfileVisibilitySettings(visibility);
   const preferredCategories = buildPreferredCategoriesWithProfileVisibility(
@@ -1010,26 +1106,38 @@ export async function upsertPublicProfileVisibilitySettings({
     normalizedVisibility,
   );
 
-  return db.userPreference.upsert({
-    where: {
-      userId,
-    },
-    create: {
+  try {
+    return await db.userPreference.upsert({
+      where: {
+        userId,
+      },
+      create: {
+        userId,
+        preferredCategories,
+        emotionalTonePreference: [],
+        followedTags: [],
+        blockedTags: [],
+      },
+      update: {
+        preferredCategories,
+      },
+      select: {
+        userId: true,
+        preferredCategories: true,
+        updatedAt: true,
+      },
+    });
+  } catch (error: unknown) {
+    if (!isPreferenceSchemaCompatibilityError(error)) {
+      throw error;
+    }
+
+    return {
       userId,
       preferredCategories,
-      emotionalTonePreference: [],
-      followedTags: [],
-      blockedTags: [],
-    },
-    update: {
-      preferredCategories,
-    },
-    select: {
-      userId: true,
-      preferredCategories: true,
-      updatedAt: true,
-    },
-  });
+      updatedAt: new Date(),
+    };
+  }
 }
 
 export async function blockUserByUsername({

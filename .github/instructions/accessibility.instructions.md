@@ -11,6 +11,13 @@ description: "WCAG 2.2 accessibility patterns for PaTan™: semantic HTML, ARIA,
 - Use commas, periods, parentheses, or a colon instead.
 - Apply this rule to UI copy, comments, labels, and documentation.
 
+## Production Implementation Standard
+
+- Accessibility work must be implemented end to end, not as lightweight patch additions.
+- Changes must include semantic structure, keyboard behavior, focus management, and assistive announcement coverage where applicable.
+- Do not leave TODO markers, placeholder ARIA labels, or incomplete interaction states.
+- Validate accessibility behavior in integrated flows, not only in isolated components.
+
 PaTan™ must be WCAG 2.2 Level AA compliant. Every user: including those using screen readers, keyboard navigation, or high contrast modes: should fully access all storytelling features.
 
 ## Semantic HTML First

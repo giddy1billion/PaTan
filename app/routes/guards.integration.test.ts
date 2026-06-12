@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
 vi.mock('~/utils/auth.server', () => ({
+  getUser: vi.fn(),
   requireUser: vi.fn(),
 }));
 
@@ -38,13 +39,14 @@ vi.mock('~/utils/db.server', () => ({
 import { loader as authenticatedLayoutLoader } from '~/routes/authenticated-layout';
 import { loader as profileRedirectLoader } from '~/routes/profile.redirect';
 import { loader as publicProfileLoader } from '~/routes/u.$username';
-import { requireUser } from '~/utils/auth.server';
+import { getUser, requireUser } from '~/utils/auth.server';
 import { getOnboardingProfile } from '~/utils/users.server';
 import { db } from '~/utils/db.server';
 
 describe('Route integration guards', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(getUser).mockResolvedValue(null);
   });
 
   it('redirects incomplete onboarding users from authenticated layout', async () => {
