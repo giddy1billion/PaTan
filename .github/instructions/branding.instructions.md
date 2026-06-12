@@ -5,6 +5,12 @@ description: "PaTan™ brand design tokens: colors, typography, spacing, animati
 
 # PaTan™ Brand Color System
 
+## Writing Compliance
+
+- Never use em dash or en dash punctuation in generated content.
+- Use commas, periods, parentheses, or a colon instead.
+- Apply this rule to UI copy, comments, labels, and documentation.
+
 Based on the **Tree of Light identity**: Reflection, Hope, Trust, Growth, and Human Connection.
 
 ## The Four Pillars Rule
@@ -29,22 +35,22 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 
 ## BASE COLORS (Always Use)
 
-| Color | Hex | Usage |
-|-------|-----|-------|
-| Page Background | `#FFFFFF` | Every page, every story, every reflection |
-| Card/Surface | `#F8FAFC` | Story cards, aspiration cards, modals, sidebar widgets |
-| Border/Divider | `#E2E8F0` | Section dividers, card borders, input fields, tables |
+| Color           | Hex       | Usage                                                  |
+| --------------- | --------- | ------------------------------------------------------ |
+| Page Background | `#FFFFFF` | Every page, every story, every reflection              |
+| Card/Surface    | `#F8FAFC` | Story cards, aspiration cards, modals, sidebar widgets |
+| Border/Divider  | `#E2E8F0` | Section dividers, card borders, input fields, tables   |
 
 ---
 
 ## TYPOGRAPHY COLORS
 
-| Color | Hex | CSS Variable | Usage |
-|-------|-----|--------------|-------|
-| Primary Text | `#0D2B45` | `--color-text-primary` | H1-H6 headings, story titles, nav links |
-| Body Text | `#334155` | `--color-text-body` | Story content, descriptions, long-form |
-| Secondary Text | `#64748B` | `--color-text-secondary` | Author names, timestamps, categories |
-| Muted Text | `#94A3B8` | `--color-text-muted` | Captions, helper text, disclaimers |
+| Color          | Hex       | CSS Variable             | Usage                                   |
+| -------------- | --------- | ------------------------ | --------------------------------------- |
+| Primary Text   | `#0D2B45` | `--color-text-primary`   | H1-H6 headings, story titles, nav links |
+| Body Text      | `#334155` | `--color-text-body`      | Story content, descriptions, long-form  |
+| Secondary Text | `#64748B` | `--color-text-secondary` | Author names, timestamps, categories    |
+| Muted Text     | `#94A3B8` | `--color-text-muted`     | Captions, helper text, disclaimers      |
 
 **Rule**: Never use pure black (#000) for body text.
 
@@ -52,30 +58,31 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 
 ## PRIMARY BRAND COLORS
 
-| Color | Hex | CSS Variable | Usage |
-|-------|-----|--------------|-------|
+| Color         | Hex       | CSS Variable       | Usage                                        |
+| ------------- | --------- | ------------------ | -------------------------------------------- |
 | Midnight Blue | `#0D2B45` | `--color-midnight` | Top nav, footer, primary CTAs, hero overlays |
-| Golden Light | `#F5B942` | `--color-golden` | Celebration, achievements, featured labels |
-| Forest Green | `#2E6F40` | `--color-forest` | Success, milestones, growth indicators |
-| Night Sky | `#1C2230` | `--color-night` | Dark mode, expanded nav panels |
+| Golden Light  | `#F5B942` | `--color-golden`   | Celebration, achievements, featured labels   |
+| Forest Green  | `#2E6F40` | `--color-forest`   | Success, milestones, growth indicators       |
+| Night Sky     | `#1C2230` | `--color-night`    | Dark mode, expanded nav panels               |
 
 ---
 
 ## SUPPORTING COLORS
 
-| Color | Hex | CSS Variable | Usage |
-|-------|-----|--------------|-------|
-| Golden Glow | `#FDF3D6` | `--color-golden-glow` | Celebration callouts, featured panels |
-| Forest Mist | `#EAF5EC` | `--color-forest-mist` | Success banners, aspiration updates |
-| Sky Reflection | `#EDF6FB` | `--color-sky-reflection` | Educational content, AI guidance |
-| Primary Hover | `#123A5A` | `--color-midnight-hover` | Primary button hover |
-| Secondary Hover | `#E4A72E` | `--color-golden-hover` | Secondary button hover |
+| Color           | Hex       | CSS Variable             | Usage                                 |
+| --------------- | --------- | ------------------------ | ------------------------------------- |
+| Golden Glow     | `#FDF3D6` | `--color-golden-glow`    | Celebration callouts, featured panels |
+| Forest Mist     | `#EAF5EC` | `--color-forest-mist`    | Success banners, aspiration updates   |
+| Sky Reflection  | `#EDF6FB` | `--color-sky-reflection` | Educational content, AI guidance      |
+| Primary Hover   | `#123A5A` | `--color-midnight-hover` | Primary button hover                  |
+| Secondary Hover | `#E4A72E` | `--color-golden-hover`   | Secondary button hover                |
 
 ---
 
 ## BUTTON SYSTEM
 
 ### Primary Button (Most Important Action)
+
 - **Background**: `#0D2B45` (Midnight Blue)
 - **Text**: `#FFFFFF` (White)
 - **Hover**: `#123A5A`
@@ -87,6 +94,7 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 ```
 
 ### Secondary Button (Supporting Action)
+
 - **Background**: `#F5B942` (Golden Light)
 - **Text**: `#0D2B45` (Midnight Blue)
 - **Hover**: `#E4A72E`
@@ -100,6 +108,7 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 ```
 
 ### Tertiary Button (Subtle Action)
+
 - **Background**: Transparent
 - **Text**: `#0D2B45` (Midnight Blue)
 
@@ -113,10 +122,10 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 
 ## LINK COLORS
 
-| State | Hex | Usage |
-|-------|-----|-------|
+| State   | Hex       | Usage                                          |
+| ------- | --------- | ---------------------------------------------- |
 | Default | `#2E6F40` | Story tags, inline hyperlinks, related stories |
-| Hover | `#0D2B45` | Hover state |
+| Hover   | `#0D2B45` | Hover state                                    |
 
 **Rule**: Links should signal exploration without competing with primary actions.
 
@@ -124,40 +133,41 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 
 ## REACTION COLORS
 
-| Reaction | Hex | Represents |
-|----------|-----|------------|
-| Celebrate | `#F5B942` | Joy, Recognition |
-| Uplift | `#2E6F40` | Growth, Support |
-| Empathy | `#A855F7` | Understanding, Connection |
+| Reaction  | Hex       | Represents                |
+| --------- | --------- | ------------------------- |
+| Celebrate | `#F5B942` | Joy, Recognition          |
+| Uplift    | `#2E6F40` | Growth, Support           |
+| Empathy   | `#A855F7` | Understanding, Connection |
 
 ---
 
 ## INTERACTION STATES
 
-| State | Color/Hex | Usage |
-|-------|-----------|-------|
-| Focus Ring | `#F5B942` | Keyboard navigation |
-| Selected Background | `#EDF6FB` | Selected items |
-| Selected Border | `#0D2B45` | Selected item borders |
-| Disabled Background | `#E2E8F0` | Disabled elements |
-| Disabled Text | `#94A3B8` | Disabled text |
+| State               | Color/Hex | Usage                 |
+| ------------------- | --------- | --------------------- |
+| Focus Ring          | `#F5B942` | Keyboard navigation   |
+| Selected Background | `#EDF6FB` | Selected items        |
+| Selected Border     | `#0D2B45` | Selected item borders |
+| Disabled Background | `#E2E8F0` | Disabled elements     |
+| Disabled Text       | `#94A3B8` | Disabled text         |
 
 ---
 
 ## STATUS COLORS
 
-| Status | Color | Background |
-|--------|-------|------------|
-| Success | `#2E6F40` | `#EAF5EC` |
-| Warning | `#F59E0B` | `#FEF3C7` |
-| Error | `#DC2626` | `#FEE2E2` |
-| Information | `#2563EB` | `#DBEAFE` |
+| Status      | Color     | Background |
+| ----------- | --------- | ---------- |
+| Success     | `#2E6F40` | `#EAF5EC`  |
+| Warning     | `#F59E0B` | `#FEF3C7`  |
+| Error       | `#DC2626` | `#FEE2E2`  |
+| Information | `#2563EB` | `#DBEAFE`  |
 
 ---
 
 ## SPECIAL CONTENT ELEMENTS
 
 ### Reflection Block
+
 - **Left Border**: `#0D2B45`
 - **Background**: `#F8FAFC`
 - **Text**: `#0D2B45`
@@ -171,6 +181,7 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 ```
 
 ### Hope Highlight Box
+
 - **Background**: `#FDF3D6`
 - **Border**: `#F5B942`
 - **Text**: `#0D2B45`
@@ -184,6 +195,7 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 ```
 
 ### Growth Callout Box
+
 - **Background**: `#EAF5EC`
 - **Border**: `#2E6F40`
 - **Text**: `#0D2B45`
@@ -200,11 +212,11 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 
 ## AI ASSISTANT COLORS
 
-| Element | Hex | Usage |
-|---------|-----|-------|
-| AI Background | `#EDF6FB` | AI prompt containers |
-| AI Border | `#B8E3F3` | AI element borders |
-| AI Accent | `#0D2B45` | AI text emphasis |
+| Element       | Hex       | Usage                   |
+| ------------- | --------- | ----------------------- |
+| AI Background | `#EDF6FB` | AI prompt containers    |
+| AI Border     | `#B8E3F3` | AI element borders      |
+| AI Accent     | `#0D2B45` | AI text emphasis        |
 | AI Suggestion | `#FDF3D6` | Highlighted suggestions |
 
 ```tsx
@@ -218,8 +230,9 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 ## TYPOGRAPHY
 
 ### Font Families
-- **Headings**: Merriweather — timeless, reflective, trustworthy
-- **Body/UI**: Inter — modern, readable, accessible
+
+- **Headings**: Merriweather: timeless, reflective, trustworthy
+- **Body/UI**: Inter: modern, readable, accessible
 
 ### Mobile-First Typography Scale
 
@@ -268,15 +281,15 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 
 ## SPACING SCALE (Mobile-First)
 
-| Token | Size | Usage |
-|-------|------|-------|
-| `space-4` | 16px | Component padding |
-| `space-6` | 24px | Card padding |
-| `space-8` | 32px | Element gaps |
-| `space-12` | 48px | Section padding (mobile) |
-| `space-16` | 64px | Section padding (tablet) |
+| Token      | Size | Usage                     |
+| ---------- | ---- | ------------------------- |
+| `space-4`  | 16px | Component padding         |
+| `space-6`  | 24px | Card padding              |
+| `space-8`  | 32px | Element gaps              |
+| `space-12` | 48px | Section padding (mobile)  |
+| `space-16` | 64px | Section padding (tablet)  |
 | `space-20` | 80px | Section padding (desktop) |
-| `space-24` | 96px | Hero spacing |
+| `space-24` | 96px | Hero spacing              |
 
 ```tsx
 // Section spacing (mobile-first)
@@ -290,10 +303,10 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 ```css
 :root {
   /* Durations */
-  --duration-fast: 150ms;    /* Hover effects */
-  --duration-normal: 200ms;  /* Button interactions */
-  --duration-slow: 300ms;    /* Panel animations */
-  --duration-slower: 400ms;  /* Page transitions */
+  --duration-fast: 150ms; /* Hover effects */
+  --duration-normal: 200ms; /* Button interactions */
+  --duration-slow: 300ms; /* Panel animations */
+  --duration-slower: 400ms; /* Page transitions */
 
   /* Easing */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -307,6 +320,7 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 ## INTERACTIVE ELEMENT STANDARDS
 
 ### Touch Targets
+
 - Minimum size: 44×44px (iOS) / 48×48dp (Android)
 - Minimum spacing between targets: 8px
 
@@ -315,6 +329,7 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 ```
 
 ### Hover States
+
 ```tsx
 <button className="
   hover:-translate-y-0.5
@@ -324,19 +339,21 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 ```
 
 ### Focus States (Required for Accessibility)
+
 ```tsx
 <button className="
   focus-visible:outline-none
-  focus-visible:ring-2 
+  focus-visible:ring-2
   focus-visible:ring-golden
   focus-visible:ring-offset-2
 ">
 ```
 
 ### Active/Pressed States
+
 ```tsx
 <button className="
-  active:translate-y-0 
+  active:translate-y-0
   active:scale-[0.98]
   active:shadow-sm
 ">
@@ -346,14 +363,14 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 
 ## BRAND VOICE IN MICROCOPY
 
-| Context | Example |
-|---------|---------|
-| Empty state | "Your story is waiting to be told" |
-| Success | "Your light has been shared" |
-| Loading | "Gathering inspiration..." |
-| Error | "Something went wrong. Let's try again." |
-| CTA | "Share Your Story" not "Post Now" |
-| Encouragement | "You're not alone" not "Join thousands" |
+| Context       | Example                                  |
+| ------------- | ---------------------------------------- |
+| Empty state   | "Your story is waiting to be told"       |
+| Success       | "Your light has been shared"             |
+| Loading       | "Gathering inspiration..."               |
+| Error         | "Something went wrong. Let's try again." |
+| CTA           | "Share Your Story" not "Post Now"        |
+| Encouragement | "You're not alone" not "Join thousands"  |
 
 ---
 
@@ -370,29 +387,29 @@ This ratio prevents the experience from feeling overly religious, overly corpora
 
 ---
 
-## QUICK REFERENCE — ALL HEX CODES
+## QUICK REFERENCE: ALL HEX CODES
 
 ```
-#FFFFFF — Page Background
-#F8FAFC — Card/Surface Background
-#E2E8F0 — Border/Divider
-#0D2B45 — Primary Text + Midnight Blue
-#334155 — Body Text
-#64748B — Secondary Text
-#94A3B8 — Muted Text
-#F5B942 — Golden Light Accent
-#FDF3D6 — Golden Glow Background
-#2E6F40 — Forest Growth Accent
-#EAF5EC — Forest Mist Background
-#EDF6FB — Sky Reflection Background
-#1C2230 — Night Sky
-#123A5A — Primary Hover
-#E4A72E — Secondary Hover
-#A855F7 — Empathy Reaction
-#F59E0B — Warning
-#FEF3C7 — Warning Background
-#DC2626 — Error
-#FEE2E2 — Error Background
-#2563EB — Information
-#DBEAFE — Information Background
+#FFFFFF: Page Background
+#F8FAFC: Card/Surface Background
+#E2E8F0: Border/Divider
+#0D2B45: Primary Text + Midnight Blue
+#334155: Body Text
+#64748B: Secondary Text
+#94A3B8: Muted Text
+#F5B942: Golden Light Accent
+#FDF3D6: Golden Glow Background
+#2E6F40: Forest Growth Accent
+#EAF5EC: Forest Mist Background
+#EDF6FB: Sky Reflection Background
+#1C2230: Night Sky
+#123A5A: Primary Hover
+#E4A72E: Secondary Hover
+#A855F7: Empathy Reaction
+#F59E0B: Warning
+#FEF3C7: Warning Background
+#DC2626: Error
+#FEE2E2: Error Background
+#2563EB: Information
+#DBEAFE: Information Background
 ```

@@ -1,65 +1,76 @@
-import type { MetaFunction } from 'react-router';
-import { Link } from 'react-router';
+import type { MetaFunction } from "react-router";
+import { Link } from "react-router";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'About PaTan™ – Our Mission to Illuminate Lives Through Stories' },
-    { name: 'description', content: 'Learn about PaTan™\'s mission to create a trusted digital sanctuary where people share authentic life experiences that inspire humanity.' },
+    { title: "About PaTan™ | Our Mission to Illuminate Lives Through Stories" },
+    {
+      name: "description",
+      content:
+        "Learn about PaTan™'s mission to create a trusted digital sanctuary where people share authentic life experiences that inspire humanity.",
+    },
   ];
 };
 
 const values = [
   {
-    icon: '💡',
-    title: 'Illumination',
-    description: 'Every story has the power to light someone else\'s path.',
+    icon: "💡",
+    title: "Illumination",
+    description: "Every story has the power to light someone else's path.",
   },
   {
-    icon: '🤝',
-    title: 'Authentic Connection',
-    description: 'Real stories from real people create genuine human bonds.',
+    icon: "🤝",
+    title: "Authentic Connection",
+    description: "Real stories from real people create genuine human bonds.",
   },
   {
-    icon: '🌱',
-    title: 'Growth Mindset',
-    description: 'We celebrate progress, not perfection.',
+    icon: "🌱",
+    title: "Growth Mindset",
+    description: "We celebrate progress, not perfection.",
   },
   {
-    icon: '🛡️',
-    title: 'Emotional Safety',
-    description: 'A sanctuary where vulnerability is protected and honored.',
+    icon: "🛡️",
+    title: "Emotional Safety",
+    description: "A sanctuary where vulnerability is protected and honored.",
   },
   {
-    icon: '🌍',
-    title: 'Inclusive Community',
-    description: 'Faith-friendly but belief-inclusive for all backgrounds.',
+    icon: "🌍",
+    title: "Inclusive Community",
+    description: "Faith-friendly but belief-inclusive for all backgrounds.",
   },
   {
-    icon: '✨',
-    title: 'Positive Impact',
-    description: 'Encouragement over virality, meaning over metrics.',
+    icon: "✨",
+    title: "Positive Impact",
+    description: "Encouragement over virality, meaning over metrics.",
   },
 ];
 
 const team = [
-  { name: 'Coming Soon', role: 'Founder & CEO', image: null },
-  { name: 'Coming Soon', role: 'Head of Community', image: null },
-  { name: 'Coming Soon', role: 'Lead Engineer', image: null },
+  { name: "Coming Soon", role: "Founder & CEO", image: null },
+  { name: "Coming Soon", role: "Head of Community", image: null },
+  { name: "Coming Soon", role: "Lead Engineer", image: null },
 ];
 
 export default function About() {
   return (
     <main id="main-content" className="page-modern">
       {/* Hero */}
-      <section className="bg-midnight text-dawn py-20" aria-labelledby="about-heading">
+      <section
+        className="bg-midnight text-dawn py-20"
+        aria-labelledby="about-heading"
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 id="about-heading" className="font-heading text-4xl sm:text-5xl font-bold">
+          <h1
+            id="about-heading"
+            className="font-heading text-4xl sm:text-5xl font-bold"
+          >
             Illuminating Lives Through
             <span className="text-golden"> Authentic Stories</span>
           </h1>
           <p className="mt-6 text-xl text-dawn/80">
-            PaTan™ exists to create a trusted digital sanctuary where people from every 
-            background can share authentic life experiences that inspire humanity.
+            PaTan™ exists to create a trusted digital sanctuary where people
+            from every background can share authentic life experiences that
+            inspire humanity.
           </p>
         </div>
       </section>
@@ -72,8 +83,9 @@ export default function About() {
               Our Mission
             </h2>
             <p className="mt-6 text-xl text-night/70 leading-relaxed">
-              To illuminate the human experience through authentic stories of hope, 
-              resilience, gratitude, faith, transformation, and personal growth.
+              To illuminate the human experience through authentic stories of
+              hope, resilience, gratitude, faith, transformation, and personal
+              growth.
             </p>
           </div>
 
@@ -141,13 +153,13 @@ export default function About() {
                 key={value.title}
                 className="bg-white rounded-xl p-6 shadow-sm border border-mist"
               >
-                <span className="text-4xl" aria-hidden="true">{value.icon}</span>
+                <span className="text-4xl" aria-hidden="true">
+                  {value.icon}
+                </span>
                 <h3 className="mt-4 font-heading text-xl font-bold text-midnight">
                   {value.title}
                 </h3>
-                <p className="mt-2 text-night/70">
-                  {value.description}
-                </p>
+                <p className="mt-2 text-night/70">{value.description}</p>
               </div>
             ))}
           </div>
@@ -169,7 +181,9 @@ export default function About() {
                 <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-golden/20 to-forest/20 flex items-center justify-center">
                   <span className="text-3xl">👤</span>
                 </div>
-                <h3 className="mt-4 font-medium text-midnight">{member.name}</h3>
+                <h3 className="mt-4 font-medium text-midnight">
+                  {member.name}
+                </h3>
                 <p className="text-sm text-night/60">{member.role}</p>
               </div>
             ))}
@@ -184,7 +198,7 @@ export default function About() {
             Ready to Share Your Story?
           </h2>
           <p className="mt-4 text-lg text-dawn/70">
-            Join thousands of people finding hope, encouragement, and connection 
+            Join thousands of people finding hope, encouragement, and connection
             through authentic storytelling.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">

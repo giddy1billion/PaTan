@@ -1,9 +1,13 @@
-import type { MetaFunction } from 'react-router';
+import type { MetaFunction } from "react-router";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Terms of Service – PaTan™' },
-    { name: 'description', content: 'Terms and conditions for using the PaTan™ storytelling platform.' },
+    { title: "Terms of Service | PaTan™" },
+    {
+      name: "description",
+      content:
+        "Terms and conditions for using the PaTan™ storytelling platform.",
+    },
   ];
 };
 
@@ -16,9 +20,7 @@ export default function Terms() {
           <h1 className="font-heading text-3xl sm:text-4xl font-bold">
             Terms of Service
           </h1>
-          <p className="mt-4 text-dawn/70">
-            Last updated: June 2026
-          </p>
+          <p className="mt-4 text-dawn/70">Last updated: June 2026</p>
         </div>
       </section>
 
@@ -32,9 +34,9 @@ export default function Terms() {
                   Welcome to PaTan™
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  These Terms of Service govern your use of PaTan™ and its services. By creating 
-                  an account or using our platform, you agree to these terms. Please read them 
-                  carefully.
+                  These Terms of Service govern your use of PaTan™ and its
+                  services. By creating an account or using our platform, you
+                  agree to these terms. Please read them carefully.
                 </p>
               </section>
 
@@ -44,13 +46,14 @@ export default function Terms() {
                 </h2>
                 <div className="mt-4 space-y-4 text-night/70">
                   <p>
-                    You must be at least 13 years old to create an account. You are responsible 
-                    for maintaining the security of your account and all activities that occur 
-                    under it.
+                    You must be at least 13 years old to create an account. You
+                    are responsible for maintaining the security of your account
+                    and all activities that occur under it.
                   </p>
                   <p>
-                    You agree to provide accurate information and keep it updated. We reserve 
-                    the right to suspend accounts that violate these terms.
+                    You agree to provide accurate information and keep it
+                    updated. We reserve the right to suspend accounts that
+                    violate these terms.
                   </p>
                 </div>
               </section>
@@ -61,14 +64,15 @@ export default function Terms() {
                 </h2>
                 <div className="mt-4 space-y-4 text-night/70">
                   <p>
-                    You retain ownership of the stories and content you create on PaTan™. By 
-                    posting content, you grant us a license to display, distribute, and promote 
-                    your content on our platform.
+                    You retain ownership of the stories and content you create
+                    on PaTan™. By posting content, you grant us a license to
+                    display, distribute, and promote your content on our
+                    platform.
                   </p>
                   <p>
-                    You are responsible for ensuring your content does not violate any laws or 
-                    the rights of others. Content that is defamatory, infringing, or harmful 
-                    may be removed.
+                    You are responsible for ensuring your content does not
+                    violate any laws or the rights of others. Content that is
+                    defamatory, infringing, or harmful may be removed.
                   </p>
                 </div>
               </section>
@@ -78,9 +82,10 @@ export default function Terms() {
                   Community Standards
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  All users must follow our Community Guidelines. Violations may result in 
-                  content removal, account suspension, or permanent ban. We take the safety 
-                  and wellbeing of our community seriously.
+                  All users must follow our Community Guidelines. Violations may
+                  result in content removal, account suspension, or permanent
+                  ban. We take the safety and wellbeing of our community
+                  seriously.
                 </p>
               </section>
 
@@ -121,9 +126,10 @@ export default function Terms() {
                   AI Features
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  PaTan™ offers AI-powered features to assist with storytelling. While these 
-                  tools aim to help you express your experiences, you are responsible for 
-                  reviewing and approving any AI-generated suggestions before publishing.
+                  PaTan™ offers AI-powered features to assist with storytelling.
+                  While these tools aim to help you express your experiences,
+                  you are responsible for reviewing and approving any
+                  AI-generated suggestions before publishing.
                 </p>
               </section>
 
@@ -133,13 +139,15 @@ export default function Terms() {
                 </h2>
                 <div className="mt-4 space-y-4 text-night/70">
                   <p>
-                    PaTan™ is provided "as is" without warranties of any kind. We do not 
-                    guarantee uninterrupted service or that the platform will be error-free.
+                    PaTan™ is provided "as is" without warranties of any kind.
+                    We do not guarantee uninterrupted service or that the
+                    platform will be error-free.
                   </p>
                   <p>
-                    Stories shared on PaTan™ represent personal experiences and should not be 
-                    considered professional advice. For medical, legal, or financial matters, 
-                    please consult qualified professionals.
+                    Stories shared on PaTan™ represent personal experiences and
+                    should not be considered professional advice. For medical,
+                    legal, or financial matters, please consult qualified
+                    professionals.
                   </p>
                 </div>
               </section>
@@ -149,9 +157,10 @@ export default function Terms() {
                   Changes to Terms
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  We may update these terms from time to time. Significant changes will be 
-                  communicated through the platform or via email. Continued use of PaTan™ 
-                  after changes constitutes acceptance of the new terms.
+                  We may update these terms from time to time. Significant
+                  changes will be communicated through the platform or via
+                  email. Continued use of PaTan™ after changes constitutes
+                  acceptance of the new terms.
                 </p>
               </section>
 
@@ -160,8 +169,11 @@ export default function Terms() {
                   Contact Us
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  Questions about these terms? Contact us at{' '}
-                  <a href="mailto:legal@PaTan™.site" className="text-golden hover:text-soft-gold">
+                  Questions about these terms? Contact us at{" "}
+                  <a
+                    href="mailto:legal@PaTan™.site"
+                    className="text-golden hover:text-soft-gold"
+                  >
                     legal@PaTan™.site
                   </a>
                 </p>

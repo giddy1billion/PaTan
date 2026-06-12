@@ -5,7 +5,13 @@ description: "WCAG 2.2 accessibility patterns for PaTan™: semantic HTML, ARIA,
 
 # Accessibility Standards for PaTan™
 
-PaTan™ must be WCAG 2.2 Level AA compliant. Every user — including those using screen readers, keyboard navigation, or high contrast modes — should fully access all storytelling features.
+## Writing Compliance
+
+- Never use em dash or en dash punctuation in generated content.
+- Use commas, periods, parentheses, or a colon instead.
+- Apply this rule to UI copy, comments, labels, and documentation.
+
+PaTan™ must be WCAG 2.2 Level AA compliant. Every user: including those using screen readers, keyboard navigation, or high contrast modes: should fully access all storytelling features.
 
 ## Semantic HTML First
 
@@ -24,7 +30,7 @@ Use native elements before ARIA:
 
 ## Headings
 
-Maintain logical hierarchy — never skip levels:
+Maintain logical hierarchy: never skip levels:
 
 ```tsx
 <h1>Discover Stories</h1>
@@ -46,8 +52,14 @@ Every input needs an associated label:
 Error messages must be announced:
 
 ```tsx
-<input aria-invalid={!!error} aria-describedby="title-error" />
-{error && <span id="title-error" role="alert">{error}</span>}
+<input aria-invalid={!!error} aria-describedby="title-error" />;
+{
+  error && (
+    <span id="title-error" role="alert">
+      {error}
+    </span>
+  );
+}
 ```
 
 ## Focus Management
@@ -64,7 +76,9 @@ Never remove focus outlines without replacement:
 }
 
 /* ❌ Never do this */
-:focus { outline: none; }
+:focus {
+  outline: none;
+}
 ```
 
 ### Focus Trapping
@@ -72,11 +86,7 @@ Never remove focus outlines without replacement:
 Trap focus in modals and dialogs:
 
 ```tsx
-<dialog 
-  ref={dialogRef}
-  aria-labelledby="dialog-title"
-  aria-modal="true"
->
+<dialog ref={dialogRef} aria-labelledby="dialog-title" aria-modal="true">
   <h2 id="dialog-title">Share Your Story</h2>
   {/* focusable content */}
 </dialog>
@@ -96,7 +106,7 @@ Provide skip navigation:
 
 - **Text contrast**: 4.5:1 minimum (3:1 for large text)
 - **UI components**: 3:1 against adjacent colors
-- **Never rely on color alone** — use icons, patterns, or text
+- **Never rely on color alone**: use icons, patterns, or text
 
 ```tsx
 // ✅ Status with icon + text
@@ -144,10 +154,16 @@ Announce loading to screen readers:
 
 ```tsx
 <button disabled={isSubmitting} aria-busy={isSubmitting}>
-  {isSubmitting ? 'Publishing...' : 'Publish Story'}
-</button>
+  {isSubmitting ? "Publishing..." : "Publish Story"}
+</button>;
 
-{isLoading && <div role="status" aria-live="polite">Loading stories...</div>}
+{
+  isLoading && (
+    <div role="status" aria-live="polite">
+      Loading stories...
+    </div>
+  );
+}
 ```
 
 ## Engagement Actions
@@ -155,7 +171,7 @@ Announce loading to screen readers:
 PaTan engagement buttons need clear labels:
 
 ```tsx
-<button 
+<button
   aria-label={`Celebrate this story. ${celebrateCount} celebrations`}
   aria-pressed={hasCelebrated}
 >
@@ -191,6 +207,7 @@ Respect user preferences:
 ### Touch Targets
 
 Minimum touch target sizes for mobile accessibility:
+
 - **Apple HIG**: 44×44px
 - **Material Design**: 48×48dp
 - **Minimum spacing**: 8px between targets
@@ -241,8 +258,8 @@ Minimum touch target sizes for mobile accessibility:
 
 ```tsx
 // Provide context for swipe gestures
-<div 
-  role="region" 
+<div
+  role="region"
   aria-label="Story carousel. Swipe left or right to navigate."
 >
   <Carousel />
@@ -257,6 +274,7 @@ Minimum touch target sizes for mobile accessibility:
 ## Testing Checklist
 
 ### Desktop
+
 - [ ] Navigate entire flow with keyboard only
 - [ ] Test with screen reader (NVDA/VoiceOver)
 - [ ] Check color contrast ratios (4.5:1 text, 3:1 UI)
@@ -266,6 +284,7 @@ Minimum touch target sizes for mobile accessibility:
 - [ ] Validate heading hierarchy
 
 ### Mobile
+
 - [ ] Test on real devices (iOS Safari, Android Chrome)
 - [ ] Verify touch targets are 44px+ minimum
 - [ ] Test with VoiceOver (iOS) and TalkBack (Android)
@@ -276,6 +295,7 @@ Minimum touch target sizes for mobile accessibility:
 - [ ] Test with Dynamic Type (iOS) / Font scaling (Android)
 
 ### Cross-Device
+
 - [ ] Test on 320px viewport width
 - [ ] Verify content doesn't overflow horizontally
 - [ ] Check interactive elements have adequate spacing

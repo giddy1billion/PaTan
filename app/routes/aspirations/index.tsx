@@ -1,74 +1,84 @@
-import type { MetaFunction } from 'react-router';
-import { Link } from 'react-router';
+import type { MetaFunction } from "react-router";
+import { Link } from "react-router";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Aspirations – PaTan™' },
-    { name: 'description', content: 'Share your dreams, goals, and aspirations. Receive community support on your journey.' },
+    { title: "Aspirations | PaTan™" },
+    {
+      name: "description",
+      content:
+        "Share your dreams, goals, and aspirations. Receive community support on your journey.",
+    },
   ];
 };
 
 const aspirations = [
   {
-    id: '1',
-    title: 'Complete my first marathon',
-    author: 'Michael R.',
-    status: 'in-progress',
+    id: "1",
+    title: "Complete my first marathon",
+    author: "Michael R.",
+    status: "in-progress",
     progress: 65,
     supporters: 45,
-    category: 'Health & Wellness',
+    category: "Health & Wellness",
   },
   {
-    id: '2',
-    title: 'Write and publish my memoir',
-    author: 'Sarah M.',
-    status: 'in-progress',
+    id: "2",
+    title: "Write and publish my memoir",
+    author: "Sarah M.",
+    status: "in-progress",
     progress: 40,
     supporters: 89,
-    category: 'Personal Growth',
+    category: "Personal Growth",
   },
   {
-    id: '3',
-    title: 'Start a community garden in my neighborhood',
-    author: 'Elena P.',
-    status: 'achieved',
+    id: "3",
+    title: "Start a community garden in my neighborhood",
+    author: "Elena P.",
+    status: "achieved",
     progress: 100,
     supporters: 156,
-    category: 'Social Impact',
+    category: "Social Impact",
   },
   {
-    id: '4',
-    title: 'Learn to play the piano',
-    author: 'James K.',
-    status: 'pending',
+    id: "4",
+    title: "Learn to play the piano",
+    author: "James K.",
+    status: "pending",
     progress: 0,
     supporters: 23,
-    category: 'Personal Growth',
+    category: "Personal Growth",
   },
   {
-    id: '5',
-    title: 'Reconnect with estranged family members',
-    author: 'Anonymous',
-    status: 'in-progress',
+    id: "5",
+    title: "Reconnect with estranged family members",
+    author: "Anonymous",
+    status: "in-progress",
     progress: 30,
     supporters: 78,
-    category: 'Relationships',
+    category: "Relationships",
   },
 ];
 
 const statusConfig = {
-  pending: { label: 'Pending', class: 'badge-pending' },
-  'in-progress': { label: 'In Progress', class: 'badge-in-progress' },
-  achieved: { label: 'Achieved', class: 'badge-achieved' },
+  pending: { label: "Pending", class: "badge-pending" },
+  "in-progress": { label: "In Progress", class: "badge-in-progress" },
+  achieved: { label: "Achieved", class: "badge-achieved" },
 };
 
 export default function AspirationsIndex() {
   return (
     <main id="main-content" className="page-modern">
       {/* Hero */}
-      <section className="bg-midnight text-dawn py-16" aria-labelledby="aspirations-heading">
+      <section
+        className="bg-midnight text-dawn py-16"
+        aria-labelledby="aspirations-heading"
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 id="aspirations-heading" className="font-heading text-3xl sm:text-4xl font-bold">
+          <h1
+            id="aspirations-heading"
+            className="font-heading text-3xl sm:text-4xl font-bold"
+          >
             Aspirations
           </h1>
           <p className="mt-4 text-lg text-dawn/70">
@@ -86,22 +96,34 @@ export default function AspirationsIndex() {
           <nav aria-label="Aspiration filters">
             <ul className="flex gap-4 overflow-x-auto py-4" role="list">
               <li>
-                <button type="button" className="px-4 py-2 rounded-full text-sm font-medium bg-midnight text-dawn">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-full text-sm font-medium bg-midnight text-dawn"
+                >
                   All
                 </button>
               </li>
               <li>
-                <button type="button" className="px-4 py-2 rounded-full text-sm font-medium bg-mist/50 text-night/70 hover:bg-mist">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-full text-sm font-medium bg-mist/50 text-night/70 hover:bg-mist"
+                >
                   In Progress
                 </button>
               </li>
               <li>
-                <button type="button" className="px-4 py-2 rounded-full text-sm font-medium bg-mist/50 text-night/70 hover:bg-mist">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-full text-sm font-medium bg-mist/50 text-night/70 hover:bg-mist"
+                >
                   Achieved
                 </button>
               </li>
               <li>
-                <button type="button" className="px-4 py-2 rounded-full text-sm font-medium bg-mist/50 text-night/70 hover:bg-mist">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-full text-sm font-medium bg-mist/50 text-night/70 hover:bg-mist"
+                >
                   Pending
                 </button>
               </li>
@@ -122,10 +144,22 @@ export default function AspirationsIndex() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className={statusConfig[aspiration.status as keyof typeof statusConfig].class}>
-                        {statusConfig[aspiration.status as keyof typeof statusConfig].label}
+                      <span
+                        className={
+                          statusConfig[
+                            aspiration.status as keyof typeof statusConfig
+                          ].class
+                        }
+                      >
+                        {
+                          statusConfig[
+                            aspiration.status as keyof typeof statusConfig
+                          ].label
+                        }
                       </span>
-                      <span className="text-xs text-night/50">{aspiration.category}</span>
+                      <span className="text-xs text-night/50">
+                        {aspiration.category}
+                      </span>
                     </div>
                     <h2 className="mt-3 font-heading text-lg font-bold text-midnight">
                       <Link
@@ -148,16 +182,20 @@ export default function AspirationsIndex() {
                 </div>
 
                 {/* Progress Bar */}
-                {aspiration.status !== 'pending' && (
+                {aspiration.status !== "pending" && (
                   <div className="mt-4">
                     <div className="flex items-center justify-between text-sm mb-1">
                       <span className="text-night/60">Progress</span>
-                      <span className="font-medium text-midnight">{aspiration.progress}%</span>
+                      <span className="font-medium text-midnight">
+                        {aspiration.progress}%
+                      </span>
                     </div>
                     <div className="h-2 bg-mist rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all ${
-                          aspiration.status === 'achieved' ? 'bg-forest' : 'bg-golden'
+                          aspiration.status === "achieved"
+                            ? "bg-forest"
+                            : "bg-golden"
                         }`}
                         style={{ width: `${aspiration.progress}%` }}
                         role="progressbar"
@@ -193,7 +231,8 @@ export default function AspirationsIndex() {
             What Are You Working Toward?
           </h2>
           <p className="mt-4 text-night/70">
-            Share your aspiration and let the community support you on your journey.
+            Share your aspiration and let the community support you on your
+            journey.
           </p>
           <Link to="/aspirations/new" className="mt-6 btn-primary inline-block">
             Share Your Aspiration

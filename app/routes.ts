@@ -13,6 +13,7 @@ export default [
 
     // Public Profiles
     route("u/:username", "routes/u.$username.tsx"),
+    route("stories/:storyId", "routes/stories.storyId.tsx"),
 
     // Static Pages
     route("about", "routes/about.tsx"),
@@ -43,7 +44,6 @@ export default [
 
     // Discovery & Stories
     route("discover", "routes/discover.tsx"),
-    route("stories/:storyId", "routes/stories.$storyId.tsx"),
     route("stories/new", "routes/stories.new.tsx"),
 
     // Thematic Journeys

@@ -6,19 +6,19 @@ Build the complete PaTan™ homepage following the information architecture.
 
 ## Sections to Generate
 
-1. **Navigation** — Sticky nav, logo, menu items, Login/Get Started
-2. **Hero** — "Every Story Has the Power to Light Someone Else's Path"
-3. **Featured Stories** — 3 testimony preview cards
-4. **How It Works** — Reflect → Inspire → Connect
-5. **AI Assistant** — Story confidence builder
-6. **Thematic Journeys** — 8-category grid
-7. **Aspirations** — Goal tracking showcase
-8. **Community Metrics** — Animated counters
-9. **Testimonials** — User quote carousel
-10. **Mobile Experience** — PWA showcase
-11. **FAQ** — 7-question accordion
-12. **Final CTA** — "Someone May Need the Story Only You Can Tell"
-13. **Footer** — Product, Company, Resources, Social columns
+1. **Navigation**: Sticky nav, logo, menu items, Login/Get Started
+2. **Hero**: "Every Story Has the Power to Light Someone Else's Path"
+3. **Featured Stories**: 3 testimony preview cards
+4. **How It Works**: Reflect → Inspire → Connect
+5. **AI Assistant**: Story confidence builder
+6. **Thematic Journeys**: 8-category grid
+7. **Aspirations**: Goal tracking showcase
+8. **Community Metrics**: Animated counters
+9. **Testimonials**: User quote carousel
+10. **Mobile Experience**: PWA showcase
+11. **FAQ**: 7-question accordion
+12. **Final CTA**: "Someone May Need the Story Only You Can Tell"
+13. **Footer**: Product, Company, Resources, Social columns
 
 ## File Structure
 
@@ -63,6 +63,7 @@ app/components/
 ## Mobile-First Design
 
 ### Responsive Breakpoints
+
 ```tsx
 // ALWAYS start mobile, enhance up
 <section className="
@@ -74,6 +75,7 @@ app/components/
 ```
 
 ### Typography Scale
+
 ```tsx
 // Hero headline
 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
@@ -83,11 +85,13 @@ app/components/
 ```
 
 ### Touch Targets
+
 - Minimum 44×44px for buttons and interactive elements
 - 8px+ spacing between touch targets
 - Thumb-friendly zones for primary CTAs
 
 ### Mobile Navigation
+
 - Bottom navigation bar for mobile (md:hidden)
 - Hamburger menu or full nav for tablet+
 

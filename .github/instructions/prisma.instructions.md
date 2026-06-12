@@ -5,6 +5,12 @@ description: "Prisma conventions for PaTan™: schema design, relations, naming,
 
 # Prisma Conventions for PaTan™
 
+## Writing Compliance
+
+- Never use em dash or en dash punctuation in generated content.
+- Use commas, periods, parentheses, or a colon instead.
+- Apply this rule to schema docs, code comments, and developer guidance.
+
 ## Naming
 
 - **Models**: PascalCase singular (`User`, `Story`, `Aspiration`)
@@ -17,7 +23,7 @@ description: "Prisma conventions for PaTan™: schema design, relations, naming,
 model Story {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now()) @map("created_at")
-  
+
   @@map("stories")
 }
 
@@ -30,7 +36,7 @@ enum StoryStatus {
 
 ## ID Strategy
 
-Use `cuid()` for all primary keys — URL-safe, sortable, no collisions:
+Use `cuid()` for all primary keys: URL-safe, sortable, no collisions:
 
 ```prisma
 id String @id @default(cuid())
@@ -58,6 +64,7 @@ model Story {
 ## Indexes
 
 Add indexes for:
+
 - Foreign keys (Prisma adds automatically)
 - Frequently filtered fields
 - Composite queries
@@ -65,7 +72,7 @@ Add indexes for:
 ```prisma
 model Story {
   // ... fields
-  
+
   @@index([status, createdAt(sort: Desc)])
   @@index([categoryId])
 }
@@ -78,7 +85,7 @@ Use `deletedAt` pattern for user content:
 ```prisma
 model Story {
   deletedAt DateTime? @map("deleted_at")
-  
+
   @@index([deletedAt])
 }
 ```
@@ -95,13 +102,14 @@ updatedAt DateTime @updatedAt @map("updated_at")
 ## PaTan™ Core Models
 
 Reference these domain entities:
-- `User` — accounts with profiles, preferences
-- `Story` — testimonies with categories, tags, media
-- `Aspiration` — goals/requests with status tracking
-- `Engagement` — celebrate, uplift, empathy reactions
-- `Comment` — threaded discussions
-- `Collection` — curated story groups
-- `ModerationReport` — flagged content tracking
+
+- `User`: accounts with profiles, preferences
+- `Story`: testimonies with categories, tags, media
+- `Aspiration`: goals/requests with status tracking
+- `Engagement`: celebrate, uplift, empathy reactions
+- `Comment`: threaded discussions
+- `Collection`: curated story groups
+- `ModerationReport`: flagged content tracking
 
 ## Enums for PaTan™
 

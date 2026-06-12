@@ -1,9 +1,13 @@
-import type { MetaFunction } from 'react-router';
+import type { MetaFunction } from "react-router";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Privacy Policy – PaTan™' },
-    { name: 'description', content: 'Learn how PaTan™ protects your privacy and handles your personal information.' },
+    { title: "Privacy Policy | PaTan™" },
+    {
+      name: "description",
+      content:
+        "Learn how PaTan™ protects your privacy and handles your personal information.",
+    },
   ];
 };
 
@@ -16,9 +20,7 @@ export default function Privacy() {
           <h1 className="font-heading text-3xl sm:text-4xl font-bold">
             Privacy Policy
           </h1>
-          <p className="mt-4 text-dawn/70">
-            Last updated: June 2026
-          </p>
+          <p className="mt-4 text-dawn/70">Last updated: June 2026</p>
         </div>
       </section>
 
@@ -32,9 +34,10 @@ export default function Privacy() {
                   Our Commitment to Privacy
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  At PaTan™, we believe that sharing your story should never compromise your 
-                  privacy. This policy explains how we collect, use, and protect your personal 
-                  information when you use our platform.
+                  At PaTan™, we believe that sharing your story should never
+                  compromise your privacy. This policy explains how we collect,
+                  use, and protect your personal information when you use our
+                  platform.
                 </p>
               </section>
 
@@ -44,16 +47,27 @@ export default function Privacy() {
                 </h2>
                 <div className="mt-4 space-y-4 text-night/70">
                   <div>
-                    <h3 className="font-semibold text-midnight">Account Information</h3>
-                    <p>Name, email address, and profile details you provide when creating an account.</p>
+                    <h3 className="font-semibold text-midnight">
+                      Account Information
+                    </h3>
+                    <p>
+                      Name, email address, and profile details you provide when
+                      creating an account.
+                    </p>
                   </div>
                   <div>
                     <h3 className="font-semibold text-midnight">Content</h3>
-                    <p>Stories, aspirations, comments, and other content you share on the platform.</p>
+                    <p>
+                      Stories, aspirations, comments, and other content you
+                      share on the platform.
+                    </p>
                   </div>
                   <div>
                     <h3 className="font-semibold text-midnight">Usage Data</h3>
-                    <p>Information about how you interact with our platform to improve your experience.</p>
+                    <p>
+                      Information about how you interact with our platform to
+                      improve your experience.
+                    </p>
                   </div>
                 </div>
               </section>
@@ -91,9 +105,9 @@ export default function Privacy() {
                   Data Protection
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  We implement industry-standard security measures to protect your data, 
-                  including encryption in transit and at rest, secure authentication, 
-                  and regular security audits.
+                  We implement industry-standard security measures to protect
+                  your data, including encryption in transit and at rest, secure
+                  authentication, and regular security audits.
                 </p>
               </section>
 
@@ -124,8 +138,11 @@ export default function Privacy() {
                   </li>
                 </ul>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  For step-by-step account deletion instructions, visit our{' '}
-                  <a href="/data-deletion" className="text-golden hover:text-soft-gold">
+                  For step-by-step account deletion instructions, visit our{" "}
+                  <a
+                    href="/data-deletion"
+                    className="text-golden hover:text-soft-gold"
+                  >
                     User Data Deletion page
                   </a>
                   .
@@ -137,9 +154,10 @@ export default function Privacy() {
                   Anonymous Publishing
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  PaTan™ supports anonymous story publishing. When you publish anonymously, 
-                  your identity is not displayed to other users. However, we retain this 
-                  information internally for moderation and legal compliance purposes.
+                  PaTan™ supports anonymous story publishing. When you publish
+                  anonymously, your identity is not displayed to other users.
+                  However, we retain this information internally for moderation
+                  and legal compliance purposes.
                 </p>
               </section>
 
@@ -148,9 +166,10 @@ export default function Privacy() {
                   Third-Party Services
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  We use trusted third-party services for authentication, analytics, and 
-                  infrastructure. These partners are bound by strict data processing agreements 
-                  and are not permitted to use your data for their own purposes.
+                  We use trusted third-party services for authentication,
+                  analytics, and infrastructure. These partners are bound by
+                  strict data processing agreements and are not permitted to use
+                  your data for their own purposes.
                 </p>
               </section>
 
@@ -159,8 +178,12 @@ export default function Privacy() {
                   Contact Us
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  For privacy-related questions or to exercise your rights, contact us at{' '}
-                  <a href="mailto:privacy@PaTan™.site" className="text-golden hover:text-soft-gold">
+                  For privacy-related questions or to exercise your rights,
+                  contact us at{" "}
+                  <a
+                    href="mailto:privacy@PaTan™.site"
+                    className="text-golden hover:text-soft-gold"
+                  >
                     privacy@PaTan™.site
                   </a>
                 </p>

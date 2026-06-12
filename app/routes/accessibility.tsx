@@ -1,10 +1,13 @@
-import type { MetaFunction } from 'react-router';
-import { Link } from 'react-router';
+import type { MetaFunction } from "react-router";
+import { Link } from "react-router";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Accessibility Statement – PaTan™' },
-    { name: 'description', content: 'PaTan™\'s commitment to digital accessibility for all users.' },
+    { title: "Accessibility Statement | PaTan™" },
+    {
+      name: "description",
+      content: "PaTan™'s commitment to digital accessibility for all users.",
+    },
   ];
 };
 
@@ -32,9 +35,10 @@ export default function Accessibility() {
                 Our Commitment
               </h2>
               <p className="mt-4 text-night/70 leading-relaxed">
-                PaTan™ is committed to ensuring digital accessibility for people with 
-                disabilities. We are continually improving the user experience for everyone 
-                and applying the relevant accessibility standards.
+                PaTan™ is committed to ensuring digital accessibility for people
+                with disabilities. We are continually improving the user
+                experience for everyone and applying the relevant accessibility
+                standards.
               </p>
             </section>
 
@@ -43,9 +47,9 @@ export default function Accessibility() {
                 Conformance Status
               </h2>
               <p className="mt-4 text-night/70 leading-relaxed">
-                We strive to conform to the Web Content Accessibility Guidelines (WCAG) 2.2 
-                Level AA standards. These guidelines explain how to make web content more 
-                accessible for people with disabilities.
+                We strive to conform to the Web Content Accessibility Guidelines
+                (WCAG) 2.2 Level AA standards. These guidelines explain how to
+                make web content more accessible for people with disabilities.
               </p>
             </section>
 
@@ -59,8 +63,13 @@ export default function Accessibility() {
                     ✓
                   </span>
                   <div>
-                    <strong className="text-midnight">Keyboard Navigation</strong>
-                    <p>All functionality is accessible via keyboard without requiring a mouse.</p>
+                    <strong className="text-midnight">
+                      Keyboard Navigation
+                    </strong>
+                    <p>
+                      All functionality is accessible via keyboard without
+                      requiring a mouse.
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -68,8 +77,13 @@ export default function Accessibility() {
                     ✓
                   </span>
                   <div>
-                    <strong className="text-midnight">Screen Reader Support</strong>
-                    <p>Semantic HTML and ARIA labels ensure compatibility with assistive technologies.</p>
+                    <strong className="text-midnight">
+                      Screen Reader Support
+                    </strong>
+                    <p>
+                      Semantic HTML and ARIA labels ensure compatibility with
+                      assistive technologies.
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -78,7 +92,10 @@ export default function Accessibility() {
                   </span>
                   <div>
                     <strong className="text-midnight">Color Contrast</strong>
-                    <p>Text maintains a minimum 4.5:1 contrast ratio against backgrounds.</p>
+                    <p>
+                      Text maintains a minimum 4.5:1 contrast ratio against
+                      backgrounds.
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -87,7 +104,10 @@ export default function Accessibility() {
                   </span>
                   <div>
                     <strong className="text-midnight">Focus Indicators</strong>
-                    <p>Visible focus states help keyboard users navigate the interface.</p>
+                    <p>
+                      Visible focus states help keyboard users navigate the
+                      interface.
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -96,7 +116,10 @@ export default function Accessibility() {
                   </span>
                   <div>
                     <strong className="text-midnight">Skip Links</strong>
-                    <p>Skip navigation links allow users to jump directly to main content.</p>
+                    <p>
+                      Skip navigation links allow users to jump directly to main
+                      content.
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -105,7 +128,9 @@ export default function Accessibility() {
                   </span>
                   <div>
                     <strong className="text-midnight">Reduced Motion</strong>
-                    <p>Animations respect user preferences for reduced motion.</p>
+                    <p>
+                      Animations respect user preferences for reduced motion.
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -113,8 +138,13 @@ export default function Accessibility() {
                     ✓
                   </span>
                   <div>
-                    <strong className="text-midnight">Form Accessibility</strong>
-                    <p>All form inputs have associated labels and error messages are announced.</p>
+                    <strong className="text-midnight">
+                      Form Accessibility
+                    </strong>
+                    <p>
+                      All form inputs have associated labels and error messages
+                      are announced.
+                    </p>
                   </div>
                 </li>
               </ul>
@@ -125,7 +155,8 @@ export default function Accessibility() {
                 Assistive Technologies
               </h2>
               <p className="mt-4 text-night/70 leading-relaxed">
-                PaTan™ is designed to be compatible with the following assistive technologies:
+                PaTan™ is designed to be compatible with the following assistive
+                technologies:
               </p>
               <ul className="mt-4 space-y-2 text-night/70">
                 <li>• Screen readers (NVDA, JAWS, VoiceOver, TalkBack)</li>
@@ -140,16 +171,25 @@ export default function Accessibility() {
                 Known Limitations
               </h2>
               <p className="mt-4 text-night/70 leading-relaxed">
-                While we strive for full accessibility, some content may have limitations:
+                While we strive for full accessibility, some content may have
+                limitations:
               </p>
               <ul className="mt-4 space-y-2 text-night/70">
-                <li>• User-uploaded images may not always have descriptive alt text</li>
-                <li>• Some third-party embedded content may not be fully accessible</li>
-                <li>• PDF documents generated by users may vary in accessibility</li>
+                <li>
+                  • User-uploaded images may not always have descriptive alt
+                  text
+                </li>
+                <li>
+                  • Some third-party embedded content may not be fully
+                  accessible
+                </li>
+                <li>
+                  • PDF documents generated by users may vary in accessibility
+                </li>
               </ul>
               <p className="mt-4 text-night/70">
-                We are actively working to address these limitations and encourage users to 
-                add descriptive text to their media.
+                We are actively working to address these limitations and
+                encourage users to add descriptive text to their media.
               </p>
             </section>
 
@@ -158,18 +198,23 @@ export default function Accessibility() {
                 Feedback
               </h2>
               <p className="mt-4 text-night/70 leading-relaxed">
-                We welcome your feedback on the accessibility of PaTan™. If you encounter 
-                any barriers or have suggestions for improvement, please contact us:
+                We welcome your feedback on the accessibility of PaTan™. If you
+                encounter any barriers or have suggestions for improvement,
+                please contact us:
               </p>
               <div className="mt-4 p-6 bg-mist/50 rounded-xl">
                 <p className="text-night/70">
-                  <strong className="text-midnight">Email:</strong>{' '}
-                  <a href="mailto:accessibility@PaTan™.site" className="text-golden hover:text-soft-gold">
+                  <strong className="text-midnight">Email:</strong>{" "}
+                  <a
+                    href="mailto:accessibility@PaTan™.site"
+                    className="text-golden hover:text-soft-gold"
+                  >
                     accessibility@PaTan™.site
                   </a>
                 </p>
                 <p className="mt-2 text-night/70">
-                  We aim to respond to accessibility feedback within 3 business days.
+                  We aim to respond to accessibility feedback within 3 business
+                  days.
                 </p>
               </div>
             </section>
@@ -179,9 +224,10 @@ export default function Accessibility() {
                 Continuous Improvement
               </h2>
               <p className="mt-4 text-night/70 leading-relaxed">
-                Accessibility is an ongoing effort. We regularly audit our platform, 
-                train our team on accessibility best practices, and incorporate feedback 
-                from users with disabilities to improve our services.
+                Accessibility is an ongoing effort. We regularly audit our
+                platform, train our team on accessibility best practices, and
+                incorporate feedback from users with disabilities to improve our
+                services.
               </p>
             </section>
           </article>

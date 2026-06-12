@@ -571,6 +571,7 @@ export async function getPublicProfileByUsername(username: string) {
       where: {
         authorId: user.id,
         privacy: "PUBLIC",
+        isAnonymous: false,
         deletedAt: null,
       },
     }),
@@ -600,6 +601,7 @@ export async function getPublicProfileByUsername(username: string) {
       where: {
         authorId: user.id,
         privacy: "PUBLIC",
+        isAnonymous: false,
         deletedAt: null,
       },
       select: {
@@ -927,8 +929,8 @@ export async function getProfileSafetySettings(userId: string) {
       anonymousPublishingDefault: true,
       defaultStoryVisibility: true,
       defaultAspirationVisibility: true,
-    } as any,
-  } as any);
+    },
+  });
 
   if (!preferences) {
     return {
@@ -939,9 +941,9 @@ export async function getProfileSafetySettings(userId: string) {
   }
 
   return {
-    anonymousPublishingDefault: Boolean((preferences as any).anonymousPublishingDefault),
-    defaultStoryVisibility: ((preferences as any).defaultStoryVisibility ?? "PUBLIC") as ProfileStoryVisibility,
-    defaultAspirationVisibility: ((preferences as any).defaultAspirationVisibility ?? "PUBLIC") as ProfileStoryVisibility,
+    anonymousPublishingDefault: Boolean(preferences.anonymousPublishingDefault),
+    defaultStoryVisibility: (preferences.defaultStoryVisibility ?? "PUBLIC") as ProfileStoryVisibility,
+    defaultAspirationVisibility: (preferences.defaultAspirationVisibility ?? "PUBLIC") as ProfileStoryVisibility,
   };
 }
 
@@ -959,20 +961,20 @@ export async function upsertProfileSafetySettings(input: SafetySettingsInput) {
       emotionalTonePreference: [],
       followedTags: [],
       blockedTags: [],
-    } as any,
+    },
     update: {
       anonymousPublishingDefault: input.anonymousPublishingDefault,
       defaultStoryVisibility: input.defaultStoryVisibility,
       defaultAspirationVisibility: input.defaultAspirationVisibility,
-    } as any,
+    },
     select: {
       userId: true,
       anonymousPublishingDefault: true,
       defaultStoryVisibility: true,
       defaultAspirationVisibility: true,
       updatedAt: true,
-    } as any,
-  } as any);
+    },
+  });
 }
 
 export async function getPublicProfileVisibilitySettings(userId: string) {
@@ -980,11 +982,11 @@ export async function getPublicProfileVisibilitySettings(userId: string) {
     where: { userId },
     select: {
       preferredCategories: true,
-    } as any,
-  } as any);
+    },
+  });
 
   return parsePublicProfileVisibilityFromPreferredCategories(
-    (preferences as any)?.preferredCategories,
+    preferences?.preferredCategories,
   );
 }
 
@@ -999,12 +1001,12 @@ export async function upsertPublicProfileVisibilitySettings({
     where: { userId },
     select: {
       preferredCategories: true,
-    } as any,
-  } as any);
+    },
+  });
 
   const normalizedVisibility = normalizePublicProfileVisibilitySettings(visibility);
   const preferredCategories = buildPreferredCategoriesWithProfileVisibility(
-    (existing as any)?.preferredCategories,
+    existing?.preferredCategories,
     normalizedVisibility,
   );
 
@@ -1018,16 +1020,16 @@ export async function upsertPublicProfileVisibilitySettings({
       emotionalTonePreference: [],
       followedTags: [],
       blockedTags: [],
-    } as any,
+    },
     update: {
       preferredCategories,
-    } as any,
+    },
     select: {
       userId: true,
       preferredCategories: true,
       updatedAt: true,
-    } as any,
-  } as any);
+    },
+  });
 }
 
 export async function blockUserByUsername({
@@ -1055,8 +1057,7 @@ export async function blockUserByUsername({
     throw new Error("cannot-block-self");
   }
 
-  const prismaAny = db as any;
-  await prismaAny.userBlock.upsert({
+  await db.userBlock.upsert({
     where: {
       blockerId_blockedId: {
         blockerId,

@@ -5,6 +5,12 @@ description: "Modern UI/UX design patterns with mobile-first responsiveness, mic
 
 # PaTan™ UI/UX Design System
 
+## Writing Compliance
+
+- Never use em dash or en dash punctuation in generated content.
+- Use commas, periods, parentheses, or a colon instead.
+- Apply this rule to UI copy, comments, labels, and design documentation.
+
 Expert-level design patterns from 20+ years of UI/UX and frontend engineering experience. Every component must feel premium, performant, and emotionally resonant.
 
 ## Core Design Philosophy

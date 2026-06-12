@@ -1,33 +1,68 @@
-import type { MetaFunction } from 'react-router';
-import { Link } from 'react-router';
+import type { MetaFunction } from "react-router";
+import { Link } from "react-router";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Community – PaTan™' },
-    { name: 'description', content: 'Connect with our global community of storytellers and supporters.' },
+    { title: "Community | PaTan™" },
+    {
+      name: "description",
+      content:
+        "Connect with our global community of storytellers and supporters.",
+    },
   ];
 };
 
 const circles = [
-  { name: 'Gratitude Circle', members: 1234, description: 'Daily gratitude sharing and reflection' },
-  { name: 'Overcomers', members: 892, description: 'Stories of resilience and triumph' },
-  { name: 'Faith Journey', members: 1567, description: 'Exploring spirituality together' },
-  { name: 'Wellness Warriors', members: 723, description: 'Health and healing stories' },
-  { name: 'Career Changers', members: 456, description: 'Professional growth journeys' },
-  { name: 'Relationship Reflections', members: 634, description: 'Love, family, and connection' },
+  {
+    name: "Gratitude Circle",
+    members: 1234,
+    description: "Daily gratitude sharing and reflection",
+  },
+  {
+    name: "Overcomers",
+    members: 892,
+    description: "Stories of resilience and triumph",
+  },
+  {
+    name: "Faith Journey",
+    members: 1567,
+    description: "Exploring spirituality together",
+  },
+  {
+    name: "Wellness Warriors",
+    members: 723,
+    description: "Health and healing stories",
+  },
+  {
+    name: "Career Changers",
+    members: 456,
+    description: "Professional growth journeys",
+  },
+  {
+    name: "Relationship Reflections",
+    members: 634,
+    description: "Love, family, and connection",
+  },
 ];
 
 export default function Community() {
   return (
     <main id="main-content" className="page-modern">
       {/* Hero */}
-      <section className="bg-midnight text-dawn py-16" aria-labelledby="community-heading">
+      <section
+        className="bg-midnight text-dawn py-16"
+        aria-labelledby="community-heading"
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 id="community-heading" className="font-heading text-3xl sm:text-4xl font-bold">
+          <h1
+            id="community-heading"
+            className="font-heading text-3xl sm:text-4xl font-bold"
+          >
             Find Your Circle
           </h1>
           <p className="mt-4 text-lg text-dawn/70">
-            Connect with people who understand your journey and celebrate your growth.
+            Connect with people who understand your journey and celebrate your
+            growth.
           </p>
         </div>
       </section>
@@ -36,7 +71,8 @@ export default function Community() {
       <section className="py-8 bg-golden/10 border-b border-golden/20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-golden font-medium">
-            🚀 Community features are coming soon! Join the waitlist to be notified.
+            🚀 Community features are coming soon! Join the waitlist to be
+            notified.
           </p>
         </div>
       </section>
@@ -95,7 +131,8 @@ export default function Community() {
                 Private Messaging
               </h3>
               <p className="mt-2 text-night/70 text-sm">
-                Connect one-on-one with storytellers whose journeys resonate with yours.
+                Connect one-on-one with storytellers whose journeys resonate
+                with yours.
               </p>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-sm border border-mist">

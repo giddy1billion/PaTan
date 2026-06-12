@@ -1,41 +1,134 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { Form, Link, redirect } from 'react-router';
-import { requireUser } from '~/utils/auth.server';
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "react-router";
+import { Form, Link, redirect, useActionData, useLoaderData } from "react-router";
+import { requireUser } from "~/utils/auth.server";
+import { db } from "~/utils/db.server";
+import { getProfileSafetySettings } from "~/utils/users.server";
+
+type ActionData = {
+  error?: string;
+};
+
+function slugify(input: string) {
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+    .slice(0, 80);
+}
+
+function toAspirationPrivacy(input: string) {
+  if (input === "followers") {
+    return "FOLLOWERS_ONLY" as const;
+  }
+
+  if (input === "private") {
+    return "PRIVATE" as const;
+  }
+
+  return "PUBLIC" as const;
+}
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Share Your Aspiration – PaTan™' },
-    { name: 'description', content: 'Share your dreams and goals with the community and receive support.' },
+    { title: "Share Your Aspiration | PaTan™" },
+    {
+      name: "description",
+      content:
+        "Share your dreams and goals with the community and receive support.",
+    },
   ];
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requireUser(request);
-  return null;
+  const sessionUser = await requireUser(request);
+  const safety = await getProfileSafetySettings(sessionUser.id);
+
+  return {
+    safety,
+  };
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  await requireUser(request);
+  const sessionUser = await requireUser(request);
+  const formData = await request.formData();
 
-  // Database insert belongs here and should always run after auth guard.
-  // Example future insert: await prisma.aspiration.create({ data: { ... } });
-  return redirect('/aspirations?created=1');
+  const title = String(formData.get("title") ?? "").trim();
+  const category = String(formData.get("category") ?? "").trim();
+  const descriptionInput = String(formData.get("description") ?? "").trim();
+  const targetDateInput = String(formData.get("targetDate") ?? "").trim();
+  const privacyInput = String(formData.get("privacy") ?? "public");
+  const isAnonymous = String(formData.get("anonymous") ?? "") === "on";
+
+  if (!title || !category) {
+    return {
+      error: "Title and category are required.",
+    } satisfies ActionData;
+  }
+
+  const description = descriptionInput || `Aspiration: ${title}`;
+  const targetDate = targetDateInput ? new Date(targetDateInput) : null;
+
+  if (targetDateInput && Number.isNaN(targetDate?.getTime())) {
+    return {
+      error: "Target date is invalid.",
+    } satisfies ActionData;
+  }
+
+  const milestones = [1, 2, 3]
+    .map((num) => String(formData.get(`milestone${num}`) ?? "").trim())
+    .filter(Boolean)
+    .slice(0, 3);
+
+  await db.aspiration.create({
+    data: {
+      authorId: sessionUser.id,
+      title,
+      description,
+      privacy: toAspirationPrivacy(privacyInput),
+      isAnonymous,
+      categoryId: slugify(category) || null,
+      targetDate,
+      milestones: milestones.length
+        ? {
+            create: milestones.map((milestoneTitle, index) => ({
+              title: milestoneTitle,
+              orderIndex: index,
+            })),
+          }
+        : undefined,
+    },
+  });
+
+  return redirect("/aspirations?created=1");
 }
 
 const categories = [
-  'Health & Wellness',
-  'Personal Growth',
-  'Relationships',
-  'Professional',
-  'Social Impact',
-  'Creative',
-  'Spiritual',
-  'Financial',
-  'Education',
-  'Other',
+  "Health & Wellness",
+  "Personal Growth",
+  "Relationships",
+  "Professional",
+  "Social Impact",
+  "Creative",
+  "Spiritual",
+  "Financial",
+  "Education",
+  "Other",
 ];
 
 export default function NewAspiration() {
+  const { safety } = useLoaderData<typeof loader>();
+  const actionData = useActionData<ActionData>();
+  const defaultPrivacy =
+    safety.defaultAspirationVisibility === "FOLLOWERS_ONLY"
+      ? "followers"
+      : safety.defaultAspirationVisibility === "PRIVATE"
+        ? "private"
+        : "public";
+
   return (
     <main id="main-content" className="page-modern min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 lg:py-16">
@@ -47,31 +140,57 @@ export default function NewAspiration() {
             Share Your Aspiration
           </h1>
           <p className="mt-4 text-base sm:text-lg text-[#334155] max-w-3xl leading-relaxed">
-            When we share our goals, we invite encouragement, accountability, and
-            meaningful support along the journey.
+            When we share our goals, we invite encouragement, accountability,
+            and meaningful support along the journey.
           </p>
 
           <div className="mt-6 flex flex-wrap items-center gap-2 sm:gap-3">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FDF3D6] text-[#0D2B45] text-xs sm:text-sm font-medium">
-              <span className="w-2 h-2 rounded-full bg-[#F5B942]" aria-hidden="true" />
+              <span
+                className="w-2 h-2 rounded-full bg-[#F5B942]"
+                aria-hidden="true"
+              />
               Hopeful Progress
             </span>
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EAF5EC] text-[#0D2B45] text-xs sm:text-sm font-medium">
-              <span className="w-2 h-2 rounded-full bg-[#2E6F40]" aria-hidden="true" />
+              <span
+                className="w-2 h-2 rounded-full bg-[#2E6F40]"
+                aria-hidden="true"
+              />
               Community Support
             </span>
           </div>
         </div>
 
         <Form method="post" className="form-modern mt-8 sm:mt-10 space-y-8">
-          <section className="surface-modern p-5 sm:p-7 space-y-5" aria-labelledby="aspiration-basics-heading">
-            <h2 id="aspiration-basics-heading" className="font-heading text-xl sm:text-2xl text-midnight font-bold">
+          {actionData?.error ? (
+            <div
+              className="rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
+              role="alert"
+              aria-live="polite"
+            >
+              {actionData.error}
+            </div>
+          ) : null}
+
+          <section
+            className="surface-modern p-5 sm:p-7 space-y-5"
+            aria-labelledby="aspiration-basics-heading"
+          >
+            <h2
+              id="aspiration-basics-heading"
+              className="font-heading text-xl sm:text-2xl text-midnight font-bold"
+            >
               Aspiration Basics
             </h2>
 
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-night">
-                What are you working toward? <span className="text-error">*</span>
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-night"
+              >
+                What are you working toward?{" "}
+                <span className="text-error">*</span>
               </label>
               <input
                 id="title"
@@ -85,7 +204,10 @@ export default function NewAspiration() {
             </div>
 
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-night">
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-night"
+              >
                 Category <span className="text-error">*</span>
               </label>
               <select
@@ -96,13 +218,18 @@ export default function NewAspiration() {
               >
                 <option value="">Select a category</option>
                 {categories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-night">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-night"
+              >
                 Tell us more about this aspiration
               </label>
               <textarea
@@ -115,13 +242,22 @@ export default function NewAspiration() {
             </div>
           </section>
 
-          <section className="surface-modern p-5 sm:p-7 space-y-5" aria-labelledby="aspiration-plan-heading">
-            <h2 id="aspiration-plan-heading" className="font-heading text-xl sm:text-2xl text-midnight font-bold">
+          <section
+            className="surface-modern p-5 sm:p-7 space-y-5"
+            aria-labelledby="aspiration-plan-heading"
+          >
+            <h2
+              id="aspiration-plan-heading"
+              className="font-heading text-xl sm:text-2xl text-midnight font-bold"
+            >
               Timeline & Milestones
             </h2>
 
             <div>
-              <label htmlFor="targetDate" className="block text-sm font-medium text-night">
+              <label
+                htmlFor="targetDate"
+                className="block text-sm font-medium text-night"
+              >
                 Target completion date
               </label>
               <input
@@ -156,8 +292,16 @@ export default function NewAspiration() {
             </div>
           </section>
 
-          <fieldset className="surface-modern p-6" aria-labelledby="aspiration-privacy-heading">
-            <legend id="aspiration-privacy-heading" className="text-sm font-medium text-night px-2">Privacy</legend>
+          <fieldset
+            className="surface-modern p-6"
+            aria-labelledby="aspiration-privacy-heading"
+          >
+            <legend
+              id="aspiration-privacy-heading"
+              className="text-sm font-medium text-night px-2"
+            >
+              Privacy
+            </legend>
 
             <div className="mt-4 space-y-4">
               <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-[#E2E8F0] p-4 hover:bg-[#F8FAFC] transition-colors">
@@ -165,12 +309,14 @@ export default function NewAspiration() {
                   type="radio"
                   name="privacy"
                   value="public"
-                  defaultChecked
+                  defaultChecked={defaultPrivacy === "public"}
                   className="mt-1 h-4 w-4"
                 />
                 <div>
                   <span className="font-medium text-midnight">Public</span>
-                  <p className="text-sm text-night/60">Anyone can see and support your aspiration</p>
+                  <p className="text-sm text-night/60">
+                    Anyone can see and support your aspiration
+                  </p>
                 </div>
               </label>
 
@@ -179,11 +325,16 @@ export default function NewAspiration() {
                   type="radio"
                   name="privacy"
                   value="followers"
+                  defaultChecked={defaultPrivacy === "followers"}
                   className="mt-1 h-4 w-4"
                 />
                 <div>
-                  <span className="font-medium text-midnight">Followers Only</span>
-                  <p className="text-sm text-night/60">Only your followers can see this</p>
+                  <span className="font-medium text-midnight">
+                    Followers Only
+                  </span>
+                  <p className="text-sm text-night/60">
+                    Only your followers can see this
+                  </p>
                 </div>
               </label>
 
@@ -192,11 +343,14 @@ export default function NewAspiration() {
                   type="radio"
                   name="privacy"
                   value="private"
+                  defaultChecked={defaultPrivacy === "private"}
                   className="mt-1 h-4 w-4"
                 />
                 <div>
                   <span className="font-medium text-midnight">Private</span>
-                  <p className="text-sm text-night/60">Only you can see this aspiration</p>
+                  <p className="text-sm text-night/60">
+                    Only you can see this aspiration
+                  </p>
                 </div>
               </label>
             </div>
@@ -206,11 +360,16 @@ export default function NewAspiration() {
                 <input
                   type="checkbox"
                   name="anonymous"
+                  defaultChecked={safety.anonymousPublishingDefault}
                   className="h-4 w-4"
                 />
                 <div>
-                  <span className="font-medium text-midnight">Post Anonymously</span>
-                  <p className="text-sm text-night/60">Your name will not be shown</p>
+                  <span className="font-medium text-midnight">
+                    Post Anonymously
+                  </span>
+                  <p className="text-sm text-night/60">
+                    Your name will not be shown
+                  </p>
                 </div>
               </label>
             </div>

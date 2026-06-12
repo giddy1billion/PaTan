@@ -475,6 +475,7 @@ model Aspiration {
   description   String            @db.Text
   status        AspirationStatus  @default(PENDING)
   privacy       AspirationPrivacy @default(PUBLIC)
+  isAnonymous   Boolean           @default(false) @map("is_anonymous")
   categoryId    String?           @map("category_id")
   targetDate    DateTime?         @map("target_date")
   achievedAt    DateTime?         @map("achieved_at")
@@ -493,6 +494,7 @@ model Aspiration {
   @@index([authorId])
   @@index([status])
   @@index([privacy])
+  @@index([isAnonymous])
   @@index([deletedAt])
   @@index([createdAt(sort: Desc)])
   @@map("aspirations")

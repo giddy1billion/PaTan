@@ -1,10 +1,13 @@
-import type { MetaFunction } from 'react-router';
-import { Link, Form } from 'react-router';
+import type { MetaFunction } from "react-router";
+import { Link, Form } from "react-router";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Reset Password – PaTan™' },
-    { name: 'description', content: 'Reset your PaTan™ password to regain access to your account.' },
+    { title: "Reset Password | PaTan™" },
+    {
+      name: "description",
+      content: "Reset your PaTan™ password to regain access to your account.",
+    },
   ];
 };
 
@@ -24,12 +27,17 @@ export default function ForgotPassword() {
             className="h-8 w-auto"
             aria-hidden="true"
           />
-          <span className="font-heading text-lg font-bold text-midnight">PaTan™</span>
+          <span className="font-heading text-lg font-bold text-midnight">
+            PaTan™
+          </span>
         </Link>
       </header>
 
       {/* Main Content */}
-      <main id="main-content" className="page-modern flex-1 flex items-center justify-center p-4 sm:p-6">
+      <main
+        id="main-content"
+        className="page-modern flex-1 flex items-center justify-center p-4 sm:p-6"
+      >
         <div className="w-full max-w-lg">
           <div className="page-hero-modern p-6 sm:p-8">
             <h1 className="font-heading text-2xl font-bold text-midnight text-center">
@@ -41,7 +49,10 @@ export default function ForgotPassword() {
 
             <Form method="post" className="form-modern mt-8 space-y-6">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-night">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-night"
+                >
                   Email address
                 </label>
                 <input
@@ -64,7 +75,7 @@ export default function ForgotPassword() {
             </Form>
 
             <p className="mt-8 text-center text-sm text-night/60">
-              Remember your password?{' '}
+              Remember your password?{" "}
               <Link
                 to="/login"
                 className="font-medium text-[#2E6F40] hover:text-[#0D2B45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded"
