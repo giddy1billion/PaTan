@@ -66,6 +66,7 @@ export default [
   // Auth routes (no nav/footer)
   route("oauth/callback", "routes/auth/oauth.callback.tsx"),
   route("oauth/:provider", "routes/auth/oauth.$provider.tsx"),
+  route("api/health", "routes/api.health.ts"),
   route("auth/verify-email", "routes/auth/verify-email.tsx"),
   route("verify-email", "routes/auth/verify-email-status.tsx"),
   route("auth/mfa", "routes/auth/mfa.tsx"),

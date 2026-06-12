@@ -14,6 +14,8 @@
     "generate:icons": "tsx scripts/generate-brand-assets.ts icons",
     "generate:social": "tsx scripts/generate-brand-assets.ts social",
     "generate:png": "tsx scripts/convert-svg-to-png.ts",
+    "emails:resend-verifications": "tsx scripts/resend-email-verifications.ts --force",
+    "emails:resend-verifications:dry": "tsx scripts/resend-email-verifications.ts --dry-run",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:migrate:prod": "prisma migrate deploy",

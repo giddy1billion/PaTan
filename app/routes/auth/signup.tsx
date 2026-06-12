@@ -68,7 +68,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
 
     try {
-      await issueEmailVerification({
+      const issueResult = await issueEmailVerification({
         userId: user.id,
         email: user.email,
         requestUrl: request.url,
@@ -78,11 +78,18 @@ export async function action({ request }: ActionFunctionArgs) {
       await logAuthSecurityEvent({
         request,
         eventType: "email_verification_sent",
-        severity: "info",
-        outcome: "signup-created",
+        severity: issueResult.status === "sent" ? "info" : "warn",
+        outcome: issueResult.status === "sent" ? "signup-created" : "signup-created-queued",
         userId: user.id,
         email: user.email,
         route: "/signup",
+        metadata: {
+          deliveryStatus: issueResult.status,
+          queuedForRetry: issueResult.queuedForRetry,
+          queueId: issueResult.queueId,
+          provider: issueResult.provider,
+          failureReason: issueResult.failureReason,
+        },
       });
     } catch {
       await logAuthSecurityEvent({

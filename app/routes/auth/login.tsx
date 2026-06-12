@@ -113,7 +113,7 @@ export async function action({ request }: ActionFunctionArgs) {
     });
 
     if (candidate?.email && !candidate.emailVerified) {
-      await issueEmailVerification({
+      const issueResult = await issueEmailVerification({
         userId: candidate.id,
         email: candidate.email,
         requestUrl: request.url,
@@ -123,11 +123,18 @@ export async function action({ request }: ActionFunctionArgs) {
       await logAuthSecurityEvent({
         request,
         eventType: "email_verification_sent",
-        severity: "info",
-        outcome: "login-resend",
+        severity: issueResult.status === "sent" ? "info" : "warn",
+        outcome: issueResult.status === "sent" ? "login-resend" : "login-resend-queued",
         userId: candidate.id,
         email: candidate.email,
         route: "/login",
+        metadata: {
+          deliveryStatus: issueResult.status,
+          queuedForRetry: issueResult.queuedForRetry,
+          queueId: issueResult.queueId,
+          provider: issueResult.provider,
+          failureReason: issueResult.failureReason,
+        },
       });
     }
 
@@ -169,7 +176,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   if (verification.status === "unverified") {
-    await issueEmailVerification({
+    const issueResult = await issueEmailVerification({
       userId: verification.userId,
       email: verification.email,
       requestUrl: request.url,
@@ -179,11 +186,18 @@ export async function action({ request }: ActionFunctionArgs) {
     await logAuthSecurityEvent({
       request,
       eventType: "email_verification_sent",
-      severity: "info",
-      outcome: "login-prerequisite",
+      severity: issueResult.status === "sent" ? "info" : "warn",
+      outcome: issueResult.status === "sent" ? "login-prerequisite" : "login-prerequisite-queued",
       userId: verification.userId,
       email: verification.email,
       route: "/login",
+      metadata: {
+        deliveryStatus: issueResult.status,
+        queuedForRetry: issueResult.queuedForRetry,
+        queueId: issueResult.queueId,
+        provider: issueResult.provider,
+        failureReason: issueResult.failureReason,
+      },
     });
 
     await logAuthSecurityEvent({

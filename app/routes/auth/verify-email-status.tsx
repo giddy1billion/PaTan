@@ -140,7 +140,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
-    await issueEmailVerification({
+    const issueResult = await issueEmailVerification({
       userId: profile.id,
       email: profile.email,
       requestUrl: request.url,
@@ -150,18 +150,32 @@ export async function action({ request }: ActionFunctionArgs) {
     await logAuthSecurityEvent({
       request,
       eventType: "email_verification_sent",
-      severity: "info",
-      outcome: "verify-page-resend",
+      severity: issueResult.status === "sent" ? "info" : "warn",
+      outcome: issueResult.status === "sent" ? "verify-page-resend" : "verify-page-resend-queued",
       userId: profile.id,
       email: profile.email,
       route: "/verify-email",
+      metadata: {
+        deliveryStatus: issueResult.status,
+        queuedForRetry: issueResult.queuedForRetry,
+        queueId: issueResult.queueId,
+        provider: issueResult.provider,
+        failureReason: issueResult.failureReason,
+      },
     });
+
+    if (issueResult.status === "queued") {
+      return redirect(
+        `/verify-email?security=verification-email-queued&redirectTo=${encodeURIComponent(redirectTo)}`,
+        { headers: rateLimit.headers },
+      );
+    }
 
     return redirect(
       `/verify-email?security=verification-email-sent&redirectTo=${encodeURIComponent(redirectTo)}`,
       { headers: rateLimit.headers },
     );
-  } catch {
+    } catch {
     await logAuthSecurityEvent({
       request,
       eventType: "email_verification_sent",
@@ -198,11 +212,14 @@ export default function VerifyEmailStatusRoute() {
   const statusMessage =
     securityCode === "verification-email-sent"
       ? "A fresh verification link has been sent to your inbox."
-      : securityCode === "email-already-verified"
-        ? "Your email is already verified."
-        : securityCode === "email-verified"
-          ? "Your email has been verified. You can continue now."
-          : null;
+      : securityCode === "verification-email-queued"
+        ? "Your verification email is queued. We will resend automatically when email delivery is available."
+        : securityCode === "email-already-verified"
+          ? "Your email is already verified."
+          : securityCode === "email-verified"
+            ? "Your email has been verified. You can continue now."
+            : null;
+
 
   const isVerified = Boolean(profile.emailVerified);
 

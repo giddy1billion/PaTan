@@ -7,6 +7,7 @@ export type SecurityEmailInput = {
   subject: string;
   text: string;
   html?: string;
+  requireDelivery?: boolean;
   category:
     | "email-verification"
     | "mfa"
@@ -18,7 +19,14 @@ export type SecurityEmailInput = {
 
 export type SecurityEmailResult = {
   sent: boolean;
-  provider: "resend" | "webhook" | "console";
+  status: "sent" | "failed";
+  provider: "resend" | "webhook" | "console" | "none";
+  failureReason?:
+    | "resend-unavailable"
+    | "resend-rejected"
+    | "webhook-unavailable"
+    | "webhook-failed"
+    | "delivery-unavailable";
 };
 
 const DEFAULT_FROM_EMAIL = "PaTan Security <security@notifications.patan.app>";
@@ -41,6 +49,17 @@ function shouldUseWebhookFallback() {
   return process.env.AUTH_EMAIL_WEBHOOK_URL?.trim() ? true : false;
 }
 
+export function getSecurityEmailServiceStatus() {
+  const resendConfigured = Boolean(process.env.RESEND_API_KEY?.trim());
+  const webhookConfigured = Boolean(process.env.AUTH_EMAIL_WEBHOOK_URL?.trim());
+
+  return {
+    resendConfigured,
+    webhookConfigured,
+    deliveryReady: resendConfigured || webhookConfigured,
+  };
+}
+
 export async function sendSecurityEmail(input: SecurityEmailInput): Promise<SecurityEmailResult> {
   const template = buildSecurityEmailTemplate({
     category: input.category,
@@ -49,6 +68,8 @@ export async function sendSecurityEmail(input: SecurityEmailInput): Promise<Secu
     html: input.html,
     metadata: input.metadata,
   });
+
+  let failureReason: SecurityEmailResult["failureReason"];
 
   const resend = getResendClient();
   if (resend) {
@@ -68,10 +89,13 @@ export async function sendSecurityEmail(input: SecurityEmailInput): Promise<Secu
       });
 
       if (!response.error) {
-        return { sent: true, provider: "resend" };
+        return { sent: true, status: "sent", provider: "resend" };
       }
+
+      failureReason = "resend-rejected";
     } catch {
       // Continue to fallback providers when Resend is temporarily unavailable.
+      failureReason = "resend-unavailable";
     }
   }
 
@@ -111,11 +135,25 @@ export async function sendSecurityEmail(input: SecurityEmailInput): Promise<Secu
       });
 
       if (response.ok) {
-        return { sent: true, provider: "webhook" };
+        return { sent: true, status: "sent", provider: "webhook" };
       }
+
+      failureReason = "webhook-failed";
     } catch {
       // Fall through to console logging when webhook delivery fails.
+      failureReason = "webhook-failed";
     }
+  } else {
+    failureReason = failureReason ?? "webhook-unavailable";
+  }
+
+  if (input.requireDelivery) {
+    return {
+      sent: false,
+      status: "failed",
+      provider: "none",
+      failureReason: failureReason ?? "delivery-unavailable",
+    };
   }
 
   console.info("[security-email]", {
@@ -127,5 +165,5 @@ export async function sendSecurityEmail(input: SecurityEmailInput): Promise<Secu
     metadata: input.metadata ?? {},
   });
 
-  return { sent: true, provider: "console" };
+  return { sent: true, status: "sent", provider: "console" };
 }

@@ -136,7 +136,7 @@ export async function action({ request }: ActionFunctionArgs) {
       });
     }
 
-    await issueEmailVerification({
+    const issueResult = await issueEmailVerification({
       userId: current.id,
       email: current.email,
       requestUrl: request.url,
@@ -146,12 +146,25 @@ export async function action({ request }: ActionFunctionArgs) {
     await logAuthSecurityEvent({
       request,
       eventType: "email_verification_sent",
-      severity: "info",
-      outcome: "profile-requested",
+      severity: issueResult.status === "sent" ? "info" : "warn",
+      outcome: issueResult.status === "sent" ? "profile-requested" : "profile-requested-queued",
       userId: current.id,
       email: current.email,
       route: "/profile",
+      metadata: {
+        deliveryStatus: issueResult.status,
+        queuedForRetry: issueResult.queuedForRetry,
+        queueId: issueResult.queueId,
+        provider: issueResult.provider,
+        failureReason: issueResult.failureReason,
+      },
     });
+
+    if (issueResult.status === "queued") {
+      return redirect("/profile?security=verification-email-queued", {
+        headers: rateLimit.headers,
+      });
+    }
 
     return redirect("/profile?security=verification-email-sent", {
       headers: rateLimit.headers,
@@ -165,7 +178,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const requestedMfaEnabled =
     String(formData.get("mfaEnabled") ?? "") === "true";
   if (requestedMfaEnabled && !current.emailVerified) {
-    await issueEmailVerification({
+    const issueResult = await issueEmailVerification({
       userId: current.id,
       email: current.email,
       requestUrl: request.url,
@@ -174,13 +187,29 @@ export async function action({ request }: ActionFunctionArgs) {
     await logAuthSecurityEvent({
       request,
       eventType: "email_verification_sent",
-      severity: "info",
-      outcome: "mfa-enable-prerequisite",
+      severity: issueResult.status === "sent" ? "info" : "warn",
+      outcome:
+        issueResult.status === "sent"
+          ? "mfa-enable-prerequisite"
+          : "mfa-enable-prerequisite-queued",
       userId: current.id,
       email: current.email,
       route: "/profile",
+      metadata: {
+        deliveryStatus: issueResult.status,
+        queuedForRetry: issueResult.queuedForRetry,
+        queueId: issueResult.queueId,
+        provider: issueResult.provider,
+        failureReason: issueResult.failureReason,
+      },
     });
-    return redirect("/profile?error=email-not-verified&security=verification-email-sent", {
+
+    const securityState =
+      issueResult.status === "queued"
+        ? "verification-email-queued"
+        : "verification-email-sent";
+
+    return redirect(`/profile?error=email-not-verified&security=${securityState}`, {
       headers: rateLimit.headers,
     });
   }
@@ -231,11 +260,14 @@ export default function ProfileRoute() {
         ? "Multi-factor authentication has been disabled."
         : securityMessageKey === "verification-email-sent"
           ? "A verification link has been sent to your email address."
-          : securityMessageKey === "email-already-verified"
-            ? "Your email is already verified."
-            : securityMessageKey === "email-verified"
-              ? "Your email was verified successfully."
-        : null;
+          : securityMessageKey === "verification-email-queued"
+            ? "Verification email is queued and will be sent automatically when delivery is available."
+            : securityMessageKey === "email-already-verified"
+              ? "Your email is already verified."
+              : securityMessageKey === "email-verified"
+                ? "Your email was verified successfully."
+                : null;
+
   return (
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
       {" "}

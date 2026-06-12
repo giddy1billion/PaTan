@@ -14,6 +14,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { getBotDefenseClientConfig } from "~/utils/bot-defense.server";
 import { issueCsrfToken } from "~/utils/csrf.server";
+import { startEmailVerificationRetryWorker } from "~/utils/email-verification.server";
 
 const GOOGLE_FONTS_STYLESHEET_HREF =
   "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap";
@@ -38,6 +39,7 @@ function getSecurityCsp() {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
+  startEmailVerificationRetryWorker();
   const csrf = await issueCsrfToken(request);
   const botDefense = getBotDefenseClientConfig();
 
