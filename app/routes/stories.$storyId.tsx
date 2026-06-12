@@ -42,13 +42,13 @@ function formatStatus(value: string) {
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) {
     return [
-      { title: 'Story - PaTan' },
+      { title: 'Story | PaTan' },
       { name: 'description', content: 'Read and reflect on an inspiring community story.' },
     ];
   }
 
   return [
-    { title: `${data.story.title} - PaTan` },
+    { title: `${data.story.title} | PaTan` },
     {
       name: 'description',
       content: data.story.excerpt || `Read ${data.story.author.displayName}'s story on PaTan.`,
