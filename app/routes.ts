@@ -13,7 +13,7 @@ export default [
 
     // Public Profiles
     route("u/:username", "routes/u.$username.tsx"),
-    route("stories/:storyId", "routes/stories.storyId.tsx"),
+    route("stories/:storyId", "routes/stories.$storyId.tsx"),
 
     // Static Pages
     route("about", "routes/about.tsx"),
