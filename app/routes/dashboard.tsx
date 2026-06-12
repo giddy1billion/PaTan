@@ -2,6 +2,7 @@ import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
+  ShouldRevalidateFunctionArgs,
 } from "react-router";
 import {
   Form,
@@ -36,6 +37,9 @@ type ActionData = {
   error?: string;
   success?: string;
 };
+
+const DASHBOARD_TAB_QUERY_KEYS = new Set(["activity", "range"]);
+
 function parseRange(input: string | null): EngagementRange {
   if (input === "7d" || input === "30d" || input === "90d") {
     return input;
@@ -82,6 +86,63 @@ export async function loader({ request }: LoaderFunctionArgs) {
     throw new Response("Dashboard unavailable", { status: 404 });
   }
   return { summary, suggestions, showWelcome, activityFilter, range };
+}
+
+function getChangedSearchParamKeys(currentUrl: URL, nextUrl: URL) {
+  const changedKeys = new Set<string>();
+  const keys = new Set<string>([
+    ...Array.from(currentUrl.searchParams.keys()),
+    ...Array.from(nextUrl.searchParams.keys()),
+  ]);
+
+  for (const key of keys) {
+    const currentValue = currentUrl.searchParams.getAll(key).join("\u0000");
+    const nextValue = nextUrl.searchParams.getAll(key).join("\u0000");
+    if (currentValue !== nextValue) {
+      changedKeys.add(key);
+    }
+  }
+
+  return changedKeys;
+}
+
+export function shouldRevalidate({
+  currentUrl,
+  nextUrl,
+  formMethod,
+  defaultShouldRevalidate,
+}: ShouldRevalidateFunctionArgs) {
+  if (formMethod && formMethod.toLowerCase() !== "get") {
+    return defaultShouldRevalidate;
+  }
+
+  if (currentUrl.pathname !== nextUrl.pathname) {
+    return defaultShouldRevalidate;
+  }
+
+  const changedKeys = getChangedSearchParamKeys(currentUrl, nextUrl);
+
+  if (changedKeys.size === 0) {
+    return defaultShouldRevalidate;
+  }
+
+  const changedOnlyDashboardTabs = Array.from(changedKeys).every((key) =>
+    DASHBOARD_TAB_QUERY_KEYS.has(key),
+  );
+
+  if (!changedOnlyDashboardTabs) {
+    return defaultShouldRevalidate;
+  }
+
+  if (changedKeys.has("range")) {
+    return true;
+  }
+
+  if (changedKeys.has("activity")) {
+    return false;
+  }
+
+  return defaultShouldRevalidate;
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -457,9 +518,16 @@ export default function DashboardRoute() {
                     key={option.value}
                     type="button"
                     onClick={() => {
+                      if (searchParams.get("range") === option.value) {
+                        return;
+                      }
+
                       const next = new URLSearchParams(searchParams);
                       next.set("range", option.value);
-                      setSearchParams(next);
+                      setSearchParams(next, {
+                        replace: true,
+                        preventScrollReset: true,
+                      });
                     }}
                     className={`min-h-[44px] rounded-full px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${range === option.value ? "bg-midnight text-white" : "bg-surface text-midnight hover:bg-mist"}`}
                     aria-pressed={range === option.value}
@@ -609,9 +677,16 @@ export default function DashboardRoute() {
                     key={filter.value}
                     type="button"
                     onClick={() => {
+                      if (searchParams.get("activity") === filter.value) {
+                        return;
+                      }
+
                       const next = new URLSearchParams(searchParams);
                       next.set("activity", filter.value);
-                      setSearchParams(next);
+                      setSearchParams(next, {
+                        replace: true,
+                        preventScrollReset: true,
+                      });
                     }}
                     className={`min-h-[44px] rounded-full px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${activityFilter === filter.value ? "bg-midnight text-white" : "bg-surface text-midnight hover:bg-mist"}`}
                     aria-pressed={activityFilter === filter.value}

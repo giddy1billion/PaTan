@@ -224,7 +224,7 @@ export default function Discover() {
       return;
     }
 
-    setSearchParams(nextParams, { replace: true });
+    setSearchParams(nextParams, { replace: true, preventScrollReset: true });
   }, [showOnboardingWelcome, showStoryPublishedNotice, searchParams, setSearchParams]);
 
   return (
@@ -349,6 +349,10 @@ export default function Discover() {
                   <button
                     type="button"
                     onClick={() => {
+                      if (selectedCategory === category.value && !searchParams.get("welcome")) {
+                        return;
+                      }
+
                       const nextParams = new URLSearchParams(searchParams);
 
                       if (category.value) {
@@ -358,7 +362,10 @@ export default function Discover() {
                       }
 
                       nextParams.delete("welcome");
-                      setSearchParams(nextParams);
+                      setSearchParams(nextParams, {
+                        replace: true,
+                        preventScrollReset: true,
+                      });
                     }}
                     className={`min-h-[44px] px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${
                       selectedCategory === category.value

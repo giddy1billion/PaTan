@@ -298,10 +298,17 @@ export default function NotificationsRoute() {
                   id="notif-view"
                   value={view}
                   onChange={(event) => {
+                    if (event.target.value === view) {
+                      return;
+                    }
+
                     const next = new URLSearchParams(searchParams);
                     next.set("view", event.target.value);
                     next.set("page", "1");
-                    setSearchParams(next);
+                    setSearchParams(next, {
+                      replace: true,
+                      preventScrollReset: true,
+                    });
                   }}
                   className="mt-1 min-h-[44px] w-full rounded-xl border border-mist px-4 py-2.5 text-base bg-white focus:outline-none focus:ring-2 focus:ring-golden"
                 >
@@ -318,10 +325,17 @@ export default function NotificationsRoute() {
                   id="notif-type"
                   value={type}
                   onChange={(event) => {
+                    if (event.target.value === type) {
+                      return;
+                    }
+
                     const next = new URLSearchParams(searchParams);
                     next.set("type", event.target.value);
                     next.set("page", "1");
-                    setSearchParams(next);
+                    setSearchParams(next, {
+                      replace: true,
+                      preventScrollReset: true,
+                    });
                   }}
                   className="mt-1 min-h-[44px] w-full rounded-xl border border-mist px-4 py-2.5 text-base bg-white focus:outline-none focus:ring-2 focus:ring-golden"
                 >

@@ -6,6 +6,7 @@ import type {
 import { Form, Link, useActionData, useLoaderData, useNavigation } from "react-router";
 import { getUser, requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
+import { createNotification } from "~/utils/notifications.server";
 import {
   blockUserByUsername,
   getPublicProfileVisibilitySettings,
@@ -193,10 +194,25 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       createdAt: aspiration.createdAt,
     }),
   );
+  const isFollowing =
+    viewer && viewer.id !== profile.id
+      ? Boolean(
+          await db.follow.findUnique({
+            where: {
+              followerId_followingId: {
+                followerId: viewer.id,
+                followingId: profile.id,
+              },
+            },
+            select: { id: true },
+          }),
+        )
+      : false;
   return {
     profile,
     viewer,
     isOwner: viewer?.id === profile.id,
+    isFollowing,
     stats: { followersCount, followingCount, storyCount, aspirationCount },
     visibility,
     stories,
@@ -216,26 +232,88 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 
   try {
+    if (intent === "follow-user" || intent === "unfollow-user") {
+      const target = await db.user.findFirst({
+        where: {
+          username: { equals: username, mode: "insensitive" },
+          deletedAt: null,
+        },
+        select: { id: true },
+      });
+
+      if (!target) {
+        return { error: "This profile no longer exists." } satisfies ActionData;
+      }
+
+      if (target.id === sessionUser.id) {
+        return {
+          error: "You cannot follow your own profile.",
+        } satisfies ActionData;
+      }
+
+      if (intent === "follow-user") {
+        const existing = await db.follow.findUnique({
+          where: {
+            followerId_followingId: {
+              followerId: sessionUser.id,
+              followingId: target.id,
+            },
+          },
+          select: { id: true },
+        });
+
+        if (!existing) {
+          await db.follow.create({
+            data: {
+              followerId: sessionUser.id,
+              followingId: target.id,
+            },
+          });
+
+          await createNotification({
+            userId: target.id,
+            actorId: sessionUser.id,
+            type: "NEW_FOLLOWER",
+            title: "You have a new follower",
+            body: "Someone followed your journey.",
+            resourceId: sessionUser.id,
+            resourceType: "user",
+          });
+        }
+
+        return {
+          success: `You are now following @${username}.`,
+        } satisfies ActionData;
+      }
+
+      await db.follow.deleteMany({
+        where: {
+          followerId: sessionUser.id,
+          followingId: target.id,
+        },
+      });
+
+      return { success: `You unfollowed @${username}.` } satisfies ActionData;
+    }
+
     if (intent === "block-user") {
-      const reason = String(formData.get("blockReason") ?? "").trim();
       await blockUserByUsername({
         blockerId: sessionUser.id,
         blockedUsername: username,
-        reason,
       });
 
       return { success: `You blocked @${username}.` } satisfies ActionData;
     }
 
     if (intent === "report-user") {
-      const description = String(formData.get("reportDescription") ?? "").trim();
       await reportUserByUsername({
         reporterId: sessionUser.id,
         reportedUsername: username,
-        description,
       });
 
-      return { success: `You reported @${username}.` } satisfies ActionData;
+      return {
+        success: `Thank you. Our moderation team will review @${username}.`,
+      } satisfies ActionData;
     }
 
     return { error: "Unsupported profile action." } satisfies ActionData;
@@ -255,11 +333,23 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function PublicUserProfileRoute() {
-  const { profile, viewer, isOwner, stats, visibility, stories, aspirations } =
-    useLoaderData<typeof loader>();
+  const {
+    profile,
+    viewer,
+    isOwner,
+    isFollowing,
+    stats,
+    visibility,
+    stories,
+    aspirations,
+  } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const submittingIntent =
+    navigation.state === "submitting"
+      ? String(navigation.formData?.get("intent") ?? "")
+      : "";
   const locationText = [profile.city, profile.country]
     .filter(Boolean)
     .join(", ");
