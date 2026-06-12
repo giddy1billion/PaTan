@@ -34,6 +34,21 @@ npm run dev
 
 Your application will be available at `http://localhost:5173`.
 
+### OAuth Environment Variables
+
+For Google and Facebook OAuth login, create a local `.env` file from `.env.example` and set:
+
+- `SESSION_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GOOGLE_REDIRECT_URI`
+- `FACEBOOK_CLIENT_ID`
+- `FACEBOOK_CLIENT_SECRET`
+- `FACEBOOK_REDIRECT_URI`
+
+For production, set both redirect URIs to `https://patan.site/oauth/callback`.
+For local development, you can use `http://localhost:5173/oauth/callback`.
+
 ## Building for Production
 
 Create a production build:

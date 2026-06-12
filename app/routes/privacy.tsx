@@ -123,6 +123,13 @@ export default function Privacy() {
                     Opt out of non-essential communications
                   </li>
                 </ul>
+                <p className="mt-4 text-night/70 leading-relaxed">
+                  For step-by-step account deletion instructions, visit our{' '}
+                  <a href="/data-deletion" className="text-golden hover:text-soft-gold">
+                    User Data Deletion page
+                  </a>
+                  .
+                </p>
               </section>
 
               <section>

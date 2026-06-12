@@ -152,44 +152,10 @@ h1, h2, h3, h4, h5, h6 {
   color: #FFFFFF;
 }
 
-/* Headings on dark backgrounds - white text */
-.bg-midnight h1,
-.bg-midnight h2,
-.bg-midnight h3,
-.bg-midnight h4,
-.bg-midnight h5,
-.bg-midnight h6,
-.bg-night h1,
-.bg-night h2,
-.bg-night h3,
-.bg-night h4,
-.bg-night h5,
-.bg-night h6,
-[class*="bg-[#0D2B45"] h1,
-[class*="bg-[#0D2B45"] h2,
-[class*="bg-[#0D2B45"] h3,
-[class*="bg-[#0D2B45"] h4,
-[class*="bg-[#0D2B45"] h5,
-[class*="bg-[#0D2B45"] h6 {
-  color: #FFFFFF;
-}
-
-/* Body text on dark backgrounds - white text */
-.bg-midnight p,
-.bg-midnight span,
-.bg-midnight li,
-.bg-midnight td,
-.bg-midnight label,
-.bg-night p,
-.bg-night span,
-.bg-night li,
-.bg-night td,
-.bg-night label,
-[class*="bg-[#0D2B45"] p,
-[class*="bg-[#0D2B45"] span,
-[class*="bg-[#0D2B45"] li,
-[class*="bg-[#0D2B45"] td,
-[class*="bg-[#0D2B45"] label {
+/* Keep links readable on dark backgrounds unless they explicitly set text-* */
+.bg-midnight a:not([class*="text-"]),
+.bg-night a:not([class*="text-"]),
+[class*="bg-[#0D2B45"] a:not([class*="text-"]) {
   color: #FFFFFF;
 }
 

@@ -33,6 +33,7 @@ export default [
     route("guidelines", "routes/guidelines.tsx"),
     route("help", "routes/help.tsx"),
     route("privacy", "routes/privacy.tsx"),
+    route("data-deletion", "routes/data-deletion.tsx"),
     route("terms", "routes/terms.tsx"),
     route("accessibility", "routes/accessibility.tsx"),
     
@@ -47,6 +48,9 @@ export default [
   ]),
   
   // Auth routes (no nav/footer)
+  route("oauth/callback", "routes/auth/oauth.callback.tsx"),
+  route("oauth/:provider", "routes/auth/oauth.$provider.tsx"),
+  route("logout", "routes/auth/logout.tsx"),
   route("login", "routes/auth/login.tsx"),
   route("signup", "routes/auth/signup.tsx"),
   route("forgot-password", "routes/auth/forgot-password.tsx"),

@@ -171,7 +171,7 @@ export function Hero() {
             </div>
 
             {/* Trust Indicators */}
-            <div className="mt-12 sm:mt-16 flex flex-wrap justify-center gap-6 sm:gap-8 opacity-0 animate-fade-in-up stagger-4">
+            <div className="mt-12 sm:mt-16 flex flex-wrap justify-center gap-6 sm:gap-8 opacity-0 animate-fade-in-up stagger-4 text-golden">
               {trustIndicators.map((indicator, index) => (
                 <div 
                   key={index}

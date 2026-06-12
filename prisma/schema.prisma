@@ -1,0 +1,921 @@
+// PaTan Prisma Schema
+// Human Stories Platform for Hope, Reflection, Gratitude, and Transformation
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum UserRole {
+  USER
+  MODERATOR
+  ADMIN
+  SUPER_ADMIN
+
+  @@map("user_role")
+}
+
+enum AuthProvider {
+  EMAIL
+  GOOGLE
+  FACEBOOK
+  APPLE
+  PHONE
+
+  @@map("auth_provider")
+}
+
+enum StoryStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  ARCHIVED
+  REJECTED
+
+  @@map("story_status")
+}
+
+enum StoryPrivacy {
+  PUBLIC
+  FOLLOWERS_ONLY
+  PRIVATE
+  ANONYMOUS
+
+  @@map("story_privacy")
+}
+
+enum ContentFormat {
+  TEXT
+  AUDIO
+  VIDEO
+  IMAGE
+  CAROUSEL
+
+  @@map("content_format")
+}
+
+enum AspirationStatus {
+  PENDING
+  IN_PROGRESS
+  ACHIEVED
+  GRANTED
+  TRANSFORMED
+
+  @@map("aspiration_status")
+}
+
+enum AspirationPrivacy {
+  PUBLIC
+  FOLLOWERS_ONLY
+  PRIVATE
+
+  @@map("aspiration_privacy")
+}
+
+enum ReactionType {
+  CELEBRATE
+  UPLIFT
+  EMPATHY
+  GRATITUDE
+  INSPIRE
+
+  @@map("reaction_type")
+}
+
+enum NotificationType {
+  NEW_FOLLOWER
+  STORY_REACTION
+  STORY_COMMENT
+  ASPIRATION_SUPPORT
+  STORY_MILESTONE
+  AI_SUGGESTION
+  COMMUNITY_UPDATE
+  MESSAGE
+  MENTION
+
+  @@map("notification_type")
+}
+
+enum ReportReason {
+  HATE_SPEECH
+  HARASSMENT
+  HARMFUL_CONTENT
+  SPAM
+  MISINFORMATION
+  INAPPROPRIATE
+  OTHER
+
+  @@map("report_reason")
+}
+
+enum ReportStatus {
+  PENDING
+  UNDER_REVIEW
+  RESOLVED
+  DISMISSED
+
+  @@map("report_status")
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+
+  @@map("media_type")
+}
+
+enum BadgeType {
+  STORYTELLER
+  HOPE_CATALYST
+  COMMUNITY_ENCOURAGER
+  TRANSFORMATION_GUIDE
+  TRUSTED_CONTRIBUTOR
+  MILESTONE
+
+  @@map("badge_type")
+}
+
+// ============================================================================
+// USER & AUTHENTICATION
+// ============================================================================
+
+model User {
+  id                  String        @id @default(cuid())
+  email               String?       @unique
+  emailVerified       DateTime?     @map("email_verified")
+  phone               String?       @unique
+  phoneVerified       DateTime?     @map("phone_verified")
+  passwordHash        String?       @map("password_hash")
+  username            String        @unique
+  displayName         String        @map("display_name")
+  bio                 String?       @db.Text
+  profilePhotoUrl     String?       @map("profile_photo_url")
+  coverPhotoUrl       String?       @map("cover_photo_url")
+  pronouns            String?
+  nameAudioUrl        String?       @map("name_audio_url")
+  voiceIntroUrl       String?       @map("voice_intro_url")
+  country             String?
+  city                String?
+  timezone            String?
+  language            String?       @default("en")
+  spiritualAffiliation String?      @map("spiritual_affiliation")
+  placeOfWorship      String?       @map("place_of_worship")
+  personalInterests   String[]      @map("personal_interests")
+  isVerified          Boolean       @default(false) @map("is_verified")
+  verifiedAt          DateTime?     @map("verified_at")
+  role                UserRole      @default(USER)
+  reputationScore     Int           @default(0) @map("reputation_score")
+  trustLevel          Int           @default(1) @map("trust_level")
+  mfaEnabled          Boolean       @default(false) @map("mfa_enabled")
+  mfaSecret           String?       @map("mfa_secret")
+  lastActiveAt        DateTime?     @map("last_active_at")
+  onboardingCompleted Boolean       @default(false) @map("onboarding_completed")
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
+  deletedAt           DateTime?     @map("deleted_at")
+
+  // Relations
+  accounts            Account[]
+  sessions            Session[]
+  preferences         UserPreference?
+  stories             Story[]               @relation("AuthorStories")
+  aspirations         Aspiration[]          @relation("AuthorAspirations")
+  comments            Comment[]
+  reactions           Reaction[]
+  savedStories        SavedStory[]
+  collections         Collection[]
+  followers           Follow[]              @relation("Following")
+  following           Follow[]              @relation("Followers")
+  messagesSent        Message[]             @relation("SentMessages")
+  messagesReceived    Message[]             @relation("ReceivedMessages")
+  notifications       Notification[]        @relation("UserNotifications")
+  notificationsSent   Notification[]        @relation("NotificationActor")
+  badges              UserBadge[]
+  reports             Report[]              @relation("ReportAuthor")
+  reportsAgainst      Report[]              @relation("ReportedUser")
+  circleMembers       CircleMember[]
+  circlesCreated      Circle[]              @relation("CircleCreator")
+  aiRecommendations   AIRecommendation[]
+  emotionalSignals    EmotionalSignal[]
+  moderationActions   ModerationAction[]    @relation("ModeratorActions")
+  reflectionEntries   ReflectionEntry[]
+  aspirationSupports  AspirationSupport[]
+
+  @@index([email])
+  @@index([username])
+  @@index([role])
+  @@index([deletedAt])
+  @@index([createdAt(sort: Desc)])
+  @@map("users")
+}
+
+model Account {
+  id                String       @id @default(cuid())
+  userId            String       @map("user_id")
+  provider          AuthProvider
+  providerAccountId String       @map("provider_account_id")
+  accessToken       String?      @map("access_token") @db.Text
+  refreshToken      String?      @map("refresh_token") @db.Text
+  expiresAt         DateTime?    @map("expires_at")
+  tokenType         String?      @map("token_type")
+  scope             String?
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  token        String   @unique
+  userAgent    String?  @map("user_agent")
+  ipAddress    String?  @map("ip_address")
+  expiresAt    DateTime @map("expires_at")
+  lastActiveAt DateTime @default(now()) @map("last_active_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model UserPreference {
+  id                      String   @id @default(cuid())
+  userId                  String   @unique @map("user_id")
+  emailNotifications      Boolean  @default(true) @map("email_notifications")
+  pushNotifications       Boolean  @default(true) @map("push_notifications")
+  smsNotifications        Boolean  @default(false) @map("sms_notifications")
+  digestFrequency         String   @default("daily") @map("digest_frequency")
+  contentWarnings         Boolean  @default(true) @map("content_warnings")
+  autoplayMedia           Boolean  @default(false) @map("autoplay_media")
+  highContrastMode        Boolean  @default(false) @map("high_contrast_mode")
+  reducedMotion           Boolean  @default(false) @map("reduced_motion")
+  fontSize                String   @default("medium") @map("font_size")
+  preferredCategories     String[] @map("preferred_categories")
+  emotionalTonePreference String[] @map("emotional_tone_preference")
+  followedTags            String[] @map("followed_tags")
+  blockedTags             String[] @map("blocked_tags")
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
+}
+
+// ============================================================================
+// STORIES & CONTENT
+// ============================================================================
+
+model Story {
+  id                 String        @id @default(cuid())
+  authorId           String        @map("author_id")
+  title              String
+  slug               String        @unique
+  excerpt            String?       @db.Text
+  content            String        @db.Text
+  contentFormat      ContentFormat @default(TEXT) @map("content_format")
+  status             StoryStatus   @default(DRAFT)
+  privacy            StoryPrivacy  @default(PUBLIC)
+  isAnonymous        Boolean       @default(false) @map("is_anonymous")
+  categoryId         String        @map("category_id")
+  emotionalTone      String[]      @map("emotional_tone")
+  moodTags           String[]      @map("mood_tags")
+  wordCount          Int           @default(0) @map("word_count")
+  readingTimeMinutes Int           @default(1) @map("reading_time_minutes")
+  featuredImageUrl   String?       @map("featured_image_url")
+  aiGenerated        Boolean       @default(false) @map("ai_generated")
+  aiEnhanced         Boolean       @default(false) @map("ai_enhanced")
+  aiSummary          String?       @map("ai_summary") @db.Text
+  aiMetadata         Json?         @map("ai_metadata")
+  seoTitle           String?       @map("seo_title")
+  seoDescription     String?       @map("seo_description") @db.Text
+  seoKeywords        String[]      @map("seo_keywords")
+  viewCount          Int           @default(0) @map("view_count")
+  reactionCount      Int           @default(0) @map("reaction_count")
+  commentCount       Int           @default(0) @map("comment_count")
+  saveCount          Int           @default(0) @map("save_count")
+  shareCount         Int           @default(0) @map("share_count")
+  sentimentScore     Float?        @map("sentiment_score")
+  contentWarning     String?       @map("content_warning")
+  sensitiveTopics    String[]      @map("sensitive_topics")
+  publishedAt        DateTime?     @map("published_at")
+  scheduledAt        DateTime?     @map("scheduled_at")
+  version            Int           @default(1)
+  parentStoryId      String?       @map("parent_story_id")
+  chapterNumber      Int?          @map("chapter_number")
+  language           String        @default("en")
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+  deletedAt          DateTime?     @map("deleted_at")
+
+  // Relations
+  author           User             @relation("AuthorStories", fields: [authorId], references: [id], onDelete: Cascade)
+  category         Category         @relation(fields: [categoryId], references: [id])
+  tags             StoryTag[]
+  media            StoryMedia[]
+  comments         Comment[]
+  reactions        Reaction[]
+  savedBy          SavedStory[]
+  collections      CollectionStory[]
+  versions         StoryVersion[]
+  reports          Report[]
+  parentStory      Story?           @relation("StoryChapters", fields: [parentStoryId], references: [id])
+  chapters         Story[]          @relation("StoryChapters")
+  emotionalSignals EmotionalSignal[]
+  transcriptions   MediaTranscription[]
+
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([status, createdAt(sort: Desc)])
+  @@index([slug])
+  @@index([privacy])
+  @@index([deletedAt])
+  @@index([language])
+  @@map("stories")
+}
+
+model StoryVersion {
+  id        String   @id @default(cuid())
+  storyId   String   @map("story_id")
+  version   Int
+  title     String
+  content   String   @db.Text
+  excerpt   String?  @db.Text
+  changedBy String?  @map("changed_by")
+  changeLog String?  @map("change_log") @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, version])
+  @@index([storyId])
+  @@map("story_versions")
+}
+
+model StoryMedia {
+  id          String    @id @default(cuid())
+  storyId     String    @map("story_id")
+  type        MediaType
+  url         String
+  thumbnailUrl String?  @map("thumbnail_url")
+  altText     String?   @map("alt_text")
+  caption     String?   @db.Text
+  duration    Int?      // For audio/video in seconds
+  fileSize    Int?      @map("file_size")
+  mimeType    String?   @map("mime_type")
+  width       Int?
+  height      Int?
+  orderIndex  Int       @default(0) @map("order_index")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@index([storyId])
+  @@map("story_media")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?  @db.Text
+  iconUrl     String?  @map("icon_url")
+  color       String?
+  parentId    String?  @map("parent_id")
+  orderIndex  Int      @default(0) @map("order_index")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryHierarchy")
+  stories  Story[]
+
+  @@index([slug])
+  @@index([parentId])
+  @@map("categories")
+}
+
+model Tag {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  slug      String     @unique
+  usageCount Int       @default(0) @map("usage_count")
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  stories   StoryTag[]
+  aspirationTags AspirationTag[]
+
+  @@index([slug])
+  @@index([usageCount(sort: Desc)])
+  @@map("tags")
+}
+
+model StoryTag {
+  storyId   String   @map("story_id")
+  tagId     String   @map("tag_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  tag   Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([storyId, tagId])
+  @@map("story_tags")
+}
+
+// ============================================================================
+// ASPIRATIONS & REFLECTIONS
+// ============================================================================
+
+model Aspiration {
+  id            String            @id @default(cuid())
+  authorId      String            @map("author_id")
+  title         String
+  description   String            @db.Text
+  status        AspirationStatus  @default(PENDING)
+  privacy       AspirationPrivacy @default(PUBLIC)
+  categoryId    String?           @map("category_id")
+  targetDate    DateTime?         @map("target_date")
+  achievedAt    DateTime?         @map("achieved_at")
+  supportCount  Int               @default(0) @map("support_count")
+  viewCount     Int               @default(0) @map("view_count")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  deletedAt     DateTime?         @map("deleted_at")
+
+  // Relations
+  author     User                   @relation("AuthorAspirations", fields: [authorId], references: [id], onDelete: Cascade)
+  milestones AspirationMilestone[]
+  supporters AspirationSupport[]
+  tags       AspirationTag[]
+
+  @@index([authorId])
+  @@index([status])
+  @@index([privacy])
+  @@index([deletedAt])
+  @@index([createdAt(sort: Desc)])
+  @@map("aspirations")
+}
+
+model AspirationMilestone {
+  id           String   @id @default(cuid())
+  aspirationId String   @map("aspiration_id")
+  title        String
+  description  String?  @db.Text
+  isCompleted  Boolean  @default(false) @map("is_completed")
+  completedAt  DateTime? @map("completed_at")
+  orderIndex   Int      @default(0) @map("order_index")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  aspiration Aspiration @relation(fields: [aspirationId], references: [id], onDelete: Cascade)
+
+  @@index([aspirationId])
+  @@map("aspiration_milestones")
+}
+
+model AspirationSupport {
+  id           String     @id @default(cuid())
+  aspirationId String     @map("aspiration_id")
+  userId       String     @map("user_id")
+  message      String?    @db.Text
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  aspiration Aspiration @relation(fields: [aspirationId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([aspirationId, userId])
+  @@index([aspirationId])
+  @@index([userId])
+  @@map("aspiration_supports")
+}
+
+model AspirationTag {
+  aspirationId String   @map("aspiration_id")
+  tagId        String   @map("tag_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  aspiration Aspiration @relation(fields: [aspirationId], references: [id], onDelete: Cascade)
+  tag        Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([aspirationId, tagId])
+  @@map("aspiration_tags")
+}
+
+model ReflectionEntry {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  title      String?
+  content    String   @db.Text
+  mood       String?
+  gratitudes String[] 
+  isPrivate  Boolean  @default(true) @map("is_private")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt(sort: Desc)])
+  @@map("reflection_entries")
+}
+
+// ============================================================================
+// ENGAGEMENT & INTERACTIONS
+// ============================================================================
+
+model Comment {
+  id            String    @id @default(cuid())
+  storyId       String    @map("story_id")
+  authorId      String    @map("author_id")
+  parentId      String?   @map("parent_id")
+  content       String    @db.Text
+  isVoice       Boolean   @default(false) @map("is_voice")
+  voiceUrl      String?   @map("voice_url")
+  upvotes       Int       @default(0)
+  isEdited      Boolean   @default(false) @map("is_edited")
+  isPinned      Boolean   @default(false) @map("is_pinned")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  story    Story     @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies  Comment[] @relation("CommentReplies")
+  reports  Report[]
+
+  @@index([storyId])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([deletedAt])
+  @@map("comments")
+}
+
+model Reaction {
+  id        String       @id @default(cuid())
+  storyId   String       @map("story_id")
+  userId    String       @map("user_id")
+  type      ReactionType
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, userId, type])
+  @@index([storyId])
+  @@index([userId])
+  @@map("reactions")
+}
+
+model SavedStory {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  storyId   String   @map("story_id")
+  note      String?  @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, storyId])
+  @@index([userId])
+  @@index([storyId])
+  @@map("saved_stories")
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String   @map("follower_id")
+  followingId String   @map("following_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  follower  User @relation("Followers", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+  @@map("follows")
+}
+
+// ============================================================================
+// COLLECTIONS & CURATED CONTENT
+// ============================================================================
+
+model Collection {
+  id          String    @id @default(cuid())
+  creatorId   String    @map("creator_id")
+  name        String
+  slug        String    @unique
+  description String?   @db.Text
+  coverUrl    String?   @map("cover_url")
+  isPublic    Boolean   @default(true) @map("is_public")
+  isFeatured  Boolean   @default(false) @map("is_featured")
+  storyCount  Int       @default(0) @map("story_count")
+  viewCount   Int       @default(0) @map("view_count")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  creator User              @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  stories CollectionStory[]
+
+  @@index([creatorId])
+  @@index([slug])
+  @@index([isPublic, isFeatured])
+  @@index([deletedAt])
+  @@map("collections")
+}
+
+model CollectionStory {
+  collectionId String   @map("collection_id")
+  storyId      String   @map("story_id")
+  orderIndex   Int      @default(0) @map("order_index")
+  addedAt      DateTime @default(now()) @map("added_at")
+
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  story      Story      @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, storyId])
+  @@index([storyId])
+  @@map("collection_stories")
+}
+
+// ============================================================================
+// MESSAGING
+// ============================================================================
+
+model Message {
+  id          String    @id @default(cuid())
+  senderId    String    @map("sender_id")
+  receiverId  String    @map("receiver_id")
+  content     String    @db.Text
+  isVoice     Boolean   @default(false) @map("is_voice")
+  voiceUrl    String?   @map("voice_url")
+  isRead      Boolean   @default(false) @map("is_read")
+  readAt      DateTime? @map("read_at")
+  sharedStoryId String? @map("shared_story_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([senderId, receiverId, createdAt(sort: Desc)])
+  @@index([deletedAt])
+  @@map("messages")
+}
+
+// ============================================================================
+// NOTIFICATIONS
+// ============================================================================
+
+model Notification {
+  id          String           @id @default(cuid())
+  userId      String           @map("user_id")
+  actorId     String?          @map("actor_id")
+  type        NotificationType
+  title       String
+  body        String?          @db.Text
+  data        Json?
+  resourceId  String?          @map("resource_id")
+  resourceType String?         @map("resource_type")
+  isRead      Boolean          @default(false) @map("is_read")
+  readAt      DateTime?        @map("read_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  user  User  @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  actor User? @relation("NotificationActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("notifications")
+}
+
+// ============================================================================
+// COMMUNITY & CIRCLES
+// ============================================================================
+
+model Circle {
+  id          String   @id @default(cuid())
+  creatorId   String   @map("creator_id")
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+  coverUrl    String?  @map("cover_url")
+  isPrivate   Boolean  @default(false) @map("is_private")
+  memberCount Int      @default(0) @map("member_count")
+  rules       String[] 
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  creator User           @relation("CircleCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  members CircleMember[]
+
+  @@index([slug])
+  @@index([creatorId])
+  @@index([deletedAt])
+  @@map("circles")
+}
+
+model CircleMember {
+  id        String   @id @default(cuid())
+  circleId  String   @map("circle_id")
+  userId    String   @map("user_id")
+  role      String   @default("member")
+  joinedAt  DateTime @default(now()) @map("joined_at")
+
+  circle Circle @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([circleId, userId])
+  @@index([circleId])
+  @@index([userId])
+  @@map("circle_members")
+}
+
+// ============================================================================
+// BADGES & GAMIFICATION
+// ============================================================================
+
+model Badge {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String    @db.Text
+  iconUrl     String    @map("icon_url")
+  type        BadgeType
+  criteria    Json
+  points      Int       @default(0)
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  users UserBadge[]
+
+  @@index([slug])
+  @@index([type])
+  @@map("badges")
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  badgeId   String   @map("badge_id")
+  earnedAt  DateTime @default(now()) @map("earned_at")
+  metadata  Json?
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@index([badgeId])
+  @@map("user_badges")
+}
+
+// ============================================================================
+// MODERATION & SAFETY
+// ============================================================================
+
+model Report {
+  id           String       @id @default(cuid())
+  reporterId   String       @map("reporter_id")
+  reportedUserId String?    @map("reported_user_id")
+  storyId      String?      @map("story_id")
+  commentId    String?      @map("comment_id")
+  reason       ReportReason
+  description  String?      @db.Text
+  status       ReportStatus @default(PENDING)
+  resolvedBy   String?      @map("resolved_by")
+  resolvedAt   DateTime?    @map("resolved_at")
+  resolution   String?      @db.Text
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  reporter     User     @relation("ReportAuthor", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedUser User?    @relation("ReportedUser", fields: [reportedUserId], references: [id], onDelete: SetNull)
+  story        Story?   @relation(fields: [storyId], references: [id], onDelete: SetNull)
+  comment      Comment? @relation(fields: [commentId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([reporterId])
+  @@index([reportedUserId])
+  @@index([storyId])
+  @@index([commentId])
+  @@map("reports")
+}
+
+model ModerationAction {
+  id           String   @id @default(cuid())
+  moderatorId  String   @map("moderator_id")
+  action       String
+  targetType   String   @map("target_type")
+  targetId     String   @map("target_id")
+  reason       String   @db.Text
+  metadata     Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  moderator User @relation("ModeratorActions", fields: [moderatorId], references: [id], onDelete: Cascade)
+
+  @@index([moderatorId])
+  @@index([targetType, targetId])
+  @@index([createdAt(sort: Desc)])
+  @@map("moderation_actions")
+}
+
+// ============================================================================
+// AI & ANALYTICS
+// ============================================================================
+
+model AIRecommendation {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  storyId     String   @map("story_id")
+  score       Float
+  reason      String?
+  algorithm   String
+  isViewed    Boolean  @default(false) @map("is_viewed")
+  isClicked   Boolean  @default(false) @map("is_clicked")
+  createdAt   DateTime @default(now()) @map("created_at")
+  expiresAt   DateTime @map("expires_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isViewed])
+  @@index([expiresAt])
+  @@map("ai_recommendations")
+}
+
+model EmotionalSignal {
+  id             String   @id @default(cuid())
+  userId         String?  @map("user_id")
+  storyId        String?  @map("story_id")
+  emotionalTone  String   @map("emotional_tone")
+  intensity      Float
+  timestamp      DateTime @default(now())
+  context        Json?
+
+  user  User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  story Story? @relation(fields: [storyId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([storyId])
+  @@index([emotionalTone])
+  @@index([timestamp(sort: Desc)])
+  @@map("emotional_signals")
+}
+
+model MediaTranscription {
+  id         String   @id @default(cuid())
+  storyId    String   @map("story_id")
+  mediaUrl   String   @map("media_url")
+  transcript String   @db.Text
+  language   String
+  confidence Float?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@index([storyId])
+  @@map("media_transcriptions")
+}
+
+// ============================================================================
+// PLATFORM ANALYTICS
+// ============================================================================
+
+model PlatformMetric {
+  id        String   @id @default(cuid())
+  name      String
+  value     Float
+  dimension String?
+  metadata  Json?
+  recordedAt DateTime @default(now()) @map("recorded_at")
+
+  @@index([name, recordedAt(sort: Desc)])
+  @@map("platform_metrics")
+}
