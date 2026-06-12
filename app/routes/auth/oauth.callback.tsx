@@ -2,7 +2,7 @@ import type { LoaderFunctionArgs } from "react-router";
 import { redirect } from "react-router";
 import { commitSession, createUserSession, getSession } from "~/utils/auth.server";
 import { fetchOAuthProfile, OAuthConfigError, OAuthFlowError, parseOAuthProvider } from "~/utils/oauth.server";
-import { upsertOAuthUser } from "~/utils/users.server";
+import { getPostAuthRedirectForUser, upsertOAuthUser } from "~/utils/users.server";
 
 function getSafeAuthRoute(route: string | undefined) {
   return route === "/signup" ? "/signup" : "/login";
@@ -75,6 +75,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }
 
     const user = await upsertOAuthUser(profile);
+    const postAuthRedirect = await getPostAuthRedirectForUser(user.id, redirectTo);
 
     session.unset("oauth:state");
     session.unset("oauth:provider");
@@ -84,7 +85,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     return createUserSession({
       request,
       user,
-      redirectTo,
+      redirectTo: postAuthRedirect,
       remember: true,
       session,
     });

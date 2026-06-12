@@ -13,7 +13,7 @@ const USER_SESSION_KEY = "user";
 const THIRTY_DAYS_IN_SECONDS = 60 * 60 * 24 * 30;
 const SESSION_COOKIE_SECRET = process.env.SESSION_SECRET ?? "dev-session-secret-change-me";
 
-const authTokenCookie = createCookie("__PaTan™_auth", {
+const authTokenCookie = createCookie("__patan_auth", {
   httpOnly: true,
   path: "/",
   sameSite: "lax",
@@ -23,7 +23,7 @@ const authTokenCookie = createCookie("__PaTan™_auth", {
 
 const sessionStorage = createCookieSessionStorage({
   cookie: {
-    name: "__PaTan™_session",
+    name: "__patan_session",
     httpOnly: true,
     path: "/",
     sameSite: "lax",

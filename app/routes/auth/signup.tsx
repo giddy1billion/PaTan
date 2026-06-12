@@ -2,7 +2,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react
 import { Link, Form, redirect, useSearchParams } from 'react-router';
 import { createUserSession, getUser } from '~/utils/auth.server';
 import { getAuthErrorMessage } from '~/utils/auth-errors';
-import { createLocalUser } from '~/utils/users.server';
+import { createLocalUser, getPostAuthRedirectForUser } from '~/utils/users.server';
 
 export const meta: MetaFunction = () => {
   return [
@@ -15,7 +15,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const user = await getUser(request);
 
   if (user) {
-    return redirect('/discover');
+    const postAuthRedirect = await getPostAuthRedirectForUser(user.id, '/discover');
+    return redirect(postAuthRedirect);
   }
 
   return null;
@@ -48,10 +49,12 @@ export async function action({ request }: ActionFunctionArgs) {
     return redirect('/signup?error=signup-failed');
   }
 
+  const postAuthRedirect = await getPostAuthRedirectForUser(user.id, redirectTo);
+
   return createUserSession({
     request,
     user,
-    redirectTo,
+    redirectTo: postAuthRedirect,
     remember: true,
   });
 }

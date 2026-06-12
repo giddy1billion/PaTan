@@ -1,5 +1,6 @@
 import type { MetaFunction } from 'react-router';
 import { Link, useSearchParams } from 'react-router';
+import { useEffect } from 'react';
 
 export const meta: MetaFunction = () => {
   return [
@@ -85,7 +86,18 @@ const stories = [
 
 export default function Discover() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const showOnboardingWelcome = searchParams.get('welcome') === 'onboarding-complete';
   const selectedCategory = searchParams.get('category') || '';
+
+  useEffect(() => {
+    if (!showOnboardingWelcome) {
+      return;
+    }
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete('welcome');
+    setSearchParams(nextParams, { replace: true });
+  }, [showOnboardingWelcome, searchParams, setSearchParams]);
 
   return (
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
@@ -99,6 +111,18 @@ export default function Discover() {
             Every story here has the power to touch your heart, shift your perspective, 
             or remind you that you're not alone.
           </p>
+
+          {showOnboardingWelcome ? (
+            <div
+              className="mt-6 mx-auto max-w-xl rounded-xl border border-[#F5B942]/40 bg-white/95 text-midnight px-4 py-3 shadow-sm"
+              role="status"
+              aria-live="polite"
+            >
+              <p className="text-sm font-medium">
+                Welcome to PaTan. Your profile setup is complete and your feed is now personalized.
+              </p>
+            </div>
+          ) : null}
 
           {/* Search */}
           <div className="mt-8 max-w-xl mx-auto">

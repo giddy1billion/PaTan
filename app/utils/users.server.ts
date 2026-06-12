@@ -10,6 +10,13 @@ type CreateLocalUserInput = {
   password: string;
 };
 
+type UpdateOnboardingProfileInput = {
+  userId: string;
+  displayName: string;
+  username: string;
+  bio?: string;
+};
+
 const SCRYPT_KEY_LENGTH = 64;
 
 function slugifyUsername(value: string) {
@@ -77,6 +84,14 @@ function toSessionUser(user: {
 
 function mapOAuthProviderToAccount(provider: OAuthProfile["provider"]) {
   return provider === "google" ? "GOOGLE" : "FACEBOOK";
+}
+
+function getSafeRedirectTarget(redirectTo: string | null | undefined) {
+  if (!redirectTo || !redirectTo.startsWith("/") || redirectTo.startsWith("//")) {
+    return "/discover";
+  }
+
+  return redirectTo;
 }
 
 export async function createLocalUser(input: CreateLocalUserInput): Promise<SessionUser> {
@@ -237,4 +252,96 @@ export async function upsertOAuthUser(profile: OAuthProfile): Promise<SessionUse
     ...toSessionUser(createdUser),
     provider: profile.provider,
   };
+}
+
+export async function getPostAuthRedirectForUser(
+  userId: string,
+  requestedRedirectTo?: string | null,
+): Promise<string> {
+  const safeRedirectTo = getSafeRedirectTarget(requestedRedirectTo);
+
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { onboardingCompleted: true },
+  });
+
+  if (!user) {
+    return "/login?error=session-expired";
+  }
+
+  if (user.onboardingCompleted) {
+    return safeRedirectTo;
+  }
+
+  return `/onboarding/profile?redirectTo=${encodeURIComponent(safeRedirectTo)}`;
+}
+
+export async function getOnboardingProfile(userId: string) {
+  return db.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      displayName: true,
+      username: true,
+      bio: true,
+      personalInterests: true,
+      onboardingCompleted: true,
+    },
+  });
+}
+
+export async function updateOnboardingProfileStep(input: UpdateOnboardingProfileInput) {
+  const username = input.username.trim().toLowerCase();
+
+  const existingUsername = await db.user.findFirst({
+    where: {
+      username,
+      NOT: {
+        id: input.userId,
+      },
+    },
+    select: { id: true },
+  });
+
+  if (existingUsername) {
+    throw new Error("username-taken");
+  }
+
+  return db.user.update({
+    where: { id: input.userId },
+    data: {
+      displayName: input.displayName.trim(),
+      username,
+      bio: input.bio?.trim() || null,
+    },
+    select: {
+      id: true,
+      displayName: true,
+      username: true,
+      bio: true,
+    },
+  });
+}
+
+export async function completeOnboardingWithInterests(userId: string, interests: string[]) {
+  const normalizedInterests = Array.from(
+    new Set(
+      interests
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  ).slice(0, 8);
+
+  return db.user.update({
+    where: { id: userId },
+    data: {
+      personalInterests: normalizedInterests,
+      onboardingCompleted: true,
+    },
+    select: {
+      id: true,
+      onboardingCompleted: true,
+      personalInterests: true,
+    },
+  });
 }

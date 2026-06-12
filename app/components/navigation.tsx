@@ -32,6 +32,12 @@ function getInitials(user: SessionUser) {
   return source.slice(0, 2).toUpperCase();
 }
 
+type OnboardingProgress = {
+  isRequired: boolean;
+  step: 1 | 2;
+  resumeHref: string;
+};
+
 function UserProfileBadge({
   user,
   compact = false,
@@ -102,7 +108,13 @@ function UserProfileBadge({
   );
 }
 
-export function Navigation({ user }: { user: SessionUser | null }) {
+export function Navigation({
+  user,
+  onboarding,
+}: {
+  user: SessionUser | null;
+  onboarding: OnboardingProgress;
+}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -273,6 +285,15 @@ export function Navigation({ user }: { user: SessionUser | null }) {
             {user ? (
               <div className="flex items-center gap-2">
                 <UserProfileBadge user={user} />
+                {onboarding.isRequired ? (
+                  <Link
+                    to={onboarding.resumeHref}
+                    className="min-h-[44px] px-3 py-2 rounded-xl text-xs font-semibold uppercase tracking-wide text-forest border border-forest/20 bg-[#ECF9F0] hover:bg-[#DDF2E4] transition-all duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
+                    aria-label={`Resume onboarding, step ${onboarding.step} of 2`}
+                  >
+                    Setup {onboarding.step}/2
+                  </Link>
+                ) : null}
                 <Form method="post" action="/logout">
                   <button
                     type="submit"
@@ -411,6 +432,16 @@ export function Navigation({ user }: { user: SessionUser | null }) {
                     <p className="text-sm font-semibold text-midnight truncate">{getDisplayName(user)}</p>
                   </div>
                 </div>
+                {onboarding.isRequired ? (
+                  <Link
+                    to={onboarding.resumeHref}
+                    className="mt-3 w-full inline-flex min-h-[44px] items-center justify-center rounded-xl text-sm font-semibold text-forest border border-forest/20 bg-[#ECF9F0] hover:bg-[#DDF2E4] transition-all duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                    onClick={closeMenu}
+                    aria-label={`Resume onboarding, step ${onboarding.step} of 2`}
+                  >
+                    Resume setup ({onboarding.step}/2)
+                  </Link>
+                ) : null}
                 <Form method="post" action="/logout" className="mt-3">
                   <button
                     type="submit"
