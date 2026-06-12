@@ -117,6 +117,7 @@ export async function action({ request }: ActionFunctionArgs) {
         userId: candidate.id,
         email: candidate.email,
         requestUrl: request.url,
+        redirectTo,
       });
 
       await logAuthSecurityEvent({
@@ -172,6 +173,7 @@ export async function action({ request }: ActionFunctionArgs) {
       userId: verification.userId,
       email: verification.email,
       requestUrl: request.url,
+      redirectTo,
     });
 
     await logAuthSecurityEvent({

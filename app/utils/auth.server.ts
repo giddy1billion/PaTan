@@ -1,5 +1,6 @@
 import { createCookieSessionStorage, createCookie, redirect } from "react-router";
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { db } from "~/utils/db.server";
 
 export type SessionUser = {
   id: string;
@@ -158,8 +159,35 @@ export async function requireUser(request: Request, redirectTo?: string) {
 
   if (!user) {
     const url = new URL(request.url);
-    const target = redirectTo ?? `${url.pathname}${url.search}`;
+    const target = safeRedirect(
+      redirectTo ?? `${url.pathname}${url.search}`,
+      "/dashboard",
+    );
     throw redirect(`/login?redirectTo=${encodeURIComponent(target)}`);
+  }
+
+  return user;
+}
+
+export async function requireVerifiedUser(request: Request, redirectTo?: string) {
+  const user = await requireUser(request, redirectTo);
+
+  const verificationState = await db.user.findUnique({
+    where: { id: user.id },
+    select: { emailVerified: true },
+  });
+
+  if (!verificationState) {
+    throw redirect("/login?error=session-expired");
+  }
+
+  if (!verificationState.emailVerified) {
+    const url = new URL(request.url);
+    const target = safeRedirect(
+      redirectTo ?? `${url.pathname}${url.search}`,
+      "/dashboard",
+    );
+    throw redirect(`/verify-email?redirectTo=${encodeURIComponent(target)}`);
   }
 
   return user;

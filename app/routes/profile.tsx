@@ -140,6 +140,7 @@ export async function action({ request }: ActionFunctionArgs) {
       userId: current.id,
       email: current.email,
       requestUrl: request.url,
+      redirectTo: "/profile",
     });
 
     await logAuthSecurityEvent({
@@ -168,6 +169,7 @@ export async function action({ request }: ActionFunctionArgs) {
       userId: current.id,
       email: current.email,
       requestUrl: request.url,
+      redirectTo: "/profile",
     });
     await logAuthSecurityEvent({
       request,

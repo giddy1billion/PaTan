@@ -924,9 +924,47 @@ export async function getSuggestedFollows(userId: string) {
     }),
   ]);
 
+  const [existingFollows, existingMemberships] = await Promise.all([
+    people.length
+      ? db.follow.findMany({
+          where: {
+            followerId: userId,
+            followingId: {
+              in: people.map((person) => person.id),
+            },
+          },
+          select: {
+            followingId: true,
+          },
+        })
+      : Promise.resolve([]),
+    circles.length
+      ? db.circleMember.findMany({
+          where: {
+            userId,
+            circleId: {
+              in: circles.map((circle) => circle.id),
+            },
+          },
+          select: {
+            circleId: true,
+          },
+        })
+      : Promise.resolve([]),
+  ]);
+
+  const followedIds = new Set(existingFollows.map((entry) => entry.followingId));
+  const joinedCircleIds = new Set(existingMemberships.map((entry) => entry.circleId));
+
   return {
-    people,
-    circles,
+    people: people.map((person) => ({
+      ...person,
+      isFollowing: followedIds.has(person.id),
+    })),
+    circles: circles.map((circle) => ({
+      ...circle,
+      isMember: joinedCircleIds.has(circle.id),
+    })),
   };
 }
 

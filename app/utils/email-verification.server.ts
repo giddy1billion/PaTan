@@ -61,10 +61,12 @@ export async function issueEmailVerification({
   userId,
   email,
   requestUrl,
+  redirectTo,
 }: {
   userId: string;
   email: string;
   requestUrl?: string;
+  redirectTo?: string;
 }) {
   await ensureSchema();
 
@@ -90,7 +92,20 @@ export async function issueEmailVerification({
     [tokenHash, userId, email.toLowerCase(), expiresAt],
   );
 
-  const verifyUrl = `${getAppOrigin(requestUrl)}/auth/verify-email?token=${encodeURIComponent(token)}`;
+  const safeRedirectTo =
+    redirectTo && redirectTo.startsWith("/") && !redirectTo.startsWith("//")
+      ? redirectTo
+      : null;
+
+  const verifyParams = new URLSearchParams({
+    token,
+  });
+
+  if (safeRedirectTo) {
+    verifyParams.set("redirectTo", safeRedirectTo);
+  }
+
+  const verifyUrl = `${getAppOrigin(requestUrl)}/auth/verify-email?${verifyParams.toString()}`;
 
   await sendSecurityEmail({
     to: email,

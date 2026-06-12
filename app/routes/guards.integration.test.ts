@@ -3,6 +3,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 vi.mock('~/utils/auth.server', () => ({
   getUser: vi.fn(),
   requireUser: vi.fn(),
+  requireVerifiedUser: vi.fn(),
 }));
 
 vi.mock('~/utils/users.server', async (importOriginal) => {
@@ -39,7 +40,7 @@ vi.mock('~/utils/db.server', () => ({
 import { loader as authenticatedLayoutLoader } from '~/routes/authenticated-layout';
 import { loader as profileRedirectLoader } from '~/routes/profile.redirect';
 import { loader as publicProfileLoader } from '~/routes/u.$username';
-import { getUser, requireUser } from '~/utils/auth.server';
+import { getUser, requireVerifiedUser } from '~/utils/auth.server';
 import { getOnboardingProfile } from '~/utils/users.server';
 import { db } from '~/utils/db.server';
 
@@ -47,15 +48,52 @@ describe('Route integration guards', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(getUser).mockResolvedValue(null);
-  });
-
-  it('redirects incomplete onboarding users from authenticated layout', async () => {
-    vi.mocked(requireUser).mockResolvedValue({
+    vi.mocked(db.user.findUnique).mockResolvedValue({
+      emailVerified: new Date('2026-06-12T00:00:00.000Z'),
+    } as any);
+    vi.mocked(requireVerifiedUser).mockResolvedValue({
       id: 'user-1',
       email: 'user@example.com',
       provider: 'local',
     });
+  });
 
+  it('redirects unverified users to dedicated verify-email page before protected routes', async () => {
+    vi.mocked(requireVerifiedUser).mockRejectedValue(
+      new Response(null, {
+        status: 302,
+        headers: new Headers({
+          Location: `/verify-email?redirectTo=${encodeURIComponent('/discover?category=gratitude')}`,
+        }),
+      }),
+    );
+
+    await expect(
+      authenticatedLayoutLoader({
+        request: new Request('http://localhost/discover?category=gratitude'),
+        params: {},
+        context: {},
+      } as any),
+    ).rejects.toMatchObject({
+      status: 302,
+      headers: expect.any(Headers),
+    });
+
+    try {
+      await authenticatedLayoutLoader({
+        request: new Request('http://localhost/discover?category=gratitude'),
+        params: {},
+        context: {},
+      } as any);
+    } catch (response) {
+      expect(response).toBeInstanceOf(Response);
+      const location = (response as Response).headers.get('Location');
+      expect(location).toContain('/verify-email?redirectTo=');
+      expect(location).toContain(encodeURIComponent('/discover?category=gratitude'));
+    }
+  });
+
+  it('redirects incomplete onboarding users from authenticated layout', async () => {
     vi.mocked(getOnboardingProfile).mockResolvedValue({
       id: 'user-1',
       displayName: 'User One',

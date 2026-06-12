@@ -210,6 +210,7 @@ model User {
   moderationActions   ModerationAction[]    @relation("ModeratorActions")
   reflectionEntries   ReflectionEntry[]
   aspirationSupports  AspirationSupport[]
+  aspirationUpdates   AspirationUpdate[]
   blocksInitiated     UserBlock[]           @relation("BlockerUser")
   blocksReceived      UserBlock[]           @relation("BlockedUser")
 
@@ -489,6 +490,7 @@ model Aspiration {
   author     User                   @relation("AuthorAspirations", fields: [authorId], references: [id], onDelete: Cascade)
   milestones AspirationMilestone[]
   supporters AspirationSupport[]
+  updates    AspirationUpdate[]
   tags       AspirationTag[]
 
   @@index([authorId])
@@ -531,6 +533,22 @@ model AspirationSupport {
   @@index([aspirationId])
   @@index([userId])
   @@map("aspiration_supports")
+}
+
+model AspirationUpdate {
+  id           String   @id @default(cuid())
+  aspirationId String   @map("aspiration_id")
+  authorId     String   @map("author_id")
+  content      String   @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  aspiration Aspiration @relation(fields: [aspirationId], references: [id], onDelete: Cascade)
+  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([aspirationId, createdAt(sort: Desc)])
+  @@index([authorId])
+  @@map("aspiration_updates")
 }
 
 model AspirationTag {

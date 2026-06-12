@@ -10,7 +10,7 @@ import {
   useActionData,
   useLoaderData,
 } from "react-router";
-import { requireUser } from "~/utils/auth.server";
+import { requireVerifiedUser } from "~/utils/auth.server";
 import {
   completeOnboardingWithInterests,
   getOnboardingProfile,
@@ -54,7 +54,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 export async function loader({ request }: LoaderFunctionArgs) {
-  const sessionUser = await requireUser(request);
+  const sessionUser = await requireVerifiedUser(request);
   const url = new URL(request.url);
   const redirectTo = getSafeRedirectTarget(url.searchParams.get("redirectTo"));
   const profile = await getOnboardingProfile(sessionUser.id);
@@ -67,7 +67,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return { redirectTo, selectedInterests: profile.personalInterests };
 }
 export async function action({ request }: ActionFunctionArgs) {
-  const sessionUser = await requireUser(request);
+  const sessionUser = await requireVerifiedUser(request);
   const formData = await request.formData();
   const redirectTo = getSafeRedirectTarget(
     String(formData.get("redirectTo") ?? "/dashboard"),

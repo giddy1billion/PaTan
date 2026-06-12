@@ -15,6 +15,7 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   "verify-email-sent": "Account created. Check your email for a verification link before logging in.",
   "email-verified": "Email verified successfully. You can now log in.",
   "invalid-email-verification": "This verification link is invalid or expired.",
+  "email-verification-send-failed": "We could not send a verification email right now. Please try again in a moment.",
   "mfa-required": "A verification code is required for this sign-in attempt.",
   "mfa-invalid": "The verification code is invalid. Please try again.",
   "mfa-expired": "The verification code expired. Request a new code.",

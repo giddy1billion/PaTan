@@ -63,6 +63,7 @@ export default [
   route("oauth/callback", "routes/auth/oauth.callback.tsx"),
   route("oauth/:provider", "routes/auth/oauth.$provider.tsx"),
   route("auth/verify-email", "routes/auth/verify-email.tsx"),
+  route("verify-email", "routes/auth/verify-email-status.tsx"),
   route("auth/mfa", "routes/auth/mfa.tsx"),
   route("logout", "routes/auth/logout.tsx"),
   route("login", "routes/auth/login.tsx"),

@@ -58,14 +58,21 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   let user;
+  let postAuthRedirect = "/dashboard";
   try {
     user = await createLocalUser({ firstName, lastName, email, password });
+
+    postAuthRedirect = await getPostAuthRedirectForUser(
+      user.id,
+      redirectTo,
+    );
 
     try {
       await issueEmailVerification({
         userId: user.id,
         email: user.email,
         requestUrl: request.url,
+        redirectTo: postAuthRedirect,
       });
 
       await logAuthSecurityEvent({
@@ -121,11 +128,6 @@ export async function action({ request }: ActionFunctionArgs) {
     });
     return redirect("/signup?error=signup-failed");
   }
-
-  const postAuthRedirect = await getPostAuthRedirectForUser(
-    user.id,
-    redirectTo,
-  );
 
   return createUserSession({
     request,
