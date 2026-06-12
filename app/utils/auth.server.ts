@@ -113,7 +113,7 @@ function verifyJwt(token: string): JwtPayload | null {
   }
 }
 
-function safeRedirect(to: string | null | undefined, defaultRedirect = "/discover") {
+function safeRedirect(to: string | null | undefined, defaultRedirect = "/dashboard") {
   if (!to || typeof to !== "string") return defaultRedirect;
   if (!to.startsWith("/")) return defaultRedirect;
   if (to.startsWith("//")) return defaultRedirect;

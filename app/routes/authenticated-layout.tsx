@@ -1,8 +1,8 @@
 import type { LoaderFunctionArgs } from 'react-router';
-import { Outlet, useLoaderData } from 'react-router';
-import { Navigation } from '../components/navigation';
+import { Outlet, redirect, useLoaderData } from 'react-router';
+import { Navigation } from '~/components/navigation';
 import { Footer } from '~/components/footer';
-import { getUser } from '~/utils/auth.server';
+import { requireUser } from '~/utils/auth.server';
 import { getOnboardingProfile } from '~/utils/users.server';
 
 type OnboardingState = {
@@ -20,8 +20,18 @@ function getSafeRedirectTarget(target: string) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  const user = await requireUser(request);
   const url = new URL(request.url);
-  const user = await getUser(request);
+
+  const profile = await getOnboardingProfile(user.id);
+  if (!profile) {
+    throw redirect('/login?error=session-expired');
+  }
+
+  if (!profile.onboardingCompleted) {
+    const redirectTo = getSafeRedirectTarget(`${url.pathname}${url.search}`);
+    throw redirect(`/onboarding/profile?redirectTo=${encodeURIComponent(redirectTo)}`);
+  }
 
   const onboarding: OnboardingState = {
     isRequired: false,
@@ -29,26 +39,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
     resumeHref: '',
   };
 
-  if (user) {
-    const profile = await getOnboardingProfile(user.id);
-
-    if (profile && !profile.onboardingCompleted) {
-      const redirectTo = getSafeRedirectTarget(`${url.pathname}${url.search}`);
-
-      onboarding.isRequired = true;
-      onboarding.step = profile.personalInterests.length > 0 ? 2 : 1;
-      onboarding.resumeHref = `/onboarding/profile?redirectTo=${encodeURIComponent(redirectTo)}`;
-    }
-  }
-
   return { user, onboarding };
 }
 
-/**
- * Main app layout with navigation and footer.
- * Wraps all public-facing routes.
- */
-export default function AppLayout() {
+export default function AuthenticatedLayout() {
   const { user, onboarding } = useLoaderData<typeof loader>();
 
   return (

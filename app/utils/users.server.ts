@@ -38,7 +38,7 @@ async function generateUniqueUsername(base: string) {
   return `${normalizedBase}${Date.now().toString().slice(-6)}`;
 }
 
-function hashPassword(password: string) {
+export function hashLocalPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
   const hash = scryptSync(password, salt, SCRYPT_KEY_LENGTH).toString("hex");
   return `scrypt$${salt}$${hash}`;
@@ -88,7 +88,7 @@ function mapOAuthProviderToAccount(provider: OAuthProfile["provider"]) {
 
 function getSafeRedirectTarget(redirectTo: string | null | undefined) {
   if (!redirectTo || !redirectTo.startsWith("/") || redirectTo.startsWith("//")) {
-    return "/discover";
+    return "/dashboard";
   }
 
   return redirectTo;
@@ -117,7 +117,7 @@ export async function createLocalUser(input: CreateLocalUserInput): Promise<Sess
       email,
       username,
       displayName,
-      passwordHash: hashPassword(input.password),
+      passwordHash: hashLocalPassword(input.password),
       personalInterests: [],
       accounts: {
         create: {
@@ -191,6 +191,9 @@ export async function upsertOAuthUser(profile: OAuthProfile): Promise<SessionUse
         email: profile.email,
         displayName: profile.name,
         profilePhotoUrl: profile.avatarUrl ?? null,
+        emailVerified: new Date(),
+        isVerified: true,
+        verifiedAt: new Date(),
       },
     });
 
@@ -221,6 +224,9 @@ export async function upsertOAuthUser(profile: OAuthProfile): Promise<SessionUse
       data: {
         displayName: profile.name,
         profilePhotoUrl: profile.avatarUrl ?? existingUser.profilePhotoUrl,
+        emailVerified: existingUser.emailVerified ?? new Date(),
+        isVerified: true,
+        verifiedAt: existingUser.verifiedAt ?? new Date(),
       },
     });
 
@@ -238,6 +244,9 @@ export async function upsertOAuthUser(profile: OAuthProfile): Promise<SessionUse
       username,
       displayName: profile.name,
       profilePhotoUrl: profile.avatarUrl ?? null,
+      emailVerified: new Date(),
+      isVerified: true,
+      verifiedAt: new Date(),
       personalInterests: [],
       accounts: {
         create: {
@@ -342,6 +351,760 @@ export async function completeOnboardingWithInterests(userId: string, interests:
       id: true,
       onboardingCompleted: true,
       personalInterests: true,
+    },
+  });
+}
+
+export type ProfileStoryVisibility = "PUBLIC" | "FOLLOWERS_ONLY" | "PRIVATE";
+export type EngagementRange = "7d" | "30d" | "90d";
+export type PublicProfileField = "bio" | "location" | "pronouns" | "interests" | "stories" | "aspirations";
+export type PublicProfileVisibilitySettings = Record<PublicProfileField, boolean>;
+
+const PUBLIC_PROFILE_FIELDS: PublicProfileField[] = [
+  "bio",
+  "location",
+  "pronouns",
+  "interests",
+  "stories",
+  "aspirations",
+];
+
+const PUBLIC_PROFILE_HIDDEN_PREFIX = "public_profile:hidden:";
+
+const DEFAULT_PUBLIC_PROFILE_VISIBILITY_SETTINGS: PublicProfileVisibilitySettings = {
+  bio: true,
+  location: true,
+  pronouns: true,
+  interests: true,
+  stories: true,
+  aspirations: true,
+};
+
+type UpdateProfileInput = {
+  userId: string;
+  bio?: string;
+  country?: string;
+  city?: string;
+  pronouns?: string;
+  profilePhotoUrl?: string;
+  coverPhotoUrl?: string;
+  interests: string[];
+};
+
+function normalizeOptionalString(value: string | undefined, maxLength: number) {
+  const trimmed = (value ?? "").trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  return trimmed.slice(0, maxLength);
+}
+
+function normalizeInterests(interests: string[]) {
+  return Array.from(
+    new Set(
+      interests
+        .map((interest) => interest.trim())
+        .filter(Boolean),
+    ),
+  ).slice(0, 10);
+}
+
+function normalizePublicProfileVisibilitySettings(
+  input: Partial<PublicProfileVisibilitySettings>,
+): PublicProfileVisibilitySettings {
+  return {
+    bio: input.bio ?? DEFAULT_PUBLIC_PROFILE_VISIBILITY_SETTINGS.bio,
+    location: input.location ?? DEFAULT_PUBLIC_PROFILE_VISIBILITY_SETTINGS.location,
+    pronouns: input.pronouns ?? DEFAULT_PUBLIC_PROFILE_VISIBILITY_SETTINGS.pronouns,
+    interests: input.interests ?? DEFAULT_PUBLIC_PROFILE_VISIBILITY_SETTINGS.interests,
+    stories: input.stories ?? DEFAULT_PUBLIC_PROFILE_VISIBILITY_SETTINGS.stories,
+    aspirations: input.aspirations ?? DEFAULT_PUBLIC_PROFILE_VISIBILITY_SETTINGS.aspirations,
+  };
+}
+
+function parsePublicProfileVisibilityFromPreferredCategories(
+  preferredCategories: string[] | null | undefined,
+): PublicProfileVisibilitySettings {
+  const hiddenFields = new Set<PublicProfileField>();
+
+  for (const category of preferredCategories ?? []) {
+    if (!category.startsWith(PUBLIC_PROFILE_HIDDEN_PREFIX)) {
+      continue;
+    }
+
+    const candidate = category.slice(PUBLIC_PROFILE_HIDDEN_PREFIX.length) as PublicProfileField;
+    if (PUBLIC_PROFILE_FIELDS.includes(candidate)) {
+      hiddenFields.add(candidate);
+    }
+  }
+
+  const settings = { ...DEFAULT_PUBLIC_PROFILE_VISIBILITY_SETTINGS };
+  for (const field of PUBLIC_PROFILE_FIELDS) {
+    settings[field] = !hiddenFields.has(field);
+  }
+
+  return settings;
+}
+
+function buildPreferredCategoriesWithProfileVisibility(
+  existingCategories: string[] | null | undefined,
+  visibilitySettings: PublicProfileVisibilitySettings,
+) {
+  const preservedCategories = (existingCategories ?? []).filter(
+    (category) => !category.startsWith(PUBLIC_PROFILE_HIDDEN_PREFIX),
+  );
+
+  const hiddenTokens = PUBLIC_PROFILE_FIELDS
+    .filter((field) => !visibilitySettings[field])
+    .map((field) => `${PUBLIC_PROFILE_HIDDEN_PREFIX}${field}`);
+
+  return [...preservedCategories, ...hiddenTokens];
+}
+
+function getRangeStart(range: EngagementRange) {
+  const now = Date.now();
+
+  if (range === "7d") {
+    return new Date(now - 7 * 24 * 60 * 60 * 1000);
+  }
+
+  if (range === "90d") {
+    return new Date(now - 90 * 24 * 60 * 60 * 1000);
+  }
+
+  return new Date(now - 30 * 24 * 60 * 60 * 1000);
+}
+
+export async function getProfileForEdit(userId: string) {
+  return db.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      username: true,
+      displayName: true,
+      bio: true,
+      country: true,
+      city: true,
+      pronouns: true,
+      profilePhotoUrl: true,
+      coverPhotoUrl: true,
+      personalInterests: true,
+      createdAt: true,
+    },
+  });
+}
+
+export async function updateProfile(input: UpdateProfileInput) {
+  return db.user.update({
+    where: { id: input.userId },
+    data: {
+      bio: normalizeOptionalString(input.bio, 240),
+      country: normalizeOptionalString(input.country, 60),
+      city: normalizeOptionalString(input.city, 60),
+      pronouns: normalizeOptionalString(input.pronouns, 40),
+      profilePhotoUrl: normalizeOptionalString(input.profilePhotoUrl, 500),
+      coverPhotoUrl: normalizeOptionalString(input.coverPhotoUrl, 500),
+      personalInterests: normalizeInterests(input.interests),
+    },
+    select: {
+      id: true,
+      username: true,
+      bio: true,
+      country: true,
+      city: true,
+      pronouns: true,
+      profilePhotoUrl: true,
+      coverPhotoUrl: true,
+      personalInterests: true,
+      updatedAt: true,
+    },
+  });
+}
+
+export async function getPublicProfileByUsername(username: string) {
+  const normalized = username.trim().toLowerCase();
+
+  const user = await db.user.findFirst({
+    where: {
+      username: normalized,
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+      username: true,
+      displayName: true,
+      bio: true,
+      country: true,
+      city: true,
+      pronouns: true,
+      profilePhotoUrl: true,
+      coverPhotoUrl: true,
+      personalInterests: true,
+      createdAt: true,
+    },
+  });
+
+  if (!user) {
+    return null;
+  }
+
+  const [
+    storyCount,
+    aspirationCount,
+    followersCount,
+    followingCount,
+    recentStories,
+    recentAspirations,
+    badges,
+  ] = await Promise.all([
+    db.story.count({
+      where: {
+        authorId: user.id,
+        status: "PUBLISHED",
+        privacy: "PUBLIC",
+        isAnonymous: false,
+        deletedAt: null,
+      },
+    }),
+    db.aspiration.count({
+      where: {
+        authorId: user.id,
+        privacy: "PUBLIC",
+        deletedAt: null,
+      },
+    }),
+    db.follow.count({ where: { followingId: user.id } }),
+    db.follow.count({ where: { followerId: user.id } }),
+    db.story.findMany({
+      where: {
+        authorId: user.id,
+        status: "PUBLISHED",
+        privacy: "PUBLIC",
+        isAnonymous: false,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        excerpt: true,
+        publishedAt: true,
+        reactionCount: true,
+        commentCount: true,
+      },
+      orderBy: { publishedAt: "desc" },
+      take: 4,
+    }),
+    db.aspiration.findMany({
+      where: {
+        authorId: user.id,
+        privacy: "PUBLIC",
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        supportCount: true,
+        updatedAt: true,
+      },
+      orderBy: { updatedAt: "desc" },
+      take: 4,
+    }),
+    db.userBadge.findMany({
+      where: { userId: user.id },
+      select: {
+        earnedAt: true,
+        badge: {
+          select: {
+            name: true,
+            slug: true,
+            iconUrl: true,
+          },
+        },
+      },
+      orderBy: { earnedAt: "desc" },
+      take: 6,
+    }),
+  ]);
+
+  return {
+    user,
+    stats: {
+      storyCount,
+      aspirationCount,
+      followersCount,
+      followingCount,
+    },
+    recentStories,
+    recentAspirations,
+    badges,
+  };
+}
+
+export async function getDashboardSummary(userId: string, range: EngagementRange) {
+  const rangeStart = getRangeStart(range);
+
+  const [
+    user,
+    draftStories,
+    publishedStories,
+    reactionsReceived,
+    aspirationsByStatus,
+    recentStories,
+    recentAspirations,
+    notifications,
+    unfinishedDrafts,
+    userBadges,
+  ] = await Promise.all([
+    db.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        username: true,
+        displayName: true,
+        bio: true,
+        country: true,
+        city: true,
+        pronouns: true,
+        profilePhotoUrl: true,
+        coverPhotoUrl: true,
+        personalInterests: true,
+        onboardingCompleted: true,
+      },
+    }),
+    db.story.count({
+      where: {
+        authorId: userId,
+        status: "DRAFT",
+        deletedAt: null,
+      },
+    }),
+    db.story.count({
+      where: {
+        authorId: userId,
+        status: "PUBLISHED",
+        deletedAt: null,
+      },
+    }),
+    db.reaction.count({
+      where: {
+        story: {
+          authorId: userId,
+        },
+        createdAt: {
+          gte: rangeStart,
+        },
+      },
+    }),
+    db.aspiration.groupBy({
+      by: ["status"],
+      where: {
+        authorId: userId,
+        deletedAt: null,
+      },
+      _count: {
+        status: true,
+      },
+    }),
+    db.story.findMany({
+      where: {
+        authorId: userId,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        updatedAt: true,
+      },
+      orderBy: { updatedAt: "desc" },
+      take: 5,
+    }),
+    db.aspiration.findMany({
+      where: {
+        authorId: userId,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        updatedAt: true,
+      },
+      orderBy: { updatedAt: "desc" },
+      take: 5,
+    }),
+    db.notification.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+        type: true,
+        title: true,
+        body: true,
+        isRead: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    }),
+    db.story.findMany({
+      where: {
+        authorId: userId,
+        status: "DRAFT",
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        title: true,
+        updatedAt: true,
+      },
+      orderBy: { updatedAt: "desc" },
+      take: 3,
+    }),
+    db.userBadge.findMany({
+      where: { userId },
+      select: {
+        earnedAt: true,
+        badge: {
+          select: {
+            name: true,
+            slug: true,
+            iconUrl: true,
+            points: true,
+          },
+        },
+      },
+      orderBy: { earnedAt: "desc" },
+      take: 6,
+    }),
+  ]);
+
+  if (!user) {
+    return null;
+  }
+
+  const aspirationStatusSummary = {
+    pending: 0,
+    inProgress: 0,
+    achieved: 0,
+    granted: 0,
+    transformed: 0,
+  };
+
+  aspirationsByStatus.forEach((group) => {
+    if (group.status === "PENDING") {
+      aspirationStatusSummary.pending = group._count.status;
+    }
+    if (group.status === "IN_PROGRESS") {
+      aspirationStatusSummary.inProgress = group._count.status;
+    }
+    if (group.status === "ACHIEVED") {
+      aspirationStatusSummary.achieved = group._count.status;
+    }
+    if (group.status === "GRANTED") {
+      aspirationStatusSummary.granted = group._count.status;
+    }
+    if (group.status === "TRANSFORMED") {
+      aspirationStatusSummary.transformed = group._count.status;
+    }
+  });
+
+  const completionChecklist = [
+    Boolean(user.bio?.trim()),
+    Boolean(user.country?.trim()),
+    Boolean(user.city?.trim()),
+    Boolean(user.pronouns?.trim()),
+    Boolean(user.profilePhotoUrl?.trim()),
+    Boolean(user.coverPhotoUrl?.trim()),
+    user.personalInterests.length > 0,
+  ];
+
+  const completedFields = completionChecklist.filter(Boolean).length;
+  const completionPercent = Math.round((completedFields / completionChecklist.length) * 100);
+
+  return {
+    user,
+    range,
+    profileCompletion: {
+      completedFields,
+      totalFields: completionChecklist.length,
+      percent: completionPercent,
+    },
+    storyStats: {
+      draft: draftStories,
+      published: publishedStories,
+      reactions: reactionsReceived,
+    },
+    aspirations: aspirationStatusSummary,
+    recentStories,
+    recentAspirations,
+    notifications,
+    unfinishedDrafts,
+    badges: userBadges,
+  };
+}
+
+export async function getSuggestedFollows(userId: string) {
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: {
+      personalInterests: true,
+    },
+  });
+
+  if (!user || user.personalInterests.length === 0) {
+    return {
+      people: [],
+      circles: [],
+    };
+  }
+
+  const [people, circles] = await Promise.all([
+    db.user.findMany({
+      where: {
+        id: {
+          not: userId,
+        },
+        deletedAt: null,
+        personalInterests: {
+          hasSome: user.personalInterests,
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+        displayName: true,
+        profilePhotoUrl: true,
+        personalInterests: true,
+      },
+      take: 5,
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+    db.circle.findMany({
+      where: {
+        deletedAt: null,
+        isPrivate: false,
+        OR: user.personalInterests.flatMap((interest) => [
+          { name: { contains: interest, mode: "insensitive" as const } },
+          { description: { contains: interest, mode: "insensitive" as const } },
+        ]),
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        memberCount: true,
+      },
+      take: 5,
+      orderBy: { memberCount: "desc" },
+    }),
+  ]);
+
+  return {
+    people,
+    circles,
+  };
+}
+
+type SafetySettingsInput = {
+  userId: string;
+  anonymousPublishingDefault: boolean;
+  defaultStoryVisibility: ProfileStoryVisibility;
+  defaultAspirationVisibility: ProfileStoryVisibility;
+};
+
+export async function getProfileSafetySettings(userId: string) {
+  const preferences = await db.userPreference.findUnique({
+    where: { userId },
+    select: {
+      anonymousPublishingDefault: true,
+      defaultStoryVisibility: true,
+      defaultAspirationVisibility: true,
+    } as any,
+  } as any);
+
+  if (!preferences) {
+    return {
+      anonymousPublishingDefault: false,
+      defaultStoryVisibility: "PUBLIC" as ProfileStoryVisibility,
+      defaultAspirationVisibility: "PUBLIC" as ProfileStoryVisibility,
+    };
+  }
+
+  return {
+    anonymousPublishingDefault: Boolean((preferences as any).anonymousPublishingDefault),
+    defaultStoryVisibility: ((preferences as any).defaultStoryVisibility ?? "PUBLIC") as ProfileStoryVisibility,
+    defaultAspirationVisibility: ((preferences as any).defaultAspirationVisibility ?? "PUBLIC") as ProfileStoryVisibility,
+  };
+}
+
+export async function upsertProfileSafetySettings(input: SafetySettingsInput) {
+  return db.userPreference.upsert({
+    where: {
+      userId: input.userId,
+    },
+    create: {
+      userId: input.userId,
+      anonymousPublishingDefault: input.anonymousPublishingDefault,
+      defaultStoryVisibility: input.defaultStoryVisibility,
+      defaultAspirationVisibility: input.defaultAspirationVisibility,
+      preferredCategories: [],
+      emotionalTonePreference: [],
+      followedTags: [],
+      blockedTags: [],
+    } as any,
+    update: {
+      anonymousPublishingDefault: input.anonymousPublishingDefault,
+      defaultStoryVisibility: input.defaultStoryVisibility,
+      defaultAspirationVisibility: input.defaultAspirationVisibility,
+    } as any,
+    select: {
+      userId: true,
+      anonymousPublishingDefault: true,
+      defaultStoryVisibility: true,
+      defaultAspirationVisibility: true,
+      updatedAt: true,
+    } as any,
+  } as any);
+}
+
+export async function getPublicProfileVisibilitySettings(userId: string) {
+  const preferences = await db.userPreference.findUnique({
+    where: { userId },
+    select: {
+      preferredCategories: true,
+    } as any,
+  } as any);
+
+  return parsePublicProfileVisibilityFromPreferredCategories(
+    (preferences as any)?.preferredCategories,
+  );
+}
+
+export async function upsertPublicProfileVisibilitySettings({
+  userId,
+  visibility,
+}: {
+  userId: string;
+  visibility: Partial<PublicProfileVisibilitySettings>;
+}) {
+  const existing = await db.userPreference.findUnique({
+    where: { userId },
+    select: {
+      preferredCategories: true,
+    } as any,
+  } as any);
+
+  const normalizedVisibility = normalizePublicProfileVisibilitySettings(visibility);
+  const preferredCategories = buildPreferredCategoriesWithProfileVisibility(
+    (existing as any)?.preferredCategories,
+    normalizedVisibility,
+  );
+
+  return db.userPreference.upsert({
+    where: {
+      userId,
+    },
+    create: {
+      userId,
+      preferredCategories,
+      emotionalTonePreference: [],
+      followedTags: [],
+      blockedTags: [],
+    } as any,
+    update: {
+      preferredCategories,
+    } as any,
+    select: {
+      userId: true,
+      preferredCategories: true,
+      updatedAt: true,
+    } as any,
+  } as any);
+}
+
+export async function blockUserByUsername({
+  blockerId,
+  blockedUsername,
+  reason,
+}: {
+  blockerId: string;
+  blockedUsername: string;
+  reason?: string;
+}) {
+  const blocked = await db.user.findFirst({
+    where: {
+      username: blockedUsername.trim().toLowerCase(),
+      deletedAt: null,
+    },
+    select: { id: true },
+  });
+
+  if (!blocked) {
+    throw new Error("user-not-found");
+  }
+
+  if (blocked.id === blockerId) {
+    throw new Error("cannot-block-self");
+  }
+
+  const prismaAny = db as any;
+  await prismaAny.userBlock.upsert({
+    where: {
+      blockerId_blockedId: {
+        blockerId,
+        blockedId: blocked.id,
+      },
+    },
+    update: {
+      reason: normalizeOptionalString(reason, 300),
+    },
+    create: {
+      blockerId,
+      blockedId: blocked.id,
+      reason: normalizeOptionalString(reason, 300),
+    },
+  });
+}
+
+export async function reportUserByUsername({
+  reporterId,
+  reportedUsername,
+  description,
+}: {
+  reporterId: string;
+  reportedUsername: string;
+  description?: string;
+}) {
+  const reported = await db.user.findFirst({
+    where: {
+      username: reportedUsername.trim().toLowerCase(),
+      deletedAt: null,
+    },
+    select: { id: true },
+  });
+
+  if (!reported) {
+    throw new Error("user-not-found");
+  }
+
+  if (reported.id === reporterId) {
+    throw new Error("cannot-report-self");
+  }
+
+  await db.report.create({
+    data: {
+      reporterId,
+      reportedUserId: reported.id,
+      reason: "HARASSMENT",
+      description: normalizeOptionalString(description, 500),
     },
   });
 }

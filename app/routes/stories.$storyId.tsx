@@ -1,221 +1,551 @@
-import type { MetaFunction } from 'react-router';
-import { useParams, Link } from 'react-router';
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
+import { Form, Link, useActionData, useLoaderData, useNavigation, useRouteLoaderData } from 'react-router';
+import { requireUser } from '~/utils/auth.server';
+import { verifyCsrfToken } from '~/utils/csrf.server';
+import { db } from '~/utils/db.server';
 
-export const meta: MetaFunction = () => {
+type ActionData = {
+  error?: string;
+  success?: string;
+  values?: {
+    content: string;
+  };
+};
+
+function formatDate(value: Date | null) {
+  if (!value) {
+    return 'Recently';
+  }
+
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(value);
+}
+
+function formatShortDate(value: Date) {
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+  }).format(value);
+}
+
+function formatStatus(value: string) {
+  return value
+    .toLowerCase()
+    .split('_')
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join(' ');
+}
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) {
+    return [
+      { title: 'Story - PaTan' },
+      { name: 'description', content: 'Read and reflect on an inspiring community story.' },
+    ];
+  }
+
   return [
-    { title: 'Story – PaTan™' },
-    { name: 'description', content: 'Read inspiring stories from our community.' },
+    { title: `${data.story.title} - PaTan` },
+    {
+      name: 'description',
+      content: data.story.excerpt || `Read ${data.story.author.displayName}'s story on PaTan.`,
+    },
   ];
 };
 
-// Placeholder - will be replaced with loader
-const story = {
-  id: '1',
-  title: 'Finding Light After the Storm',
-  content: `When everything seemed lost, I discovered strength I never knew I had.
+export async function loader({ request, params }: LoaderFunctionArgs) {
+  const sessionUser = await requireUser(request);
+  const storyParam = params.storyId?.trim();
 
-It started on a Tuesday morning. The kind of morning where the sun refuses to break through the clouds, as if nature itself knew what was coming.
+  if (!storyParam) {
+    throw new Response('Story not found', { status: 404 });
+  }
 
-I had built my life around certainties—a stable career, a comfortable routine, relationships I thought would last forever. But life has a way of teaching us that nothing is truly permanent.
+  const story = await db.story.findFirst({
+    where: {
+      deletedAt: null,
+      status: 'PUBLISHED',
+      OR: [{ id: storyParam }, { slug: storyParam }],
+      AND: {
+        OR: [{ privacy: 'PUBLIC' }, { authorId: sessionUser.id }],
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      excerpt: true,
+      readingTimeMinutes: true,
+      publishedAt: true,
+      reactionCount: true,
+      commentCount: true,
+      category: {
+        select: {
+          name: true,
+        },
+      },
+      tags: {
+        select: {
+          tag: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+      author: {
+        select: {
+          username: true,
+          displayName: true,
+          city: true,
+          country: true,
+          profilePhotoUrl: true,
+        },
+      },
+    },
+  });
 
-The call came at 9:47 AM. In the span of a few minutes, everything I knew crumbled. My company was closing. My foundation shook.
+  if (!story) {
+    throw new Response('Story not found', { status: 404 });
+  }
 
-The first weeks were the hardest. I remember lying awake at 3 AM, my mind racing through every decision I'd ever made, searching for the moment where I could have done things differently. The what-ifs were relentless.
+  const [reflections, storyDraftsCount, activeAspirationsCount, savedStoriesCount, authoredStoriesCount, privateReflectionCount, recentAspirations, recentPrivateReflections] = await Promise.all([
+    db.comment.findMany({
+      where: {
+        storyId: story.id,
+        deletedAt: null,
+        parentId: null,
+      },
+      take: 8,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      select: {
+        id: true,
+        content: true,
+        createdAt: true,
+        author: {
+          select: {
+            displayName: true,
+          },
+        },
+      },
+    }),
+    db.story.count({
+      where: {
+        authorId: sessionUser.id,
+        deletedAt: null,
+        status: 'DRAFT',
+      },
+    }),
+    db.aspiration.count({
+      where: {
+        authorId: sessionUser.id,
+        deletedAt: null,
+        status: {
+          in: ['PENDING', 'IN_PROGRESS'],
+        },
+      },
+    }),
+    db.savedStory.count({
+      where: {
+        userId: sessionUser.id,
+      },
+    }),
+    db.story.count({
+      where: {
+        authorId: sessionUser.id,
+        deletedAt: null,
+      },
+    }),
+    db.reflectionEntry.count({
+      where: {
+        userId: sessionUser.id,
+      },
+    }),
+    db.aspiration.findMany({
+      where: {
+        authorId: sessionUser.id,
+        deletedAt: null,
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      take: 3,
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        updatedAt: true,
+      },
+    }),
+    db.reflectionEntry.findMany({
+      where: {
+        userId: sessionUser.id,
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      take: 3,
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        updatedAt: true,
+      },
+    }),
+  ]);
 
-But somewhere in that darkness, a small voice began to whisper. At first, it was barely audible—drowned out by fear and uncertainty. But it persisted.
+  return {
+    story,
+    reflections,
+    workspace: {
+      storyDraftsCount,
+      activeAspirationsCount,
+      savedStoriesCount,
+      authoredStoriesCount,
+      privateReflectionCount,
+      recentAspirations,
+      recentPrivateReflections,
+    },
+  };
+}
 
-"This is not the end. This is a beginning."
+export async function action({ request, params }: ActionFunctionArgs) {
+  const sessionUser = await requireUser(request);
+  const storyParam = params.storyId?.trim();
 
-I started writing. Not for anyone else, just for myself. Late at night, I would pour my thoughts onto paper—raw, unfiltered, painful. And slowly, something shifted.
+  if (!storyParam) {
+    return {
+      error: 'Invalid story reference.',
+      values: {
+        content: String((await request.formData()).get('content') ?? ''),
+      },
+    } satisfies ActionData;
+  }
 
-The more I wrote, the more I realized that my story wasn't just about loss. It was about resilience. About the human capacity to adapt, to grow, to find meaning even in the midst of chaos.
+  const formData = await request.formData();
+  const intent = String(formData.get('intent') ?? 'share-reflection');
+  const csrfToken = String(formData.get('csrfToken') ?? '');
+  const content = String(formData.get('content') ?? '').trim();
 
-I reconnected with old friends. I discovered new passions. I learned to be gentle with myself in ways I never had before.
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
 
-Today, standing on the other side of that storm, I can see how every challenge was shaping me. The job loss that felt like a catastrophe became the catalyst for starting my own business. The loneliness that once overwhelmed me taught me the value of genuine connection.
+  if (!hasValidCsrf) {
+    return {
+      error: 'Your session could not be verified. Please refresh and try again.',
+      values: { content },
+    } satisfies ActionData;
+  }
 
-If you're reading this from the middle of your own storm, I want you to know: the light is coming. It might not arrive when you expect it, or in the form you imagined. But it will come.
+  if (!content) {
+    return {
+      error: 'Please write your reflection before submitting.',
+      values: { content },
+    } satisfies ActionData;
+  }
 
-Your story is still being written. And the chapters ahead might just be the most beautiful ones yet.`,
-  author: {
-    name: 'Sarah M.',
-    location: 'Toronto, Canada',
-    avatar: null,
-    storiesCount: 12,
-  },
-  category: 'Transformation',
-  tags: ['resilience', 'career', 'personal-growth', 'hope'],
-  readTime: '5 min',
-  publishedAt: '2026-05-15',
-  reactions: {
-    celebrate: 124,
-    uplift: 89,
-    empathy: 67,
-  },
-  commentsCount: 23,
-};
+  if (content.length > 1200) {
+    return {
+      error: 'Reflection must be 1200 characters or fewer.',
+      values: { content },
+    } satisfies ActionData;
+  }
 
-export default function StoryDetail() {
-  const { storyId } = useParams();
+  const story = await db.story.findFirst({
+    where: {
+      deletedAt: null,
+      status: 'PUBLISHED',
+      OR: [{ id: storyParam }, { slug: storyParam }],
+      AND: {
+        OR: [{ privacy: 'PUBLIC' }, { authorId: sessionUser.id }],
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+    },
+  });
+
+  if (!story) {
+    return {
+      error: 'This story is no longer available for reflections.',
+      values: { content },
+    } satisfies ActionData;
+  }
+
+  if (intent === 'save-private-reflection') {
+    await db.reflectionEntry.create({
+      data: {
+        userId: sessionUser.id,
+        title: `Reflection on ${story.title}`,
+        content,
+        gratitudes: [],
+        isPrivate: true,
+      },
+    });
+
+    return {
+      success: 'Private reflection saved to your journal.',
+      values: {
+        content: '',
+      },
+    } satisfies ActionData;
+  }
+
+  await db.comment.create({
+    data: {
+      storyId: story.id,
+      authorId: sessionUser.id,
+      content,
+    },
+  });
+
+  return {
+    success: 'Reflection shared successfully.',
+    values: {
+      content: '',
+    },
+  } satisfies ActionData;
+}
+
+export default function StoryDetailRoute() {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>('root');
+  const { story, reflections, workspace } = useLoaderData<typeof loader>();
+  const actionData = useActionData<ActionData>();
+  const navigation = useNavigation();
+
+  const csrfToken = rootData?.csrfToken ?? '';
+  const csrfFieldName = rootData?.csrfFieldName ?? 'csrfToken';
+  const isSubmitting = navigation.state === 'submitting';
+
+  const locationText = [story.author.city, story.author.country].filter(Boolean).join(', ');
+  const reflectionDraft = actionData?.values?.content ?? '';
 
   return (
-    <main id="main-content" className="page-modern bg-dawn">
-      <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Category */}
-        <div className="text-center">
-          <span className="inline-block px-4 py-1.5 bg-golden/10 text-golden text-sm font-medium rounded-full">
-            {story.category}
-          </span>
-        </div>
-
-        {/* Title */}
-        <h1 className="mt-6 font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-midnight text-center leading-tight">
-          {story.title}
-        </h1>
-
-        {/* Author & Meta */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm text-night/60">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-golden to-forest flex items-center justify-center text-white font-bold">
-              {story.author.name.charAt(0)}
+    <main id="main-content" className="page-modern min-h-screen bg-dawn">
+      <article className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr),22rem]">
+          <section aria-labelledby="story-title" className="rounded-3xl border border-midnight/10 bg-white p-6 sm:p-8 shadow-sm">
+            <div className="text-center">
+              <span className="inline-block px-4 py-1.5 bg-golden/10 text-golden text-sm font-medium rounded-full">
+                {story.category.name}
+              </span>
             </div>
-            <div>
-              <p className="font-medium text-midnight">{story.author.name}</p>
-              <p>{story.author.location}</p>
+
+            <h1 id="story-title" className="mt-6 font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-midnight text-center leading-tight">
+              {story.title}
+            </h1>
+
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm text-night/60">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-golden to-forest flex items-center justify-center text-white font-bold overflow-hidden">
+                  {story.author.profilePhotoUrl ? (
+                    <img src={story.author.profilePhotoUrl} alt={`Profile avatar for ${story.author.displayName}`} className="w-full h-full object-cover" />
+                  ) : (
+                    story.author.displayName.charAt(0)
+                  )}
+                </div>
+                <div>
+                  <p className="font-medium text-midnight">{story.author.displayName}</p>
+                  <p>{locationText || 'PaTan community'}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <span>{story.readingTimeMinutes} min read</span>
+                <span aria-hidden="true">|</span>
+                <time dateTime={story.publishedAt?.toISOString()}>{formatDate(story.publishedAt)}</time>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <span>{story.readTime} read</span>
-            <span>•</span>
-            <time dateTime={story.publishedAt}>
-              {new Date(story.publishedAt).toLocaleDateString('en-US', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </time>
-          </div>
-        </div>
 
-        {/* Content */}
-        <div className="mt-12 prose prose-lg max-w-none">
-          {story.content.split('\n\n').map((paragraph, index) => (
-            <p key={index} className="text-night/80 leading-relaxed mb-6">
-              {paragraph}
-            </p>
-          ))}
-        </div>
-
-        {/* Tags */}
-        <div className="mt-12 flex flex-wrap gap-2">
-          {story.tags.map((tag) => (
-            <Link
-              key={tag}
-              to={`/discover?tag=${tag}`}
-              className="px-3 py-1 bg-mist text-night/70 text-sm rounded-full hover:bg-mist/70 transition-colors"
-            >
-              #{tag}
-            </Link>
-          ))}
-        </div>
-
-        {/* Engagement Bar */}
-        <div className="mt-12 py-6 border-y border-mist">
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <button
-              type="button"
-              className="engagement-btn"
-              aria-label="Celebrate this story"
-            >
-              🎉 Celebrate
-              <span className="text-night/50">{story.reactions.celebrate}</span>
-            </button>
-            <button
-              type="button"
-              className="engagement-btn"
-              aria-label="Uplift this story"
-            >
-              🙌 Uplift
-              <span className="text-night/50">{story.reactions.uplift}</span>
-            </button>
-            <button
-              type="button"
-              className="engagement-btn"
-              aria-label="Show empathy"
-            >
-              💜 Empathy
-              <span className="text-night/50">{story.reactions.empathy}</span>
-            </button>
-            <button
-              type="button"
-              className="engagement-btn"
-              aria-label="Save this story"
-            >
-              🔖 Save
-            </button>
-            <button
-              type="button"
-              className="engagement-btn"
-              aria-label="Share this story"
-            >
-              📤 Share
-            </button>
-          </div>
-        </div>
-
-        {/* Author Bio */}
-        <div className="mt-12 p-6 bg-white rounded-xl border border-mist">
-          <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-golden to-forest flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
-              {story.author.name.charAt(0)}
+            <div className="mt-10 prose prose-lg max-w-none">
+              {story.content.split('\n\n').map((paragraph, index) => (
+                <p key={index} className="text-night/85 leading-relaxed mb-6">
+                  {paragraph}
+                </p>
+              ))}
             </div>
-            <div>
-              <h2 className="font-heading text-lg font-bold text-midnight">
-                {story.author.name}
+
+            <div className="mt-10 flex flex-wrap gap-2">
+              {story.tags.map((tagLink) => (
+                <Link
+                  key={tagLink.tag.name}
+                  to={`/discover?tag=${encodeURIComponent(tagLink.tag.name)}`}
+                  className="px-3 py-1 bg-mist text-night/70 text-sm rounded-full hover:bg-mist/70 transition-colors"
+                >
+                  #{tagLink.tag.name}
+                </Link>
+              ))}
+            </div>
+
+            <div className="mt-8 rounded-2xl border border-midnight/10 bg-surface p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-night/70">
+                <span>{story.reactionCount} reactions</span>
+                <span>{story.commentCount + (actionData?.success && actionData.success.includes('shared') ? 1 : 0)} reflections</span>
+                <Link
+                  to={`/u/${story.author.username}`}
+                  className="font-semibold text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
+                >
+                  View author profile
+                </Link>
+              </div>
+            </div>
+
+            <section className="mt-10" aria-labelledby="reflections-heading">
+              <h2 id="reflections-heading" className="font-heading text-2xl font-bold text-midnight">
+                Reflections
               </h2>
-              <p className="text-sm text-night/60">{story.author.location}</p>
-              <p className="mt-2 text-night/70 text-sm">
-                {story.author.storiesCount} stories shared
+
+              <div className="mt-4 rounded-2xl border border-midnight/10 bg-white p-4 sm:p-5">
+                <h3 className="text-sm font-semibold text-midnight">Share or save your reflection</h3>
+
+                {actionData?.error ? (
+                  <p className="mt-3 rounded-lg border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-3 py-2 text-sm text-[#7C2D12]" role="alert">
+                    {actionData.error}
+                  </p>
+                ) : null}
+
+                {actionData?.success ? (
+                  <p className="mt-3 rounded-lg border border-forest/30 bg-[#ECF9F0] px-3 py-2 text-sm text-forest" role="status" aria-live="polite">
+                    {actionData.success}
+                  </p>
+                ) : null}
+
+                <Form method="post" className="mt-3 space-y-3">
+                  <input type="hidden" name="storyId" value={story.id} />
+                  <input type="hidden" name={csrfFieldName} value={csrfToken} />
+                  <label htmlFor="content" className="sr-only">Your reflection</label>
+                  <textarea
+                    id="content"
+                    name="content"
+                    rows={4}
+                    maxLength={1200}
+                    defaultValue={reflectionDraft}
+                    className="w-full rounded-xl border border-mist px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent"
+                    placeholder="What touched you in this story?"
+                  />
+                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                    <button
+                      type="submit"
+                      name="intent"
+                      value="save-private-reflection"
+                      className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white px-4 py-2 text-sm font-medium text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? 'Saving...' : 'Save private reflection'}
+                    </button>
+                    <button
+                      type="submit"
+                      name="intent"
+                      value="share-reflection"
+                      className="btn-primary min-h-[44px] px-5 py-2.5 text-sm"
+                      disabled={isSubmitting}
+                      aria-busy={isSubmitting}
+                    >
+                      {isSubmitting ? 'Sharing...' : 'Share reflection'}
+                    </button>
+                  </div>
+                </Form>
+              </div>
+
+              <ul className="mt-5 space-y-3" role="list">
+                {reflections.length === 0 ? (
+                  <li className="rounded-xl border border-midnight/10 bg-white p-4 text-sm text-night/70">
+                    No reflections yet. Be the first to encourage this storyteller.
+                  </li>
+                ) : (
+                  reflections.map((reflection) => (
+                    <li key={reflection.id} className="rounded-xl border border-midnight/10 bg-white p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-sm font-semibold text-midnight">{reflection.author.displayName}</p>
+                        <span className="text-xs text-night/60">{formatShortDate(reflection.createdAt)}</span>
+                      </div>
+                      <p className="mt-2 text-sm text-night/80 leading-relaxed">{reflection.content}</p>
+                    </li>
+                  ))
+                )}
+              </ul>
+            </section>
+          </section>
+
+          <aside className="space-y-4" aria-label="Story workspace">
+            <section className="rounded-3xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm">
+              <p className="text-xs uppercase tracking-[0.14em] text-golden font-semibold">My Workspace</p>
+              <h2 className="mt-2 font-heading text-2xl text-midnight">Dashboard Panel</h2>
+              <p className="mt-2 text-sm text-night/70">
+                Manage your active features while you read and reflect.
               </p>
-              <button
-                type="button"
-                className="mt-3 text-sm font-medium text-golden hover:text-soft-gold"
-              >
-                Follow
-              </button>
-            </div>
-          </div>
-        </div>
 
-        {/* Comments Section Placeholder */}
-        <section className="mt-12">
-          <h2 className="font-heading text-xl font-bold text-midnight">
-            Reflections ({story.commentsCount})
-          </h2>
-          <div className="mt-6 p-8 bg-mist/30 rounded-xl text-center">
-            <p className="text-night/60">
-              Sign in to share your reflection on this story.
-            </p>
-            <Link to="/login" className="mt-4 btn-primary inline-block">
-              Sign In
-            </Link>
-          </div>
-        </section>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <article className="rounded-xl border border-midnight/10 bg-surface p-3">
+                  <p className="text-xs text-night/60 uppercase tracking-wide">My stories</p>
+                  <p className="mt-1 text-xl font-bold text-midnight">{workspace.authoredStoriesCount}</p>
+                </article>
+                <article className="rounded-xl border border-midnight/10 bg-surface p-3">
+                  <p className="text-xs text-night/60 uppercase tracking-wide">Drafts</p>
+                  <p className="mt-1 text-xl font-bold text-midnight">{workspace.storyDraftsCount}</p>
+                </article>
+                <article className="rounded-xl border border-midnight/10 bg-surface p-3">
+                  <p className="text-xs text-night/60 uppercase tracking-wide">Aspirations</p>
+                  <p className="mt-1 text-xl font-bold text-midnight">{workspace.activeAspirationsCount}</p>
+                </article>
+                <article className="rounded-xl border border-midnight/10 bg-surface p-3">
+                  <p className="text-xs text-night/60 uppercase tracking-wide">Journal</p>
+                  <p className="mt-1 text-xl font-bold text-midnight">{workspace.privateReflectionCount}</p>
+                </article>
+              </div>
+
+              <nav className="mt-5 grid gap-2" aria-label="Workspace quick actions">
+                <Link to="/dashboard" className="btn-primary min-h-[44px] inline-flex items-center justify-center text-sm">Open dashboard</Link>
+                <Link to="/profile" className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden">Manage profile</Link>
+                <Link to="/profile/edit" className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden">Public profile settings</Link>
+                <Link to="/aspirations/new" className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden">Create aspiration</Link>
+              </nav>
+            </section>
+
+            <section className="rounded-3xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm" aria-labelledby="recent-aspirations-heading">
+              <h2 id="recent-aspirations-heading" className="font-heading text-xl text-midnight">Recent aspirations</h2>
+              {workspace.recentAspirations.length === 0 ? (
+                <p className="mt-3 text-sm text-night/70">No aspirations yet. Start one to track your next milestone.</p>
+              ) : (
+                <ul className="mt-3 space-y-3" role="list">
+                  {workspace.recentAspirations.map((aspiration) => (
+                    <li key={aspiration.id} className="rounded-xl border border-midnight/10 p-3">
+                      <p className="text-sm font-medium text-midnight">{aspiration.title}</p>
+                      <p className="mt-1 text-xs text-night/60">
+                        {formatStatus(aspiration.status)} | {formatShortDate(aspiration.updatedAt)}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            <section className="rounded-3xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm" aria-labelledby="recent-journal-heading">
+              <h2 id="recent-journal-heading" className="font-heading text-xl text-midnight">Private journal</h2>
+              {workspace.recentPrivateReflections.length === 0 ? (
+                <p className="mt-3 text-sm text-night/70">No private reflections yet. Save one after reading this story.</p>
+              ) : (
+                <ul className="mt-3 space-y-3" role="list">
+                  {workspace.recentPrivateReflections.map((entry) => (
+                    <li key={entry.id} className="rounded-xl border border-midnight/10 p-3">
+                      <p className="text-sm font-medium text-midnight">{entry.title?.trim() || 'Reflection entry'}</p>
+                      <p className="mt-1 text-xs text-night/70 line-clamp-2">{entry.content}</p>
+                      <p className="mt-1 text-xs text-night/60">{formatShortDate(entry.updatedAt)}</p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </aside>
+        </div>
       </article>
-
-      {/* Related Stories */}
-      <section className="bg-mist/30 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-heading text-2xl font-bold text-midnight text-center">
-            More Stories Like This
-          </h2>
-          <div className="mt-8 text-center">
-            <Link to="/discover" className="btn-secondary">
-              Explore More Stories
-            </Link>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }

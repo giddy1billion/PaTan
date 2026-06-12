@@ -22,7 +22,7 @@ const INTEREST_OPTIONS = [
 
 function getSafeRedirectTarget(redirectTo: string | null | undefined) {
   if (!redirectTo || !redirectTo.startsWith("/") || redirectTo.startsWith("//")) {
-    return "/discover";
+    return "/dashboard";
   }
 
   return redirectTo;
@@ -67,7 +67,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
   const formData = await request.formData();
-  const redirectTo = getSafeRedirectTarget(String(formData.get("redirectTo") ?? "/discover"));
+  const redirectTo = getSafeRedirectTarget(String(formData.get("redirectTo") ?? "/dashboard"));
 
   const selectedInterests = formData
     .getAll("interests")

@@ -1,14 +1,79 @@
 import {
+  data,
   isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteLoaderData,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { getBotDefenseClientConfig } from "~/utils/bot-defense.server";
+import { issueCsrfToken } from "~/utils/csrf.server";
+
+function getSecurityCsp() {
+  const directives = [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "frame-ancestors 'none'",
+    "object-src 'none'",
+    "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.google.com https://www.gstatic.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com data:",
+    "img-src 'self' data: https:",
+    "connect-src 'self' https://challenges.cloudflare.com https://www.google.com https://www.gstatic.com https://api.pwnedpasswords.com",
+    "frame-src 'self' https://challenges.cloudflare.com https://www.google.com",
+    "form-action 'self'",
+    "upgrade-insecure-requests",
+  ];
+
+  return directives.join("; ");
+}
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const csrf = await issueCsrfToken(request);
+  const botDefense = getBotDefenseClientConfig();
+
+  return data(
+    {
+      csrfToken: csrf.csrfToken,
+      csrfFieldName: "csrfToken",
+      botDefense,
+    },
+    {
+      headers: csrf.headers,
+    },
+  );
+}
+
+export const headers: Route.HeadersFunction = ({ loaderHeaders, parentHeaders, actionHeaders }) => {
+  const responseHeaders = new Headers(parentHeaders);
+
+  const inheritedSetCookie = loaderHeaders.get("Set-Cookie");
+  if (inheritedSetCookie) {
+    responseHeaders.append("Set-Cookie", inheritedSetCookie);
+  }
+
+  const actionSetCookie = actionHeaders.get("Set-Cookie");
+  if (actionSetCookie) {
+    responseHeaders.append("Set-Cookie", actionSetCookie);
+  }
+
+  responseHeaders.set("Content-Security-Policy", getSecurityCsp());
+  responseHeaders.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  responseHeaders.set("X-Content-Type-Options", "nosniff");
+  responseHeaders.set("X-Frame-Options", "DENY");
+  responseHeaders.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()");
+
+  if (process.env.NODE_ENV === "production") {
+    responseHeaders.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  }
+
+  return responseHeaders;
+};
 
 export const links: Route.LinksFunction = () => [
   // PWA Manifest
@@ -43,6 +108,11 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const rootData = useRouteLoaderData<typeof loader>("root");
+
+  const shouldLoadTurnstile = rootData?.botDefense.enabled && rootData.botDefense.provider === "turnstile";
+  const shouldLoadRecaptcha = rootData?.botDefense.enabled && rootData.botDefense.provider === "recaptcha";
+
   return (
     <html lang="en">
       <head>
@@ -52,6 +122,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="description" content="PaTan™ - Share transformative stories. Discover hope. Connect through authentic human experiences." />
         <Meta />
         <Links />
+        {shouldLoadTurnstile ? (
+          <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
+        ) : null}
+        {shouldLoadRecaptcha ? (
+          <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer />
+        ) : null}
       </head>
       <body>
         {/* Skip link for keyboard navigation - WCAG 2.2 */}

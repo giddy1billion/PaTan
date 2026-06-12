@@ -49,6 +49,71 @@ For Google and Facebook OAuth login, create a local `.env` file from `.env.examp
 For production, set both redirect URIs to `https://PaTan™.site/oauth/callback`.
 For local development, you can use `http://localhost:5173/oauth/callback`.
 
+### Webhook Signature Verification
+
+Outbound security webhooks include these headers:
+
+- `X-PaTan-Webhook-Source`
+- `X-PaTan-Webhook-Event`
+- `X-PaTan-Webhook-Timestamp` (unix seconds)
+- `X-PaTan-Webhook-Signature` (`sha256=<hex>`)
+- `X-PaTan-Webhook-Key-Id` (optional)
+
+Signature is computed as HMAC-SHA256 over:
+
+```text
+${timestamp}.${rawBody}
+```
+
+Tiny receiver-side verification snippet:
+
+```ts
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+export function verifyPatanWebhookSignature({
+	rawBody,
+	timestamp,
+	signatureHeader,
+	secret,
+	toleranceSeconds = 300,
+}: {
+	rawBody: string;
+	timestamp: string | undefined;
+	signatureHeader: string | undefined;
+	secret: string;
+	toleranceSeconds?: number;
+}) {
+	if (!timestamp || !signatureHeader?.startsWith("sha256=")) {
+		return false;
+	}
+
+	const ts = Number(timestamp);
+	if (!Number.isFinite(ts)) {
+		return false;
+	}
+
+	const now = Math.floor(Date.now() / 1000);
+	if (Math.abs(now - ts) > toleranceSeconds) {
+		return false;
+	}
+
+	const expected = createHmac("sha256", secret)
+		.update(`${timestamp}.${rawBody}`)
+		.digest("hex");
+
+	const provided = signatureHeader.slice("sha256=".length);
+	const expectedBuf = Buffer.from(expected, "hex");
+	const providedBuf = Buffer.from(provided, "hex");
+
+	return (
+		expectedBuf.length === providedBuf.length &&
+		timingSafeEqual(expectedBuf, providedBuf)
+	);
+}
+```
+
+Important: verify against the exact raw request body bytes before JSON parsing.
+
 ## Building for Production
 
 Create a production build:

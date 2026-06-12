@@ -1,14 +1,31 @@
-import { Form, Link, NavLink } from 'react-router';
+import { Form, Link, NavLink, useRouteLoaderData } from 'react-router';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { SessionUser } from '~/utils/auth.server';
 
-const menuItems = [
+type NavItem = {
+  label: string;
+  href: string;
+};
+
+const guestMenuItems = [
   { label: 'Discover Stories', href: '/discover' },
   { label: 'Journeys', href: '/journeys' },
   { label: 'Aspirations', href: '/aspirations' },
   { label: 'Community', href: '/community' },
   { label: 'About', href: '/about' },
-];
+] satisfies NavItem[];
+
+const memberPrimaryMenuItems = [
+  { label: 'Dashboard', href: '/dashboard' },
+  { label: 'My Profile', href: '/profile' },
+] satisfies NavItem[];
+
+const memberSecondaryMenuItems = [
+  { label: 'Discover', href: '/discover' },
+  { label: 'Journeys', href: '/journeys' },
+  { label: 'Aspirations', href: '/aspirations' },
+  { label: 'Community', href: '/community' },
+] satisfies NavItem[];
 
 function getProviderLabel(provider: SessionUser['provider']) {
   if (provider === 'google') return 'Google';
@@ -115,6 +132,12 @@ export function Navigation({
   user: SessionUser | null;
   onboarding: OnboardingProgress;
 }) {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>('root');
+  const csrfToken = rootData?.csrfToken ?? '';
+  const csrfFieldName = rootData?.csrfFieldName ?? 'csrfToken';
+
+  const primaryMenuItems = user ? memberPrimaryMenuItems : guestMenuItems;
+  const secondaryMenuItems = user ? memberSecondaryMenuItems : [];
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -239,7 +262,7 @@ export function Navigation({
       >
         <div className="flex items-center justify-between h-16 sm:h-18 lg:h-20">
           <Link
-            to="/"
+            to={user ? '/dashboard' : '/'}
             className="flex items-center gap-2.5 sm:gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 rounded-lg group min-h-[44px] shrink-0"
             aria-label="PaTan™ home"
             onClick={() => isMenuOpen && closeMenu()}
@@ -258,7 +281,7 @@ export function Navigation({
           </Link>
 
           <ul className="hidden lg:flex items-center gap-1 xl:gap-2" role="list">
-            {menuItems.map((item) => (
+            {primaryMenuItems.map((item) => (
               <li key={item.href}>
                 <NavLink
                   to={item.href}
@@ -279,6 +302,36 @@ export function Navigation({
                 </NavLink>
               </li>
             ))}
+
+            {secondaryMenuItems.length > 0 ? (
+              <>
+                <li aria-hidden="true" className="mx-1 h-6 w-px bg-midnight/15" />
+                <li aria-hidden="true" className="px-1 text-xs font-semibold uppercase tracking-wide text-[#64748B]">
+                  Explore
+                </li>
+                {secondaryMenuItems.map((item) => (
+                  <li key={item.href}>
+                    <NavLink
+                      to={item.href}
+                      className={({ isActive }) =>
+                        `relative px-3 py-2.5 text-xs font-semibold uppercase tracking-wide rounded-xl transition-all duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 min-h-[44px] inline-flex items-center
+                        after:absolute after:bottom-1 after:left-3 after:right-3 after:h-0.5 after:rounded-full after:transition-all after:duration-200
+                        ${isScrolled
+                          ? isActive
+                            ? 'text-midnight bg-surface after:bg-golden'
+                            : 'text-[#64748B] hover:text-midnight hover:bg-surface/80 after:bg-transparent hover:after:bg-midnight/10'
+                          : isActive
+                            ? 'text-golden bg-white/15 after:bg-golden drop-shadow-sm'
+                            : 'text-white/90 hover:text-golden hover:bg-white/10 after:bg-transparent hover:after:bg-white/30 drop-shadow-sm'
+                        }`
+                      }
+                    >
+                      {item.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </>
+            ) : null}
           </ul>
 
           <div className="hidden lg:flex items-center gap-2 xl:gap-3">
@@ -295,6 +348,7 @@ export function Navigation({
                   </Link>
                 ) : null}
                 <Form method="post" action="/logout">
+                  <input type="hidden" name={csrfFieldName} value={csrfToken} />
                   <button
                     type="submit"
                     className="min-h-[44px] px-3 py-2 rounded-xl text-sm font-medium text-midnight border border-midnight/15 bg-white/90 hover:bg-surface transition-all duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
@@ -402,7 +456,7 @@ export function Navigation({
       >
         <nav className="overflow-y-auto overscroll-contain max-h-[calc(100vh-6rem)] p-3" aria-label="Mobile navigation">
           <ul className="space-y-1" role="list">
-            {menuItems.map((item, index) => (
+            {primaryMenuItems.map((item, index) => (
               <li key={item.href}>
                 <NavLink
                   ref={index === 0 ? firstMenuItemRef : undefined}
@@ -421,6 +475,33 @@ export function Navigation({
               </li>
             ))}
           </ul>
+
+          {secondaryMenuItems.length > 0 ? (
+            <>
+              <p className="mt-4 px-3 text-xs font-semibold uppercase tracking-wide text-[#64748B]" id="mobile-explore-label">
+                Explore
+              </p>
+              <ul className="mt-2 space-y-1" role="list" aria-labelledby="mobile-explore-label">
+                {secondaryMenuItems.map((item) => (
+                  <li key={item.href}>
+                    <NavLink
+                      to={item.href}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold uppercase tracking-wide transition-all duration-200 motion-reduce:transition-none min-h-[48px] ${
+                          isActive
+                            ? 'bg-golden-glow text-midnight'
+                            : 'text-text-body hover:bg-surface hover:text-midnight active:bg-border'
+                        }`
+                      }
+                      onClick={closeMenu}
+                    >
+                      {item.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
 
           <div className="mt-4 pt-4 border-t border-border space-y-2">
             {user ? (
@@ -443,6 +524,7 @@ export function Navigation({
                   </Link>
                 ) : null}
                 <Form method="post" action="/logout" className="mt-3">
+                  <input type="hidden" name={csrfFieldName} value={csrfToken} />
                   <button
                     type="submit"
                     className="w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm font-medium text-midnight border border-midnight/15 bg-white hover:bg-border/50 transition-all duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"

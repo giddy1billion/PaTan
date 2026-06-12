@@ -16,7 +16,7 @@ type ActionData = {
 
 function getSafeRedirectTarget(redirectTo: string | null | undefined) {
   if (!redirectTo || !redirectTo.startsWith("/") || redirectTo.startsWith("//")) {
-    return "/discover";
+    return "/dashboard";
   }
 
   return redirectTo;
@@ -57,7 +57,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
   const formData = await request.formData();
 
-  const redirectTo = getSafeRedirectTarget(String(formData.get("redirectTo") ?? "/discover"));
+  const redirectTo = getSafeRedirectTarget(String(formData.get("redirectTo") ?? "/dashboard"));
   const displayName = String(formData.get("displayName") ?? "").trim();
   const username = String(formData.get("username") ?? "").trim().toLowerCase();
   const bio = String(formData.get("bio") ?? "").trim();

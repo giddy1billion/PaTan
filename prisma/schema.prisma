@@ -210,6 +210,8 @@ model User {
   moderationActions   ModerationAction[]    @relation("ModeratorActions")
   reflectionEntries   ReflectionEntry[]
   aspirationSupports  AspirationSupport[]
+  blocksInitiated     UserBlock[]           @relation("BlockerUser")
+  blocksReceived      UserBlock[]           @relation("BlockedUser")
 
   @@index([email])
   @@index([username])
@@ -269,6 +271,9 @@ model UserPreference {
   highContrastMode        Boolean  @default(false) @map("high_contrast_mode")
   reducedMotion           Boolean  @default(false) @map("reduced_motion")
   fontSize                String   @default("medium") @map("font_size")
+  anonymousPublishingDefault Boolean @default(false) @map("anonymous_publishing_default")
+  defaultStoryVisibility  StoryPrivacy @default(PUBLIC) @map("default_story_visibility")
+  defaultAspirationVisibility AspirationPrivacy @default(PUBLIC) @map("default_aspiration_visibility")
   preferredCategories     String[] @map("preferred_categories")
   emotionalTonePreference String[] @map("emotional_tone_preference")
   followedTags            String[] @map("followed_tags")
@@ -279,6 +284,22 @@ model UserPreference {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_preferences")
+}
+
+model UserBlock {
+  id          String   @id @default(cuid())
+  blockerId   String   @map("blocker_id")
+  blockedId   String   @map("blocked_id")
+  reason      String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  blocker User @relation("BlockerUser", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked User @relation("BlockedUser", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+  @@index([blockerId])
+  @@index([blockedId])
+  @@map("user_blocks")
 }
 
 // ============================================================================
