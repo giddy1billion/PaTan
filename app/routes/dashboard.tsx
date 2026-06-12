@@ -88,6 +88,177 @@ export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const intent = String(formData.get("intent") ?? "");
 
+  if (intent === "follow-user") {
+    const targetUserId = String(formData.get("targetUserId") ?? "").trim();
+
+    if (!targetUserId) {
+      return { error: "Target user is missing." } satisfies ActionData;
+    }
+
+    if (targetUserId === sessionUser.id) {
+      return { error: "You cannot follow yourself." } satisfies ActionData;
+    }
+
+    const targetUser = await db.user.findUnique({
+      where: { id: targetUserId },
+      select: { id: true, deletedAt: true },
+    });
+
+    if (!targetUser || targetUser.deletedAt) {
+      return { error: "This profile is no longer available." } satisfies ActionData;
+    }
+
+    const existingFollow = await db.follow.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId: sessionUser.id,
+          followingId: targetUserId,
+        },
+      },
+      select: { id: true },
+    });
+
+    if (existingFollow) {
+      return { success: "You already follow this person." } satisfies ActionData;
+    }
+
+    await db.$transaction([
+      db.follow.create({
+        data: {
+          followerId: sessionUser.id,
+          followingId: targetUserId,
+        },
+      }),
+      db.notification.create({
+        data: {
+          userId: targetUserId,
+          actorId: sessionUser.id,
+          type: "NEW_FOLLOWER",
+          title: "You have a new follower",
+          body: "Someone followed your journey.",
+          resourceId: sessionUser.id,
+          resourceType: "user",
+        },
+      }),
+    ]);
+
+    return { success: "You are now following this person." } satisfies ActionData;
+  }
+
+  if (intent === "unfollow-user") {
+    const targetUserId = String(formData.get("targetUserId") ?? "").trim();
+
+    if (!targetUserId) {
+      return { error: "Target user is missing." } satisfies ActionData;
+    }
+
+    const result = await db.follow.deleteMany({
+      where: {
+        followerId: sessionUser.id,
+        followingId: targetUserId,
+      },
+    });
+
+    if (result.count === 0) {
+      return { success: "You were not following this person." } satisfies ActionData;
+    }
+
+    return { success: "Unfollowed successfully." } satisfies ActionData;
+  }
+
+  if (intent === "join-circle") {
+    const circleId = String(formData.get("circleId") ?? "").trim();
+
+    if (!circleId) {
+      return { error: "Circle reference is missing." } satisfies ActionData;
+    }
+
+    const circle = await db.circle.findUnique({
+      where: { id: circleId },
+      select: { id: true, isPrivate: true, deletedAt: true, name: true },
+    });
+
+    if (!circle || circle.deletedAt) {
+      return { error: "This circle is not available." } satisfies ActionData;
+    }
+
+    if (circle.isPrivate) {
+      return { error: "This circle requires an invitation." } satisfies ActionData;
+    }
+
+    const membership = await db.circleMember.findUnique({
+      where: {
+        circleId_userId: {
+          circleId,
+          userId: sessionUser.id,
+        },
+      },
+      select: { id: true },
+    });
+
+    if (membership) {
+      return { success: "You are already a member of this circle." } satisfies ActionData;
+    }
+
+    await db.$transaction([
+      db.circleMember.create({
+        data: {
+          circleId,
+          userId: sessionUser.id,
+          role: "member",
+        },
+      }),
+      db.circle.update({
+        where: { id: circleId },
+        data: {
+          memberCount: {
+            increment: 1,
+          },
+        },
+      }),
+    ]);
+
+    return { success: `You joined ${circle.name}.` } satisfies ActionData;
+  }
+
+  if (intent === "leave-circle") {
+    const circleId = String(formData.get("circleId") ?? "").trim();
+
+    if (!circleId) {
+      return { error: "Circle reference is missing." } satisfies ActionData;
+    }
+
+    const [result, circle] = await Promise.all([
+      db.circleMember.deleteMany({
+        where: {
+          circleId,
+          userId: sessionUser.id,
+        },
+      }),
+      db.circle.findUnique({
+        where: { id: circleId },
+        select: { id: true, name: true, deletedAt: true },
+      }),
+    ]);
+
+    if (result.count === 0) {
+      return { success: "You are not currently a member of this circle." } satisfies ActionData;
+    }
+
+    if (circle && !circle.deletedAt) {
+      await db.circle.update({
+        where: { id: circle.id },
+        data: {
+          memberCount: {
+            decrement: 1,
+          },
+        },
+      });
+    }
+
+    return { success: "You left the circle." } satisfies ActionData;
+  }
+
   if (intent === "mark-notification-read") {
     const notificationId = String(formData.get("notificationId") ?? "").trim();
     if (!notificationId) {
@@ -142,12 +313,20 @@ export default function DashboardRoute() {
   const actionData = useActionData<ActionData>();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigationState = useNavigation();
+  const submittingIntent =
+    navigationState.state === "submitting"
+      ? String(navigationState.formData?.get("intent") ?? "")
+      : "";
   const isRefreshing =
     navigationState.state === "loading" &&
     navigationState.location?.pathname === "/dashboard";
   const isSubmittingNotificationAction =
-    navigationState.state === "submitting" &&
-    String(navigationState.formData?.get("intent") ?? "").includes("notification");
+    submittingIntent.includes("notification");
+  const isSubmittingRelationshipAction =
+    submittingIntent === "follow-user" ||
+    submittingIntent === "unfollow-user" ||
+    submittingIntent === "join-circle" ||
+    submittingIntent === "leave-circle";
   const filteredStories =
     activityFilter === "all" || activityFilter === "stories";
   const filteredAspirations =
@@ -203,6 +382,24 @@ export default function DashboardRoute() {
       <section className="py-8 sm:py-10">
         {" "}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-5 lg:grid-cols-3">
+          {actionData?.error ? (
+            <div
+              className="lg:col-span-3 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
+              role="alert"
+              aria-live="polite"
+            >
+              {actionData.error}
+            </div>
+          ) : null}
+          {actionData?.success ? (
+            <div
+              className="lg:col-span-3 rounded-xl border border-forest/30 bg-[#ECF9F0] px-4 py-3 text-sm text-forest"
+              role="status"
+              aria-live="polite"
+            >
+              {actionData.success}
+            </div>
+          ) : null}
           {" "}
           <article className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm lg:col-span-1">
             {" "}
@@ -380,6 +577,12 @@ export default function DashboardRoute() {
                 {" "}
                 Edit profile{" "}
               </Link>{" "}
+              <Link
+                to="/notifications"
+                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+              >
+                Notifications inbox
+              </Link>{" "}
             </div>{" "}
           </aside>{" "}
           <section
@@ -506,33 +709,29 @@ export default function DashboardRoute() {
                     >
                       Notifications
                     </h3>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        to="/notifications"
+                        className="min-h-[44px] inline-flex items-center rounded-lg border border-midnight/15 px-3 py-2 text-xs font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                      >
+                        Open inbox
+                      </Link>
 
-                    {summary.notifications.some((notification) => !notification.isRead) ? (
-                      <Form method="post">
-                        <input type="hidden" name="intent" value="mark-all-notifications-read" />
-                        <button
-                          type="submit"
-                          className="min-h-[44px] rounded-lg border border-midnight/15 px-3 py-2 text-xs font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
-                          disabled={isSubmittingNotificationAction}
-                          aria-busy={isSubmittingNotificationAction}
-                        >
-                          Mark all read
-                        </button>
-                      </Form>
-                    ) : null}
+                      {summary.notifications.some((notification) => !notification.isRead) ? (
+                        <Form method="post">
+                          <input type="hidden" name="intent" value="mark-all-notifications-read" />
+                          <button
+                            type="submit"
+                            className="min-h-[44px] rounded-lg border border-midnight/15 px-3 py-2 text-xs font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            disabled={isSubmittingNotificationAction}
+                            aria-busy={isSubmittingNotificationAction}
+                          >
+                            Mark all read
+                          </button>
+                        </Form>
+                      ) : null}
+                    </div>
                   </div>
-
-                  {actionData?.error ? (
-                    <p className="mt-2 text-xs text-[#7C2D12]" role="alert" aria-live="polite">
-                      {actionData.error}
-                    </p>
-                  ) : null}
-
-                  {actionData?.success ? (
-                    <p className="mt-2 text-xs text-forest" role="status" aria-live="polite">
-                      {actionData.success}
-                    </p>
-                  ) : null}
 
                   {summary.notifications.length === 0 ? (
                     <p className="mt-2 text-xs text-night/60" role="status">
@@ -626,13 +825,31 @@ export default function DashboardRoute() {
                             @{person.username}
                           </p>{" "}
                         </div>{" "}
-                        <Link
-                          to={`/u/${person.username}`}
-                          className="text-xs font-semibold text-forest hover:text-midnight"
-                        >
-                          {" "}
-                          View{" "}
-                        </Link>{" "}
+                        <div className="flex items-center gap-2">
+                          <Link
+                            to={`/u/${person.username}`}
+                            className="min-h-[44px] inline-flex items-center rounded-lg border border-midnight/15 px-2 py-1 text-xs font-semibold text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                          >
+                            View
+                          </Link>
+                          <Form method="post">
+                            <input
+                              type="hidden"
+                              name="intent"
+                              value={person.isFollowing ? "unfollow-user" : "follow-user"}
+                            />
+                            <input type="hidden" name="targetUserId" value={person.id} />
+                            <button
+                              type="submit"
+                              className="min-h-[44px] rounded-lg border border-midnight/15 px-2 py-1 text-xs font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                              disabled={isSubmittingRelationshipAction}
+                              aria-busy={isSubmittingRelationshipAction}
+                              aria-label={`${person.isFollowing ? "Unfollow" : "Follow"} ${person.displayName}`}
+                            >
+                              {person.isFollowing ? "Following" : "Follow"}
+                            </button>
+                          </Form>
+                        </div>
                       </li>
                     ))}{" "}
                   </ul>
@@ -655,13 +872,33 @@ export default function DashboardRoute() {
                         key={circle.id}
                         className="rounded-lg border border-midnight/10 px-3 py-2"
                       >
-                        {" "}
-                        <p className="text-sm font-medium text-midnight">
-                          {circle.name}
-                        </p>{" "}
-                        <p className="mt-1 text-xs text-night/60">
-                          {circle.memberCount} members
-                        </p>{" "}
+                        <div className="flex items-center justify-between gap-2">
+                          <div>
+                            <p className="text-sm font-medium text-midnight">
+                              {circle.name}
+                            </p>
+                            <p className="mt-1 text-xs text-night/60">
+                              {circle.memberCount} members
+                            </p>
+                          </div>
+                          <Form method="post">
+                            <input
+                              type="hidden"
+                              name="intent"
+                              value={circle.isMember ? "leave-circle" : "join-circle"}
+                            />
+                            <input type="hidden" name="circleId" value={circle.id} />
+                            <button
+                              type="submit"
+                              className="min-h-[44px] rounded-lg border border-midnight/15 px-3 py-2 text-xs font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                              disabled={isSubmittingRelationshipAction}
+                              aria-busy={isSubmittingRelationshipAction}
+                              aria-label={`${circle.isMember ? "Leave" : "Join"} circle ${circle.name}`}
+                            >
+                              {circle.isMember ? "Member" : "Join"}
+                            </button>
+                          </Form>
+                        </div>
                       </li>
                     ))}{" "}
                   </ul>

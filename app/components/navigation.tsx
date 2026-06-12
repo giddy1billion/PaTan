@@ -337,7 +337,13 @@ export function Navigation({
           <div className="hidden lg:flex items-center gap-2 xl:gap-3">
             {user ? (
               <div className="flex items-center gap-2">
-                <UserProfileBadge user={user} />
+                <Link
+                  to="/profile"
+                  className="rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
+                  aria-label="Open your profile"
+                >
+                  <UserProfileBadge user={user} />
+                </Link>
                 {onboarding.isRequired ? (
                   <Link
                     to={onboarding.resumeHref}
@@ -389,7 +395,15 @@ export function Navigation({
           </div>
 
           <div className="lg:hidden flex items-center gap-2">
-            {user ? <UserProfileBadge user={user} compact /> : null}
+            {user ? (
+              <Link
+                to="/profile"
+                className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                aria-label="Open your profile"
+              >
+                <UserProfileBadge user={user} compact />
+              </Link>
+            ) : null}
 
             <button
               ref={menuButtonRef}
@@ -507,7 +521,14 @@ export function Navigation({
             {user ? (
               <div className="rounded-xl border border-border bg-surface p-3">
                 <div className="flex items-center gap-3">
-                  <UserProfileBadge user={user} compact />
+                  <Link
+                    to="/profile"
+                    className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                    onClick={closeMenu}
+                    aria-label="Open your profile"
+                  >
+                    <UserProfileBadge user={user} compact />
+                  </Link>
                   <div className="min-w-0">
                     <p className="text-xs text-[#64748B]">Signed in via {getProviderLabel(user.provider)}</p>
                     <p className="text-sm font-semibold text-midnight truncate">{getDisplayName(user)}</p>
