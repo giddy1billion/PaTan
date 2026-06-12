@@ -73,6 +73,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const sessionUser = await requireUser(request);
+  const url = new URL(request.url);
   const aspirationId = params.id?.trim();
 
   if (!aspirationId) {
@@ -193,6 +194,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     sessionUserId: sessionUser.id,
     isOwner,
     isSupported: Boolean(support),
+    showUpdatedNotice: url.searchParams.get("updated") === "1",
     progress,
     completedMilestones,
     totalMilestones,
@@ -231,6 +233,30 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 
   if (intent === "support-aspiration") {
+    if (aspiration.privacy === "PRIVATE" && aspiration.authorId !== sessionUser.id) {
+      return { error: "This aspiration is private." } satisfies ActionData;
+    }
+
+    if (aspiration.privacy === "FOLLOWERS_ONLY" && aspiration.authorId !== sessionUser.id) {
+      const follow = await db.follow.findUnique({
+        where: {
+          followerId_followingId: {
+            followerId: sessionUser.id,
+            followingId: aspiration.authorId,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!follow) {
+        return {
+          error: "Only followers can support this aspiration.",
+        } satisfies ActionData;
+      }
+    }
+
     if (aspiration.authorId === sessionUser.id) {
       return { error: "You cannot support your own aspiration." } satisfies ActionData;
     }
@@ -429,6 +455,7 @@ export default function AspirationDetail() {
     aspiration,
     isOwner,
     isSupported,
+    showUpdatedNotice,
     progress,
     completedMilestones,
     totalMilestones,
@@ -462,6 +489,12 @@ export default function AspirationDetail() {
           </p>
         ) : null}
 
+        {showUpdatedNotice ? (
+          <p className="mt-4 rounded-xl border border-forest/30 bg-[#ECF9F0] px-4 py-3 text-sm text-forest" role="status" aria-live="polite">
+            Aspiration updated successfully.
+          </p>
+        ) : null}
+
         <header className="mt-4 rounded-2xl border border-midnight/10 bg-white p-6 sm:p-8 shadow-sm">
           <p className="inline-flex rounded-full bg-golden/10 px-3 py-1 text-xs font-semibold text-golden">
             {formatStatus(aspiration.status)}
@@ -477,6 +510,17 @@ export default function AspirationDetail() {
             <span>Started {formatDate(aspiration.createdAt)}</span>
             <span aria-hidden="true">|</span>
             <span>Target {formatDate(aspiration.targetDate)}</span>
+            {isOwner ? (
+              <>
+                <span aria-hidden="true">|</span>
+                <Link
+                  to={`/aspirations/${aspiration.id}/edit`}
+                  className="font-semibold text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
+                >
+                  Edit aspiration
+                </Link>
+              </>
+            ) : null}
             {showProfileLink ? (
               <>
                 <span aria-hidden="true">|</span>

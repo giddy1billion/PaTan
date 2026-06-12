@@ -105,7 +105,10 @@ export default function PersonalGrowthStories() {
       {/* Hero */}
       <section className="relative bg-gradient-to-br from-forest/90 to-midnight text-dawn py-24 overflow-hidden">
         <div className="absolute inset-0 opacity-20" aria-hidden="true">
-          <div className="absolute top-0 left-0 w-full h-full bg-[url('/patterns/growth.svg')] bg-repeat opacity-10" />
+          <div
+            className="absolute top-0 left-0 w-full h-full bg-repeat opacity-10"
+            style={{ backgroundImage: "url('/patterns/growth.svg')" }}
+          />
         </div>
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

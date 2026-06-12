@@ -216,7 +216,6 @@ export async function action({ request }: ActionFunctionArgs) {
       where: {
         userId: sessionUser.id,
         isRead: false,
-        ...(intent === "mark-filter-read" && currentView === "unread" ? {} : {}),
         ...(intent === "mark-filter-read" && currentType !== "all" ? { type: currentType } : {}),
       },
       data: {

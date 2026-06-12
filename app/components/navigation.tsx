@@ -21,6 +21,7 @@ const memberPrimaryMenuItems = [
 ] satisfies NavItem[];
 
 const memberSecondaryMenuItems = [
+  { label: 'Notifications', href: '/notifications' },
   { label: 'Discover', href: '/discover' },
   { label: 'Journeys', href: '/journeys' },
   { label: 'Aspirations', href: '/aspirations' },

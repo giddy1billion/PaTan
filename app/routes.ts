@@ -37,6 +37,8 @@ export default [
   // Authenticated application layout
   layout("routes/authenticated-layout.tsx", [
     route("dashboard", "routes/dashboard.tsx"),
+    route("notifications", "routes/notifications.tsx"),
+    route("moderation/reports", "routes/moderation.reports.tsx"),
     route("profile", "routes/profile.tsx"),
       route("profile/settings", "routes/profile.edit.tsx"),
       route("profile/edit", "routes/profile.redirect.tsx"),
@@ -45,6 +47,7 @@ export default [
     // Discovery & Stories
     route("discover", "routes/discover.tsx"),
     route("stories/new", "routes/stories.new.tsx"),
+    route("stories/:storyId/edit", "routes/stories.$storyId.edit.tsx"),
 
     // Thematic Journeys
     route("journeys", "routes/journeys/index.tsx"),
@@ -54,6 +57,7 @@ export default [
     route("aspirations", "routes/aspirations/index.tsx"),
     route("aspirations/new", "routes/aspirations.new.tsx"),
     route("aspirations/:id", "routes/aspirations.$id.tsx"),
+    route("aspirations/:id/edit", "routes/aspirations.$id.edit.tsx"),
 
     // Community
     route("community", "routes/community.tsx"),

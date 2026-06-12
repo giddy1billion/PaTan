@@ -246,8 +246,13 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     if (circle && !circle.deletedAt) {
-      await db.circle.update({
-        where: { id: circle.id },
+      await db.circle.updateMany({
+        where: {
+          id: circle.id,
+          memberCount: {
+            gt: 0,
+          },
+        },
         data: {
           memberCount: {
             decrement: 1,

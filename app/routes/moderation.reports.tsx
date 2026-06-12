@@ -9,7 +9,9 @@ import {
   redirect,
   useActionData,
   useLoaderData,
+  useNavigation,
 } from "react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
 
@@ -19,6 +21,7 @@ type ActionData = {
 };
 
 type StatusFilter = "all" | "PENDING" | "UNDER_REVIEW" | "RESOLVED" | "DISMISSED";
+type TriageStatus = Exclude<StatusFilter, "all">;
 
 const PAGE_SIZE = 20;
 
@@ -69,6 +72,10 @@ function formatReason(value: string) {
     .join(" ");
 }
 
+function formatStatus(value: TriageStatus) {
+  return value.toLowerCase().replace("_", " ");
+}
+
 async function requireModerationRole(request: Request) {
   const user = await requireUser(request);
   const roleLookup = await db.user.findUnique({
@@ -117,6 +124,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       skip: (page - 1) * PAGE_SIZE,
       select: {
         id: true,
+        reporterId: true,
         reason: true,
         status: true,
         description: true,
@@ -139,13 +147,28 @@ export async function loader({ request }: LoaderFunctionArgs) {
         story: {
           select: {
             id: true,
+            slug: true,
             title: true,
+            excerpt: true,
+            author: {
+              select: {
+                username: true,
+                displayName: true,
+              },
+            },
           },
         },
         comment: {
           select: {
             id: true,
             content: true,
+            createdAt: true,
+            author: {
+              select: {
+                username: true,
+                displayName: true,
+              },
+            },
           },
         },
       },
@@ -249,6 +272,103 @@ export default function ModerationReportsRoute() {
   const { status, page, totalCount, totalPages, counts, reports } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
+  const navigation = useNavigation();
+
+  const reportIds = useMemo(() => reports.map((report) => report.id), [reports]);
+  const [activeReportId, setActiveReportId] = useState<string | null>(reportIds[0] ?? null);
+  const [shortcutMessage, setShortcutMessage] = useState("");
+  const [resolutionDrafts, setResolutionDrafts] = useState<Record<string, string>>({});
+  const quickFormRefs = useRef<Record<string, Partial<Record<TriageStatus, HTMLFormElement | null>>>>({});
+
+  useEffect(() => {
+    if (!activeReportId || !reportIds.includes(activeReportId)) {
+      setActiveReportId(reportIds[0] ?? null);
+    }
+  }, [activeReportId, reportIds]);
+
+  useEffect(() => {
+    const nextDrafts: Record<string, string> = {};
+    for (const report of reports) {
+      nextDrafts[report.id] = report.resolution ?? "";
+    }
+    setResolutionDrafts(nextDrafts);
+  }, [reports]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
+
+      const target = event.target as HTMLElement | null;
+      if (
+        target &&
+        (
+          target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable
+        )
+      ) {
+        return;
+      }
+
+      if (reportIds.length === 0) {
+        return;
+      }
+
+      if (event.key.toLowerCase() === "j" || event.key.toLowerCase() === "k") {
+        event.preventDefault();
+
+        const currentIndex = activeReportId ? reportIds.indexOf(activeReportId) : -1;
+        const delta = event.key.toLowerCase() === "j" ? 1 : -1;
+        const fallbackIndex = currentIndex === -1 ? 0 : currentIndex;
+        const nextIndex = (fallbackIndex + delta + reportIds.length) % reportIds.length;
+        const nextReportId = reportIds[nextIndex];
+        setActiveReportId(nextReportId);
+        setShortcutMessage(`Selected report ${nextIndex + 1} of ${reportIds.length}.`);
+        return;
+      }
+
+      if (!activeReportId) {
+        return;
+      }
+
+      const shortcutMap: Record<string, TriageStatus> = {
+        "1": "PENDING",
+        "2": "UNDER_REVIEW",
+        "3": "RESOLVED",
+        "4": "DISMISSED",
+      };
+
+      const nextStatus = shortcutMap[event.key];
+      if (!nextStatus) {
+        return;
+      }
+
+      const form = quickFormRefs.current[activeReportId]?.[nextStatus];
+      if (!form) {
+        return;
+      }
+
+      event.preventDefault();
+      form.requestSubmit();
+      setShortcutMessage(`Applied ${formatStatus(nextStatus)} to selected report.`);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [activeReportId, reportIds]);
+
+  const isSubmitting = navigation.state === "submitting";
+
+  const setQuickFormRef = (reportId: string, nextStatus: TriageStatus, element: HTMLFormElement | null) => {
+    if (!quickFormRefs.current[reportId]) {
+      quickFormRefs.current[reportId] = {};
+    }
+
+    quickFormRefs.current[reportId][nextStatus] = element;
+  };
 
   return (
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
@@ -266,6 +386,10 @@ export default function ModerationReportsRoute() {
 
       <section className="py-8 sm:py-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="sr-only" role="status" aria-live="polite">
+            {shortcutMessage}
+          </p>
+
           {actionData?.error ? (
             <p className="mb-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]" role="alert" aria-live="polite">
               {actionData.error}
@@ -295,6 +419,13 @@ export default function ModerationReportsRoute() {
                 </Link>
               ))}
             </div>
+
+            <div className="mt-4 rounded-xl border border-midnight/10 bg-surface p-3 text-xs text-night/75" role="note" aria-label="Keyboard triage shortcuts">
+              <p className="font-semibold text-midnight">Keyboard triage shortcuts</p>
+              <p className="mt-1">
+                Press J and K to move between reports. Press 1 for pending, 2 for under review, 3 for resolved, and 4 for dismissed on the selected report.
+              </p>
+            </div>
           </section>
 
           <section className="mt-5 rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm" aria-labelledby="reports-heading">
@@ -309,69 +440,174 @@ export default function ModerationReportsRoute() {
             ) : (
               <ul className="mt-4 space-y-4" role="list">
                 {reports.map((report) => (
-                  <li key={report.id} className="rounded-xl border border-midnight/10 p-4">
-                    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                      <div className="min-w-0">
+                  <li
+                    key={report.id}
+                    className={`rounded-xl border p-4 ${activeReportId === report.id ? "border-golden bg-[#FFF7E6]" : "border-midnight/10 bg-white"}`}
+                    tabIndex={0}
+                    onFocus={() => setActiveReportId(report.id)}
+                    aria-label={`Report ${report.id} currently ${formatStatus(report.status as TriageStatus)}`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div>
                         <p className="text-sm font-semibold text-midnight">
-                          {formatReason(report.reason)} | {report.status.replace("_", " ")}
+                          {formatReason(report.reason)} | {formatStatus(report.status as TriageStatus)}
                         </p>
                         <p className="mt-1 text-xs text-night/60">
-                          Filed {formatDate(report.createdAt)} by {report.reporter.displayName} (@{report.reporter.username})
+                          Filed {formatDate(report.createdAt)}
                         </p>
-                        <p className="mt-1 text-xs text-night/60">
-                          Target: {report.reportedUser ? `${report.reportedUser.displayName} (@${report.reportedUser.username})` : "Content only"}
-                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveReportId(report.id);
+                          setShortcutMessage("Report selected for keyboard triage.");
+                        }}
+                        className="min-h-[44px] rounded-lg border border-midnight/15 px-3 py-2 text-xs font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                        aria-pressed={activeReportId === report.id}
+                      >
+                        {activeReportId === report.id ? "Selected" : "Select"}
+                      </button>
+                    </div>
+
+                    <div className="mt-3 grid gap-3 lg:grid-cols-[minmax(0,1fr),19rem]">
+                      <div className="space-y-3">
+                        <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Reporter</p>
+                          <p className="mt-1 text-sm text-midnight">
+                            {report.reporter.displayName} (@{report.reporter.username})
+                          </p>
+                        </article>
+
+                        <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Reported target</p>
+                          <p className="mt-1 text-sm text-midnight">
+                            {report.reportedUser
+                              ? `${report.reportedUser.displayName} (@${report.reportedUser.username})`
+                              : "Content-only report"}
+                          </p>
+                        </article>
+
                         {report.story ? (
-                          <p className="mt-1 text-xs text-night/60">Story: {report.story.title}</p>
+                          <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                            <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Story context</p>
+                            <Link
+                              to={`/stories/${report.story.id}`}
+                              className="mt-1 inline-flex text-sm font-semibold text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
+                            >
+                              {report.story.title}
+                            </Link>
+                            {report.story.excerpt ? (
+                              <p className="mt-1 text-sm text-night/75">{report.story.excerpt.slice(0, 220)}</p>
+                            ) : null}
+                            <p className="mt-1 text-xs text-night/60">
+                              Author: {report.story.author.displayName} (@{report.story.author.username})
+                            </p>
+                          </article>
                         ) : null}
+
                         {report.comment ? (
-                          <p className="mt-1 text-xs text-night/60">Comment excerpt: {report.comment.content.slice(0, 120)}</p>
+                          <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                            <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Comment context</p>
+                            <p className="mt-1 text-sm text-night/80">{report.comment.content.slice(0, 260)}</p>
+                            <p className="mt-1 text-xs text-night/60">
+                              By {report.comment.author.displayName} (@{report.comment.author.username}) on {formatDate(report.comment.createdAt)}
+                            </p>
+                          </article>
                         ) : null}
+
                         {report.description ? (
-                          <p className="mt-2 text-sm text-night/75">{report.description}</p>
+                          <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                            <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Reporter description</p>
+                            <p className="mt-1 text-sm text-night/80">{report.description}</p>
+                          </article>
                         ) : null}
+
                         {report.resolution ? (
-                          <p className="mt-2 text-sm text-forest">Resolution: {report.resolution}</p>
+                          <article className="rounded-lg border border-forest/20 bg-[#ECF9F0] px-3 py-2">
+                            <p className="text-xs font-semibold uppercase tracking-wide text-forest">Resolution</p>
+                            <p className="mt-1 text-sm text-forest">{report.resolution}</p>
+                          </article>
                         ) : null}
                       </div>
 
-                      <Form method="post" className="w-full lg:w-[18rem] space-y-2">
-                        <input type="hidden" name="intent" value="set-report-status" />
-                        <input type="hidden" name="reportId" value={report.id} />
-                        <label htmlFor={`next-status-${report.id}`} className="block text-xs font-medium text-night">
-                          Next status
-                        </label>
-                        <select
-                          id={`next-status-${report.id}`}
-                          name="nextStatus"
-                          defaultValue={report.status}
-                          className="min-h-[44px] w-full rounded-xl border border-mist px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-golden"
-                        >
-                          <option value="PENDING">Pending</option>
-                          <option value="UNDER_REVIEW">Under review</option>
-                          <option value="RESOLVED">Resolved</option>
-                          <option value="DISMISSED">Dismissed</option>
-                        </select>
-                        <label htmlFor={`resolution-${report.id}`} className="block text-xs font-medium text-night">
-                          Resolution notes
-                        </label>
-                        <textarea
-                          id={`resolution-${report.id}`}
-                          name="resolution"
-                          rows={2}
-                          maxLength={600}
-                          defaultValue={report.resolution ?? ""}
-                          className="block w-full rounded-xl border border-mist px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-golden"
-                          placeholder="Optional notes for resolved or dismissed cases"
-                        />
-                        <button type="submit" className="btn-primary min-h-[44px] w-full">
-                          Update report
-                        </button>
-                        <p className="text-[11px] text-night/60">
-                          Last updated {formatDate(report.updatedAt)}
-                          {report.resolvedAt ? `, resolved ${formatDate(report.resolvedAt)}` : ""}
-                        </p>
-                      </Form>
+                      <div className="space-y-2">
+                        <div className="rounded-lg border border-midnight/10 bg-white p-3">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Quick triage</p>
+                          <div className="mt-2 grid grid-cols-2 gap-2">
+                            {([
+                              { status: "PENDING", label: "Pending", keyHint: "1" },
+                              { status: "UNDER_REVIEW", label: "Under review", keyHint: "2" },
+                              { status: "RESOLVED", label: "Resolved", keyHint: "3" },
+                              { status: "DISMISSED", label: "Dismissed", keyHint: "4" },
+                            ] as Array<{ status: TriageStatus; label: string; keyHint: string }>).map((entry) => (
+                              <Form
+                                key={entry.status}
+                                method="post"
+                                ref={(node) => setQuickFormRef(report.id, entry.status, node)}
+                              >
+                                <input type="hidden" name="intent" value="set-report-status" />
+                                <input type="hidden" name="reportId" value={report.id} />
+                                <input type="hidden" name="nextStatus" value={entry.status} />
+                                <input type="hidden" name="resolution" value={resolutionDrafts[report.id] ?? ""} />
+                                <button
+                                  type="submit"
+                                  className="min-h-[44px] w-full rounded-lg border border-midnight/15 px-2 py-2 text-xs font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                  disabled={isSubmitting}
+                                  aria-busy={isSubmitting}
+                                  aria-label={`Set report to ${entry.label}. Shortcut ${entry.keyHint}.`}
+                                >
+                                  {entry.label} ({entry.keyHint})
+                                </button>
+                              </Form>
+                            ))}
+                          </div>
+                        </div>
+
+                        <Form method="post" className="rounded-lg border border-midnight/10 bg-white p-3 space-y-2">
+                          <input type="hidden" name="intent" value="set-report-status" />
+                          <input type="hidden" name="reportId" value={report.id} />
+                          <label htmlFor={`next-status-${report.id}`} className="block text-xs font-medium text-night">
+                            Next status
+                          </label>
+                          <select
+                            id={`next-status-${report.id}`}
+                            name="nextStatus"
+                            defaultValue={report.status}
+                            className="min-h-[44px] w-full rounded-xl border border-mist px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-golden"
+                          >
+                            <option value="PENDING">Pending</option>
+                            <option value="UNDER_REVIEW">Under review</option>
+                            <option value="RESOLVED">Resolved</option>
+                            <option value="DISMISSED">Dismissed</option>
+                          </select>
+                          <label htmlFor={`resolution-${report.id}`} className="block text-xs font-medium text-night">
+                            Resolution notes
+                          </label>
+                          <textarea
+                            id={`resolution-${report.id}`}
+                            name="resolution"
+                            rows={3}
+                            maxLength={600}
+                            value={resolutionDrafts[report.id] ?? ""}
+                            onChange={(event) => {
+                              const nextValue = event.target.value;
+                              setResolutionDrafts((current) => ({
+                                ...current,
+                                [report.id]: nextValue,
+                              }));
+                            }}
+                            className="block w-full rounded-xl border border-mist px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-golden"
+                            placeholder="Optional notes for resolved or dismissed cases"
+                          />
+                          <button type="submit" className="btn-primary min-h-[44px] w-full" disabled={isSubmitting} aria-busy={isSubmitting}>
+                            Update report
+                          </button>
+                          <p className="text-[11px] text-night/60">
+                            Last updated {formatDate(report.updatedAt)}
+                            {report.resolvedAt ? `, resolved ${formatDate(report.resolvedAt)}` : ""}
+                          </p>
+                        </Form>
+                      </div>
                     </div>
                   </li>
                 ))}

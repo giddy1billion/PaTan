@@ -6,6 +6,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
   useRouteLoaderData,
 } from "react-router";
 
@@ -13,6 +14,9 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { getBotDefenseClientConfig } from "~/utils/bot-defense.server";
 import { issueCsrfToken } from "~/utils/csrf.server";
+
+const GOOGLE_FONTS_STYLESHEET_HREF =
+  "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap";
 
 function getSecurityCsp() {
   const directives = [
@@ -78,40 +82,49 @@ export const headers: Route.HeadersFunction = ({ loaderHeaders, parentHeaders, a
 export const links: Route.LinksFunction = () => [
   // PWA Manifest
   { rel: "manifest", href: "/manifest.webmanifest" },
-  
+
   // Favicons
   { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
   { rel: "icon", href: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
   { rel: "icon", href: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
   { rel: "shortcut icon", href: "/favicon.ico" },
   { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
-  
-  // Fonts - Preconnect
+
+  // Fonts
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
     href: "https://fonts.gstatic.com",
     crossOrigin: "anonymous",
   },
-  
-  // Merriweather - Headings (timeless, reflective, trustworthy)
   {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap",
+    rel: "preload",
+    href: GOOGLE_FONTS_STYLESHEET_HREF,
+    as: "style",
+    crossOrigin: "anonymous",
   },
-  
-  // Inter - Body/UI (modern, readable, accessible)
   {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    href: GOOGLE_FONTS_STYLESHEET_HREF,
+  },
+
+  // Critical global branding asset used in navigation
+  {
+    rel: "preload",
+    href: "/brand/logos/logo-sm.png",
+    as: "image",
+    type: "image/png",
+    fetchPriority: "high",
   },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const rootData = useRouteLoaderData<typeof loader>("root");
+  const location = useLocation();
 
   const shouldLoadTurnstile = rootData?.botDefense.enabled && rootData.botDefense.provider === "turnstile";
   const shouldLoadRecaptcha = rootData?.botDefense.enabled && rootData.botDefense.provider === "recaptcha";
+  const isHomeRoute = location.pathname === "/";
 
   return (
     <html lang="en">
@@ -122,6 +135,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="description" content="PaTan™ - Share transformative stories. Discover hope. Connect through authentic human experiences." />
         <Meta />
         <Links />
+        {isHomeRoute ? (
+          <link
+            rel="preload"
+            href="/brand/logos/logo-md.png"
+            as="image"
+            type="image/png"
+            fetchPriority="high"
+          />
+        ) : null}
         {shouldLoadTurnstile ? (
           <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
         ) : null}
@@ -130,11 +152,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         ) : null}
       </head>
       <body>
-        {/* Skip link for keyboard navigation - WCAG 2.2 */}
+        {/* Skip link for keyboard navigation, WCAG 2.2 */}
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>
-        
+
         {children}
         <ScrollRestoration />
         <Scripts />
