@@ -49,7 +49,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#0D2B45" />
-        <meta name="description" content="PaTan - Share transformative stories. Discover hope. Connect through authentic human experiences." />
+        <meta name="description" content="PaTan™ - Share transformative stories. Discover hope. Connect through authentic human experiences." />
         <Meta />
         <Links />
       </head>

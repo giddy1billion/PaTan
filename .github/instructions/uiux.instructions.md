@@ -3,7 +3,7 @@ applyTo: "**/*.tsx,**/*.jsx,**/*.css,**/tailwind.config.*"
 description: "Modern UI/UX design patterns with mobile-first responsiveness, micro-interactions, and expert-level frontend engineering practices"
 ---
 
-# PaTan UI/UX Design System
+# PaTan™ UI/UX Design System
 
 Expert-level design patterns from 20+ years of UI/UX and frontend engineering experience. Every component must feel premium, performant, and emotionally resonant.
 

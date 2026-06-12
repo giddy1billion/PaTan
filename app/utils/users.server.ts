@@ -20,7 +20,7 @@ function slugifyUsername(value: string) {
 }
 
 async function generateUniqueUsername(base: string) {
-  const normalizedBase = slugifyUsername(base) || "patanuser";
+  const normalizedBase = slugifyUsername(base) || "PaTan™user";
 
   for (let i = 0; i < 100; i += 1) {
     const candidate = i === 0 ? normalizedBase : `${normalizedBase}${i}`;
@@ -94,7 +94,7 @@ export async function createLocalUser(input: CreateLocalUserInput): Promise<Sess
     throw new Error("email-taken");
   }
 
-  const usernameBase = input.firstName || email.split("@")[0] || "patanuser";
+  const usernameBase = input.firstName || email.split("@")[0] || "PaTan™user";
   const username = await generateUniqueUsername(usernameBase);
 
   const created = await db.user.create({

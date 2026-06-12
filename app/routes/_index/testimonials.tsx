@@ -14,7 +14,7 @@ const testimonials = [
     initials: 'JK',
   },
   {
-    quote: "PaTan reminded me that none of us walk alone. Every story I read connects me to someone else's journey, and that connection is powerful.",
+    quote: "PaTan™ reminded me that none of us walk alone. Every story I read connects me to someone else's journey, and that connection is powerful.",
     name: 'Amara O.',
     location: 'Lagos, Nigeria',
     initials: 'AO',

@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Gratitude Stories – Discover the Power of Thankfulness | PaTan' },
+    { title: 'Gratitude Stories – Discover the Power of Thankfulness | PaTan™' },
     {
       name: 'description',
       content: 'Read heartfelt gratitude stories that celebrate life\'s blessings. Discover how practicing thankfulness transforms perspectives and brings joy to everyday moments.',

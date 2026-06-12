@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Story – PaTan' },
+    { title: 'Story – PaTan™' },
     { name: 'description', content: 'Read inspiring stories from our community.' },
   ];
 };

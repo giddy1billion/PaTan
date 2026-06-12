@@ -1,9 +1,9 @@
 ---
 applyTo: "**/*.css,**/tailwind.config.*,**/theme.*"
-description: "PaTan brand design tokens: colors, typography, spacing, animations for CSS and Tailwind with mobile-first responsive system"
+description: "PaTan™ brand design tokens: colors, typography, spacing, animations for CSS and Tailwind with mobile-first responsive system"
 ---
 
-# PaTan Brand Color System
+# PaTan™ Brand Color System
 
 Based on the **Tree of Light identity**: Reflection, Hope, Trust, Growth, and Human Connection.
 

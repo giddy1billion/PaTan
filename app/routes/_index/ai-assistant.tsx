@@ -77,7 +77,7 @@ export function AIAssistant() {
             
             <p className="mt-4 sm:mt-6 text-base sm:text-lg text-muted leading-relaxed">
               Whether your thoughts are unfinished, emotional, or difficult to express, 
-              PaTan's AI assistant helps transform your experiences into meaningful 
+              PaTan AI assistant helps transform your experiences into meaningful 
               narratives while preserving your authentic voice.
             </p>
 

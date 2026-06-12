@@ -3,8 +3,8 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Community Guidelines – PaTan' },
-    { name: 'description', content: 'PaTan community guidelines for respectful, supportive storytelling and engagement.' },
+    { title: 'Community Guidelines – PaTan™' },
+    { name: 'description', content: 'PaTan™ community guidelines for respectful, supportive storytelling and engagement.' },
   ];
 };
 
@@ -29,7 +29,7 @@ const guidelines = [
   },
   {
     title: 'Encourage, Don\'t Compare',
-    description: 'PaTan is about lifting each other up, not competing.',
+    description: 'PaTan™ is about lifting each other up, not competing.',
     dos: ['Celebrate others\' milestones', 'Offer genuine encouragement', 'Focus on growth over perfection'],
     donts: ['Make comparisons', 'Diminish others\' experiences', 'Promote competitive dynamics'],
   },
@@ -70,12 +70,12 @@ export default function Guidelines() {
               Our Commitment to You
             </h2>
             <p className="mt-4 text-night/70 leading-relaxed">
-              PaTan is built on the belief that every story matters and every voice deserves 
+              PaTan™ is built on the belief that every story matters and every voice deserves 
               to be heard. These guidelines exist not to restrict, but to protect — ensuring 
               that everyone in our community feels safe to share their most authentic selves.
             </p>
             <p className="mt-4 text-night/70 leading-relaxed">
-              By participating in PaTan, you agree to uphold these principles and help us 
+              By participating in PaTan™, you agree to uphold these principles and help us 
               maintain a space where hope, healing, and human connection can flourish.
             </p>
           </div>
@@ -149,8 +149,8 @@ export default function Guidelines() {
             </p>
             <p className="mt-4 text-night/70">
               For urgent concerns or questions about these guidelines, contact us at{' '}
-              <a href="mailto:safety@patan.app" className="text-golden hover:text-soft-gold">
-                safety@patan.app
+              <a href="mailto:safety@PaTan™.site" className="text-golden hover:text-soft-gold">
+                safety@PaTan™.site
               </a>
             </p>
           </div>

@@ -6,8 +6,8 @@ import { verifyLocalUser } from '~/utils/users.server';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Log In – PaTan' },
-    { name: 'description', content: 'Log in to PaTan to share your story and connect with our community.' },
+    { title: 'Log In – PaTan™' },
+    { name: 'description', content: 'Log in to PaTan™ to share your story and connect with our community.' },
   ];
 };
 
@@ -67,7 +67,7 @@ export default function Login() {
             className="h-8 w-auto"
             aria-hidden="true"
           />
-          <span className="font-heading text-lg font-bold text-midnight">PaTan</span>
+          <span className="font-heading text-lg font-bold text-midnight">PaTan™</span>
         </Link>
       </header>
 

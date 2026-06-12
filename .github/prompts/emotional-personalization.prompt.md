@@ -1,8 +1,8 @@
 ---
-description: "Generate the emotional personalization onboarding flow for PaTan homepage"
+description: "Generate the emotional personalization onboarding flow for PaTan™ homepage"
 ---
 
-Create the emotional personalization component for first-time PaTan visitors.
+Create the emotional personalization component for first-time PaTan™ visitors.
 
 ## Flow
 

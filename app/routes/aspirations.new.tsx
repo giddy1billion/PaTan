@@ -4,7 +4,7 @@ import { requireUser } from '~/utils/auth.server';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Share Your Aspiration – PaTan' },
+    { title: 'Share Your Aspiration – PaTan™' },
     { name: 'description', content: 'Share your dreams and goals with the community and receive support.' },
   ];
 };

@@ -1,8 +1,8 @@
 ---
-description: "Generate PaTan design tokens for CSS, Tailwind, or Figma"
+description: "Generate PaTan™ design tokens for CSS, Tailwind, or Figma"
 ---
 
-Generate design tokens for PaTan using the official brand system.
+Generate design tokens for PaTan™ using the official brand system.
 
 ## Output Format: ${format:CSS Variables|Tailwind Config|Figma Tokens JSON}
 

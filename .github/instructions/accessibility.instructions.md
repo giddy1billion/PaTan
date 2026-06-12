@@ -1,11 +1,11 @@
 ---
 applyTo: "**/*.tsx,**/*.jsx,**/*.css"
-description: "WCAG 2.2 accessibility patterns for PaTan: semantic HTML, ARIA, keyboard navigation, screen readers, color contrast, focus management"
+description: "WCAG 2.2 accessibility patterns for PaTan™: semantic HTML, ARIA, keyboard navigation, screen readers, color contrast, focus management"
 ---
 
-# Accessibility Standards for PaTan
+# Accessibility Standards for PaTan™
 
-PaTan must be WCAG 2.2 Level AA compliant. Every user — including those using screen readers, keyboard navigation, or high contrast modes — should fully access all storytelling features.
+PaTan™ must be WCAG 2.2 Level AA compliant. Every user — including those using screen readers, keyboard navigation, or high contrast modes — should fully access all storytelling features.
 
 ## Semantic HTML First
 
@@ -152,7 +152,7 @@ Announce loading to screen readers:
 
 ## Engagement Actions
 
-PaTan's engagement buttons need clear labels:
+PaTan engagement buttons need clear labels:
 
 ```tsx
 <button 

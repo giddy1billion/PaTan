@@ -1,7 +1,7 @@
 /**
- * PaTan UI Component Library
+ * PaTan™ UI Component Library
  * 
- * Brand-aligned, accessible components following PaTan design system.
+ * Brand-aligned, accessible components following PaTan™ design system.
  * Uses Tailwind v4 with custom brand tokens defined in app.css.
  */
 

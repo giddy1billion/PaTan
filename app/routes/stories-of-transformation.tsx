@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Stories of Transformation – Life-Changing Testimonies | PaTan' },
+    { title: 'Stories of Transformation – Life-Changing Testimonies | PaTan™' },
     {
       name: 'description',
       content: 'Read inspiring stories of personal transformation and life change. Discover testimonies of people who transformed their lives through faith, growth, and determination.',

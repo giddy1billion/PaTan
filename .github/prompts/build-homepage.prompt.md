@@ -1,8 +1,8 @@
 ---
-description: "Generate the complete PaTan homepage with all 13 sections"
+description: "Generate the complete PaTan™ homepage with all 13 sections"
 ---
 
-Build the complete PaTan homepage following the information architecture.
+Build the complete PaTan™ homepage following the information architecture.
 
 ## Sections to Generate
 
@@ -93,7 +93,7 @@ app/components/
 
 ## SEO
 
-- Title: "PaTan | Share Your Story. Inspire Humanity."
+- Title: "PaTan™ | Share Your Story. Inspire Humanity."
 - Meta description
 - Open Graph image (og-image.png from brand assets)
 - Structured data for Organization

@@ -1,4 +1,4 @@
-# PaTan Brand Assets
+# PaTan™ Brand Assets
 
 ## Quick Start
 
@@ -35,7 +35,7 @@ npm run generate:png
 | `symbol-midnight.svg` | Tree symbol only (Midnight Blue) |
 | `symbol-golden.svg` | Tree symbol only (Golden Light) |
 | `symbol-forest.svg` | Tree symbol only (Deep Forest) |
-| `wordmark-midnight.svg` | "PaTan" text only |
+| `wordmark-midnight.svg` | "PaTan™" text only |
 | `tagline-midnight.svg` | "REFLECT • INSPIRE • CONNECT" |
 
 ### PWA Icons (`public/icons/`)

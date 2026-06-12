@@ -21,10 +21,10 @@ const footerLinks = {
     { label: 'Accessibility', href: '/accessibility' },
   ],
   social: [
-    { label: 'Instagram', href: 'https://instagram.com/patan', icon: 'instagram' },
-    { label: 'LinkedIn', href: 'https://linkedin.com/company/patan', icon: 'linkedin' },
-    { label: 'Facebook', href: 'https://facebook.com/patan', icon: 'facebook' },
-    { label: 'YouTube', href: 'https://youtube.com/@patan', icon: 'youtube' },
+    { label: 'Instagram', href: 'https://instagram.com/PaTan™', icon: 'instagram' },
+    { label: 'LinkedIn', href: 'https://linkedin.com/company/PaTan™', icon: 'linkedin' },
+    { label: 'Facebook', href: 'https://facebook.com/PaTan™', icon: 'facebook' },
+    { label: 'YouTube', href: 'https://youtube.com/@PaTan™', icon: 'youtube' },
   ],
 };
 
@@ -71,7 +71,7 @@ export function Footer() {
             <Link
               to="/"
               className="inline-flex items-center gap-2 sm:gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0D2B45] rounded-lg group"
-              aria-label="PaTan home"
+              aria-label="PaTan™ home"
             >
               <div className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center">
                 <img
@@ -81,7 +81,7 @@ export function Footer() {
                   aria-hidden="true"
                 />
               </div>
-              <span className="font-heading text-xl sm:text-2xl font-bold">PaTan</span>
+              <span className="font-heading text-xl sm:text-2xl font-bold">PaTan™</span>
             </Link>
             <p className="mt-4 sm:mt-6 text-sm sm:text-base text-white/80 leading-relaxed max-w-xs">
               Illuminating lives through authentic stories of gratitude, resilience, hope, and transformation.
@@ -98,7 +98,7 @@ export function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/5 text-white/70 hover:bg-[#F5B942]/20 hover:text-[#F5B942] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942]"
-                      aria-label={`Follow PaTan on ${link.label}`}
+                      aria-label={`Follow PaTan™ on ${link.label}`}
                     >
                       <SocialIcon name={link.icon} />
                     </a>
@@ -197,7 +197,7 @@ export function Footer() {
         <div className="mt-12 sm:mt-16 pt-8 border-t border-white/10">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-sm text-white/60 order-2 sm:order-1">
-              © {new Date().getFullYear()} PaTan. All rights reserved.
+              © {new Date().getFullYear()} PaTan™. All rights reserved.
             </p>
             <p className="text-sm text-white/60 font-medium tracking-[0.2em] order-1 sm:order-2">
               REFLECT • INSPIRE • CONNECT

@@ -91,7 +91,7 @@ When invoked, follow this sequence:
 - DO NOT ignore project-specific instructions from `.github/instructions/`
 - DO NOT overwhelm with minor issues — prioritize actionable items
 - ALWAYS provide file links for findings
-- ALWAYS respect the PaTan brand guidelines and accessibility standards
+- ALWAYS respect the PaTan™ brand guidelines and accessibility standards
 
 ## Trigger Phrases
 

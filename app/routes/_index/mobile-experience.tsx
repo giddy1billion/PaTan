@@ -69,7 +69,7 @@ export function MobileExperience() {
             </h2>
             
             <p className="mt-4 sm:mt-6 text-base sm:text-lg text-muted leading-relaxed">
-              Read, reflect, and connect from any device through PaTan's mobile 
+              Read, reflect, and connect from any device through PaTan mobile 
               experience and Progressive Web App.
             </p>
 
@@ -128,7 +128,7 @@ export function MobileExperience() {
                   <div className="p-4 h-[480px] sm:h-[540px]">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-5">
-                      <span className="font-heading font-bold text-midnight text-lg">PaTan</span>
+                      <span className="font-heading font-bold text-midnight text-lg">PaTan™</span>
                       <div className="w-9 h-9 rounded-full bg-gradient-to-br from-golden to-forest flex items-center justify-center text-white text-xs font-bold">
                         JD
                       </div>

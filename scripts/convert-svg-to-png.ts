@@ -1,5 +1,5 @@
 /**
- * PaTan SVG to PNG Converter
+ * PaTan™ SVG to PNG Converter
  * 
  * Converts generated SVG assets to PNG format using Sharp.
  * Run after generate:brand to create production-ready PNGs.

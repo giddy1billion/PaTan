@@ -1,8 +1,8 @@
 ---
-description: "Review UI component or page for PaTan brand compliance"
+description: "Review UI component or page for PaTan™ brand compliance"
 ---
 
-Review the following for PaTan brand compliance:
+Review the following for PaTan™ brand compliance:
 
 ## File or Component: ${target}
 

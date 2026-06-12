@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Community – PaTan' },
+    { title: 'Community – PaTan™' },
     { name: 'description', content: 'Connect with our global community of storytellers and supporters.' },
   ];
 };

@@ -3,8 +3,8 @@ import { Link, Form } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Reset Password – PaTan' },
-    { name: 'description', content: 'Reset your PaTan password to regain access to your account.' },
+    { title: 'Reset Password – PaTan™' },
+    { name: 'description', content: 'Reset your PaTan™ password to regain access to your account.' },
   ];
 };
 
@@ -24,7 +24,7 @@ export default function ForgotPassword() {
             className="h-8 w-auto"
             aria-hidden="true"
           />
-          <span className="font-heading text-lg font-bold text-midnight">PaTan</span>
+          <span className="font-heading text-lg font-bold text-midnight">PaTan™</span>
         </Link>
       </header>
 

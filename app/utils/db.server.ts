@@ -1,5 +1,5 @@
 /**
- * PaTan Database Client
+ * PaTan™ Database Client
  * PostgreSQL connection using Prisma with pg adapter
  */
 

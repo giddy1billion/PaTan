@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Healing and Resilience Stories – Recovery Journeys | PaTan' },
+    { title: 'Healing and Resilience Stories – Recovery Journeys | PaTan™' },
     {
       name: 'description',
       content: 'Read powerful stories of healing and resilience from people who recovered from trauma, illness, loss, and hardship. Find hope in their journeys.',

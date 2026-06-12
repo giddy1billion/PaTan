@@ -2,11 +2,11 @@ import type { MetaFunction } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'User Data Deletion - PaTan' },
+    { title: 'User Data Deletion - PaTan™' },
     {
       name: 'description',
       content:
-        'How to request account and personal data deletion from PaTan, including Facebook-connected account removal instructions.',
+        'How to request account and personal data deletion from PaTan™, including Facebook-connected account removal instructions.',
     },
   ];
 };
@@ -25,18 +25,18 @@ export default function DataDeletion() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <article className="space-y-8 rounded-2xl border border-midnight/10 bg-white p-6 sm:p-8 shadow-sm">
             <section className="space-y-3">
-              <h2 className="font-heading text-2xl text-midnight font-bold">How to delete your PaTan data</h2>
+              <h2 className="font-heading text-2xl text-midnight font-bold">How to delete your PaTan™ data</h2>
               <p className="text-night/80 leading-relaxed">
                 You can request deletion of your account and personal data at any time. This applies to accounts
-                created directly on PaTan and accounts connected through Facebook login.
+                created directly on PaTan™ and accounts connected through Facebook login.
               </p>
             </section>
 
             <section className="space-y-3">
               <h2 className="font-heading text-2xl text-midnight font-bold">Request steps</h2>
               <ol className="space-y-2 text-night/80 leading-relaxed list-decimal pl-6">
-                <li>Email privacy@patan.app from the email address linked to your PaTan account.</li>
-                <li>Use the subject line: PaTan Data Deletion Request.</li>
+                <li>Email privacy@PaTan™.site from the email address linked to your PaTan™ account.</li>
+                <li>Use the subject line: PaTan™ Data Deletion Request.</li>
                 <li>Include your account email and, if applicable, the provider used to sign in (Facebook or Google).</li>
                 <li>We will verify your request and begin deletion processing.</li>
               </ol>
@@ -64,10 +64,10 @@ export default function DataDeletion() {
               <p className="text-night/80 leading-relaxed">
                 Questions about deletion requests can be sent to{' '}
                 <a
-                  href="mailto:privacy@patan.app"
+                  href="mailto:privacy@PaTan™.site"
                   className="text-golden hover:text-soft-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 rounded-sm"
                 >
-                  privacy@patan.app
+                  privacy@PaTan™.site
                 </a>
                 .
               </p>

@@ -1,5 +1,5 @@
 /**
- * PaTan Database Seed Script
+ * PaTan™ Database Seed Script
  * Seeds initial data for categories, badges, and essential content
  */
 
@@ -169,7 +169,7 @@ async function main() {
     {
       name: "First Story",
       slug: "first-story",
-      description: "Welcome badge for publishing your first story on PaTan",
+      description: "Welcome badge for publishing your first story on PaTan™",
       iconUrl: "/badges/first-story.svg",
       type: "MILESTONE" as const,
       criteria: { storiesPublished: 1 },

@@ -3,8 +3,8 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Accessibility Statement – PaTan' },
-    { name: 'description', content: 'PaTan\'s commitment to digital accessibility for all users.' },
+    { title: 'Accessibility Statement – PaTan™' },
+    { name: 'description', content: 'PaTan™\'s commitment to digital accessibility for all users.' },
   ];
 };
 
@@ -32,7 +32,7 @@ export default function Accessibility() {
                 Our Commitment
               </h2>
               <p className="mt-4 text-night/70 leading-relaxed">
-                PaTan is committed to ensuring digital accessibility for people with 
+                PaTan™ is committed to ensuring digital accessibility for people with 
                 disabilities. We are continually improving the user experience for everyone 
                 and applying the relevant accessibility standards.
               </p>
@@ -125,7 +125,7 @@ export default function Accessibility() {
                 Assistive Technologies
               </h2>
               <p className="mt-4 text-night/70 leading-relaxed">
-                PaTan is designed to be compatible with the following assistive technologies:
+                PaTan™ is designed to be compatible with the following assistive technologies:
               </p>
               <ul className="mt-4 space-y-2 text-night/70">
                 <li>• Screen readers (NVDA, JAWS, VoiceOver, TalkBack)</li>
@@ -158,14 +158,14 @@ export default function Accessibility() {
                 Feedback
               </h2>
               <p className="mt-4 text-night/70 leading-relaxed">
-                We welcome your feedback on the accessibility of PaTan. If you encounter 
+                We welcome your feedback on the accessibility of PaTan™. If you encounter 
                 any barriers or have suggestions for improvement, please contact us:
               </p>
               <div className="mt-4 p-6 bg-mist/50 rounded-xl">
                 <p className="text-night/70">
                   <strong className="text-midnight">Email:</strong>{' '}
-                  <a href="mailto:accessibility@patan.app" className="text-golden hover:text-soft-gold">
-                    accessibility@patan.app
+                  <a href="mailto:accessibility@PaTan™.site" className="text-golden hover:text-soft-gold">
+                    accessibility@PaTan™.site
                   </a>
                 </p>
                 <p className="mt-2 text-night/70">
@@ -195,7 +195,7 @@ export default function Accessibility() {
             Questions?
           </h2>
           <p className="mt-4 text-night/70">
-            Our team is here to help ensure you can fully experience PaTan.
+            Our team is here to help ensure you can fully experience PaTan™.
           </p>
           <div className="mt-6">
             <Link to="/help" className="btn-primary">

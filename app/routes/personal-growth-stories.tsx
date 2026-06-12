@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Personal Growth Stories – Journeys of Self-Improvement | PaTan' },
+    { title: 'Personal Growth Stories – Journeys of Self-Improvement | PaTan™' },
     {
       name: 'description',
       content: 'Read inspiring personal growth stories from people on journeys of self-improvement. Discover how others achieved their goals and became their best selves.',

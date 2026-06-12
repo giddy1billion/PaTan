@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Overcoming Adversity – Stories of Resilience and Triumph | PaTan' },
+    { title: 'Overcoming Adversity – Stories of Resilience and Triumph | PaTan™' },
     {
       name: 'description',
       content: 'Read powerful stories of people who overcame adversity, challenges, and hardships. Find inspiration in real testimonies of resilience, courage, and triumph.',

@@ -115,7 +115,7 @@ export function Hero() {
               <div className="relative">
                 <img
                   src="/brand/logos/logo-md.png"
-                  alt="PaTan Tree of Light"
+                  alt="PaTan™ Tree of Light"
                   className="h-20 sm:h-24 lg:h-32 w-auto"
                   fetchPriority="high"
                 />

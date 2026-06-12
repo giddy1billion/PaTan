@@ -2,12 +2,12 @@ import { useState } from 'react';
 
 const faqs = [
   {
-    question: 'What is PaTan?',
-    answer: 'PaTan is an AI-powered inspirational storytelling platform where people share transformative life experiences, discover hope-filled stories, and connect with a supportive community. Our mission is to illuminate lives through authentic stories of gratitude, resilience, hope, and transformation.',
+    question: 'What is PaTan™?',
+    answer: 'PaTan™ is an AI-powered inspirational storytelling platform where people share transformative life experiences, discover hope-filled stories, and connect with a supportive community. Our mission is to illuminate lives through authentic stories of gratitude, resilience, hope, and transformation.',
   },
   {
     question: 'Who can join?',
-    answer: 'PaTan welcomes everyone from all backgrounds and beliefs. Whether you\'re looking to share your own journey, find encouragement from others\' stories, or simply be part of a positive community, there\'s a place for you here.',
+    answer: 'PaTan™ welcomes everyone from all backgrounds and beliefs. Whether you\'re looking to share your own journey, find encouragement from others\' stories, or simply be part of a positive community, there\'s a place for you here.',
   },
   {
     question: 'Do I have to share publicly?',
@@ -15,15 +15,15 @@ const faqs = [
   },
   {
     question: 'Can I remain anonymous?',
-    answer: 'Yes! PaTan fully supports anonymous publishing. You can share your story without revealing your identity, allowing you to be authentic while maintaining privacy. Many of our most powerful stories come from anonymous contributors.',
+    answer: 'Yes! PaTan™ fully supports anonymous publishing. You can share your story without revealing your identity, allowing you to be authentic while maintaining privacy. Many of our most powerful stories come from anonymous contributors.',
   },
   {
     question: 'How does AI assistance work?',
     answer: 'Our AI assistant helps you express your thoughts more clearly while preserving your authentic voice. It offers grammar suggestions, story structure guidance, title ideas, and reflection prompts. You\'re always in control—every suggestion is optional, and your story remains uniquely yours.',
   },
   {
-    question: 'Is PaTan faith-specific?',
-    answer: 'PaTan is faith-friendly but belief-inclusive. We welcome stories from all spiritual backgrounds and perspectives. Whether your journey involves religious faith, spiritual growth, or personal philosophy, your experience is valued here.',
+    question: 'Is PaTan™ faith-specific?',
+    answer: 'PaTan™ is faith-friendly but belief-inclusive. We welcome stories from all spiritual backgrounds and perspectives. Whether your journey involves religious faith, spiritual growth, or personal philosophy, your experience is valued here.',
   },
   {
     question: 'How is my information protected?',

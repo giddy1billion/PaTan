@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Discover Stories – PaTan' },
+    { title: 'Discover Stories – PaTan™' },
     { name: 'description', content: 'Discover inspiring stories of hope, transformation, and resilience from our global community.' },
   ];
 };

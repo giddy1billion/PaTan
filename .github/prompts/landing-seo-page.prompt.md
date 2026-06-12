@@ -1,5 +1,5 @@
 ---
-description: "Generate an SEO-optimized story category landing page for PaTan"
+description: "Generate an SEO-optimized story category landing page for PaTan™"
 ---
 
 Create an SEO landing page for the **${category}** story category.
@@ -16,7 +16,7 @@ Create an SEO landing page for the **${category}** story category.
 ## Page Structure
 
 ### 1. SEO Meta
-- Title: "{Category} | PaTan - Reflect • Inspire • Connect"
+- Title: "{Category} | PaTan™ - Reflect • Inspire • Connect"
 - Description: Compelling 150-160 char description
 - Open Graph tags
 - Canonical URL

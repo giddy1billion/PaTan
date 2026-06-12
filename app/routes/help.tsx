@@ -3,8 +3,8 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Help Center – PaTan' },
-    { name: 'description', content: 'Get help with your PaTan account, storytelling, and community features.' },
+    { title: 'Help Center – PaTan™' },
+    { name: 'description', content: 'Get help with your PaTan™ account, storytelling, and community features.' },
   ];
 };
 
@@ -145,7 +145,7 @@ export default function Help() {
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="mailto:support@patan.app"
+              href="mailto:support@PaTan™.site"
               className="btn-primary inline-flex items-center justify-center gap-2"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

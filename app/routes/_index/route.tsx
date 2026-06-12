@@ -14,18 +14,18 @@ import { FinalCTA } from './final-cta';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'PaTan – Share Stories. Inspire Lives. Connect Through Hope.' },
+    { title: 'PaTan™ – Share Stories. Inspire Lives. Connect Through Hope.' },
     {
       name: 'description',
       content:
-        'PaTan is an AI-powered platform for sharing transformative life experiences. Discover stories of gratitude, resilience, and hope. Your story could light someone else\'s path.',
+        'PaTan™ is an AI-powered platform for sharing transformative life experiences. Discover stories of gratitude, resilience, and hope. Your story could light someone else\'s path.',
     },
     {
       name: 'keywords',
       content:
         'inspirational stories, testimony sharing, life transformation, personal growth, community support, gratitude, hope, faith stories, overcoming adversity',
     },
-    { property: 'og:title', content: 'PaTan – Share Stories. Inspire Lives. Connect Through Hope.' },
+    { property: 'og:title', content: 'PaTan™ – Share Stories. Inspire Lives. Connect Through Hope.' },
     {
       property: 'og:description',
       content:
@@ -34,7 +34,7 @@ export const meta: MetaFunction = () => {
     { property: 'og:type', content: 'website' },
     { property: 'og:image', content: '/brand/social/og-image.png' },
     { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: 'PaTan – Share Stories. Inspire Lives.' },
+    { name: 'twitter:title', content: 'PaTan™ – Share Stories. Inspire Lives.' },
     {
       name: 'twitter:description',
       content: 'Discover hope-filled stories and share your own transformative experiences.',

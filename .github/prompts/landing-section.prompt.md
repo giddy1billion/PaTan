@@ -1,8 +1,8 @@
 ---
-description: "Generate a specific PaTan landing page section with brand styling, accessibility, and mobile-first responsiveness"
+description: "Generate a specific PaTan™ landing page section with brand styling, accessibility, and mobile-first responsiveness"
 ---
 
-Generate landing page section **${section}** for PaTan.
+Generate landing page section **${section}** for PaTan™.
 
 ## Section Options
 - navigation: Sticky nav with logo, menu, Login/Get Started

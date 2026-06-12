@@ -3,8 +3,8 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'About PaTan – Our Mission to Illuminate Lives Through Stories' },
-    { name: 'description', content: 'Learn about PaTan\'s mission to create a trusted digital sanctuary where people share authentic life experiences that inspire humanity.' },
+    { title: 'About PaTan™ – Our Mission to Illuminate Lives Through Stories' },
+    { name: 'description', content: 'Learn about PaTan™\'s mission to create a trusted digital sanctuary where people share authentic life experiences that inspire humanity.' },
   ];
 };
 
@@ -58,7 +58,7 @@ export default function About() {
             <span className="text-golden"> Authentic Stories</span>
           </h1>
           <p className="mt-6 text-xl text-dawn/80">
-            PaTan exists to create a trusted digital sanctuary where people from every 
+            PaTan™ exists to create a trusted digital sanctuary where people from every 
             background can share authentic life experiences that inspire humanity.
           </p>
         </div>
@@ -158,7 +158,7 @@ export default function About() {
       <section className="py-20 bg-dawn">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="font-heading text-3xl font-bold text-midnight text-center">
-            The Team Behind PaTan
+            The Team Behind PaTan™
           </h2>
           <p className="mt-4 text-center text-night/60">
             Building a platform for human connection

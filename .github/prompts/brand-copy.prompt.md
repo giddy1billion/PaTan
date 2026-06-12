@@ -1,8 +1,8 @@
 ---
-description: "Create brand-aligned marketing copy for PaTan campaigns"
+description: "Create brand-aligned marketing copy for PaTan™ campaigns"
 ---
 
-Write marketing copy for PaTan that embodies the brand voice.
+Write marketing copy for PaTan™ that embodies the brand voice.
 
 ## Campaign Type: ${type:Social Post|Email|Landing Page Hero|App Store Description|Press Release}
 
@@ -18,4 +18,4 @@ Write marketing copy for PaTan that embodies the brand voice.
 - Remain belief-inclusive (spiritual but not religion-specific)
 
 ## Hashtags to consider:
-#ReflectInspireConnect #ShareYourLight #StoriesThatMatter #ThePaTanJourney #IlluminateLives #PaTanCommunity
+#ReflectInspireConnect #ShareYourLight #StoriesThatMatter #ThePaTan™Journey #IlluminateLives #PaTan™Community

@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Aspirations – PaTan' },
+    { title: 'Aspirations – PaTan™' },
     { name: 'description', content: 'Share your dreams, goals, and aspirations. Receive community support on your journey.' },
   ];
 };

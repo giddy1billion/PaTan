@@ -6,8 +6,8 @@ import { createLocalUser } from '~/utils/users.server';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Sign Up – PaTan' },
-    { name: 'description', content: 'Join PaTan to share your story, discover hope-filled experiences, and connect with a supportive community.' },
+    { title: 'Sign Up – PaTan™' },
+    { name: 'description', content: 'Join PaTan™ to share your story, discover hope-filled experiences, and connect with a supportive community.' },
   ];
 };
 
@@ -78,7 +78,7 @@ export default function Signup() {
             className="h-8 w-auto"
             aria-hidden="true"
           />
-          <span className="font-heading text-lg font-bold text-midnight">PaTan</span>
+          <span className="font-heading text-lg font-bold text-midnight">PaTan™</span>
         </Link>
       </header>
 

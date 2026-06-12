@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Thematic Journeys – PaTan' },
+    { title: 'Thematic Journeys – PaTan™' },
     { name: 'description', content: 'Explore curated collections of stories organized by life themes and experiences.' },
   ];
 };

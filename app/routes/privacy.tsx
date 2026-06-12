@@ -2,8 +2,8 @@ import type { MetaFunction } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Privacy Policy – PaTan' },
-    { name: 'description', content: 'Learn how PaTan protects your privacy and handles your personal information.' },
+    { title: 'Privacy Policy – PaTan™' },
+    { name: 'description', content: 'Learn how PaTan™ protects your privacy and handles your personal information.' },
   ];
 };
 
@@ -32,7 +32,7 @@ export default function Privacy() {
                   Our Commitment to Privacy
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  At PaTan, we believe that sharing your story should never compromise your 
+                  At PaTan™, we believe that sharing your story should never compromise your 
                   privacy. This policy explains how we collect, use, and protect your personal 
                   information when you use our platform.
                 </p>
@@ -137,7 +137,7 @@ export default function Privacy() {
                   Anonymous Publishing
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  PaTan supports anonymous story publishing. When you publish anonymously, 
+                  PaTan™ supports anonymous story publishing. When you publish anonymously, 
                   your identity is not displayed to other users. However, we retain this 
                   information internally for moderation and legal compliance purposes.
                 </p>
@@ -160,8 +160,8 @@ export default function Privacy() {
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
                   For privacy-related questions or to exercise your rights, contact us at{' '}
-                  <a href="mailto:privacy@patan.app" className="text-golden hover:text-soft-gold">
-                    privacy@patan.app
+                  <a href="mailto:privacy@PaTan™.site" className="text-golden hover:text-soft-gold">
+                    privacy@PaTan™.site
                   </a>
                 </p>
               </section>

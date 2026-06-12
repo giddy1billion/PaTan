@@ -1,5 +1,5 @@
 /**
- * PaTan Brand Asset Generator (from Source Logo)
+ * PaTan™ Brand Asset Generator (from Source Logo)
  * 
  * Generates logo suite, PWA icons, social media assets from the source logo image.
  * 
@@ -9,7 +9,7 @@
  *   npm run generate:icons       # Generate PWA icons only
  *   npm run generate:social      # Generate social media kit only
  * 
- * Source: public/patan-logo.PNG
+ * Source: public/PaTan™-logo.PNG
  */
 
 import fs from 'fs';
@@ -22,7 +22,7 @@ const PUBLIC_DIR = path.join(__dirname, '../public');
 const BRAND_DIR = path.join(PUBLIC_DIR, 'brand');
 
 // Source logo file
-const SOURCE_LOGO = path.join(PUBLIC_DIR, 'patan-logo.PNG');
+const SOURCE_LOGO = path.join(PUBLIC_DIR, 'PaTan™-logo.PNG');
 
 // ============================================================================
 // BRAND TOKENS
@@ -180,7 +180,7 @@ export async function generatePWAIcons(): Promise<void> {
     .toBuffer();
 
   const faviconSvg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="PaTan favicon">
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="PaTan™ favicon">
   <image href="data:image/png;base64,${faviconSvgPayload.toString('base64')}" x="0" y="0" width="64" height="64"/>
 </svg>
 `;
@@ -204,8 +204,8 @@ export async function generatePWAIcons(): Promise<void> {
 
 export function generateWebManifest(): void {
   const manifest = {
-    name: 'PaTan',
-    short_name: 'PaTan',
+    name: 'PaTan™',
+    short_name: 'PaTan™',
     description: 'Share transformative stories. Discover hope. Connect through authentic human experiences.',
     start_url: '/',
     display: 'standalone',
@@ -288,7 +288,7 @@ async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const command = args[0] || 'all';
 
-  console.log('\n🌳 PaTan Brand Asset Generator\n');
+  console.log('\n🌳 PaTan™ Brand Asset Generator\n');
   console.log(`Source: ${SOURCE_LOGO}\n`);
 
   if (!fs.existsSync(SOURCE_LOGO)) {

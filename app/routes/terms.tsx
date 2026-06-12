@@ -2,8 +2,8 @@ import type { MetaFunction } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Terms of Service – PaTan' },
-    { name: 'description', content: 'Terms and conditions for using the PaTan storytelling platform.' },
+    { title: 'Terms of Service – PaTan™' },
+    { name: 'description', content: 'Terms and conditions for using the PaTan™ storytelling platform.' },
   ];
 };
 
@@ -29,10 +29,10 @@ export default function Terms() {
             <article className="space-y-12">
               <section>
                 <h2 className="font-heading text-2xl font-bold text-midnight">
-                  Welcome to PaTan
+                  Welcome to PaTan™
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  These Terms of Service govern your use of PaTan and its services. By creating 
+                  These Terms of Service govern your use of PaTan™ and its services. By creating 
                   an account or using our platform, you agree to these terms. Please read them 
                   carefully.
                 </p>
@@ -61,7 +61,7 @@ export default function Terms() {
                 </h2>
                 <div className="mt-4 space-y-4 text-night/70">
                   <p>
-                    You retain ownership of the stories and content you create on PaTan. By 
+                    You retain ownership of the stories and content you create on PaTan™. By 
                     posting content, you grant us a license to display, distribute, and promote 
                     your content on our platform.
                   </p>
@@ -121,7 +121,7 @@ export default function Terms() {
                   AI Features
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
-                  PaTan offers AI-powered features to assist with storytelling. While these 
+                  PaTan™ offers AI-powered features to assist with storytelling. While these 
                   tools aim to help you express your experiences, you are responsible for 
                   reviewing and approving any AI-generated suggestions before publishing.
                 </p>
@@ -133,11 +133,11 @@ export default function Terms() {
                 </h2>
                 <div className="mt-4 space-y-4 text-night/70">
                   <p>
-                    PaTan is provided "as is" without warranties of any kind. We do not 
+                    PaTan™ is provided "as is" without warranties of any kind. We do not 
                     guarantee uninterrupted service or that the platform will be error-free.
                   </p>
                   <p>
-                    Stories shared on PaTan represent personal experiences and should not be 
+                    Stories shared on PaTan™ represent personal experiences and should not be 
                     considered professional advice. For medical, legal, or financial matters, 
                     please consult qualified professionals.
                   </p>
@@ -150,7 +150,7 @@ export default function Terms() {
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
                   We may update these terms from time to time. Significant changes will be 
-                  communicated through the platform or via email. Continued use of PaTan 
+                  communicated through the platform or via email. Continued use of PaTan™ 
                   after changes constitutes acceptance of the new terms.
                 </p>
               </section>
@@ -161,8 +161,8 @@ export default function Terms() {
                 </h2>
                 <p className="mt-4 text-night/70 leading-relaxed">
                   Questions about these terms? Contact us at{' '}
-                  <a href="mailto:legal@patan.app" className="text-golden hover:text-soft-gold">
-                    legal@patan.app
+                  <a href="mailto:legal@PaTan™.site" className="text-golden hover:text-soft-gold">
+                    legal@PaTan™.site
                   </a>
                 </p>
               </section>

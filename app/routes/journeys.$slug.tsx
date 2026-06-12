@@ -5,7 +5,7 @@ export const meta: MetaFunction = ({ params }) => {
   const slug = params.slug || '';
   const name = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   return [
-    { title: `${name} Journey – PaTan` },
+    { title: `${name} Journey – PaTan™` },
     { name: 'description', content: `Explore stories of ${name.toLowerCase()} from our inspiring community.` },
   ];
 };

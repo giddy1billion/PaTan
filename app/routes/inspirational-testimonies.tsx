@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Inspirational Testimonies – Real Stories of Faith and Courage | PaTan' },
+    { title: 'Inspirational Testimonies – Real Stories of Faith and Courage | PaTan™' },
     {
       name: 'description',
       content: 'Read powerful testimonies from people who experienced life-changing moments of faith, courage, and divine intervention. Authentic inspirational stories.',
@@ -95,7 +95,7 @@ export default function InspirationalTestimonies() {
               ourselves at work in our lives.
             </p>
             <p>
-              On PaTan, people from all backgrounds share their testimonies. Whether rooted 
+              On PaTan™, people from all backgrounds share their testimonies. Whether rooted 
               in religious faith, spiritual practice, or simply a profound life experience, 
               every testimony has the power to touch another soul.
             </p>

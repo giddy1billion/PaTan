@@ -1,9 +1,9 @@
 ---
 applyTo: "**/*.prisma,**/prisma/**"
-description: "Prisma conventions for PaTan: schema design, relations, naming, indexes"
+description: "Prisma conventions for PaTan™: schema design, relations, naming, indexes"
 ---
 
-# Prisma Conventions for PaTan
+# Prisma Conventions for PaTan™
 
 ## Naming
 
@@ -92,7 +92,7 @@ createdAt DateTime @default(now()) @map("created_at")
 updatedAt DateTime @updatedAt @map("updated_at")
 ```
 
-## PaTan Core Models
+## PaTan™ Core Models
 
 Reference these domain entities:
 - `User` — accounts with profiles, preferences
@@ -103,7 +103,7 @@ Reference these domain entities:
 - `Collection` — curated story groups
 - `ModerationReport` — flagged content tracking
 
-## Enums for PaTan
+## Enums for PaTan™
 
 ```prisma
 enum StoryCategory {

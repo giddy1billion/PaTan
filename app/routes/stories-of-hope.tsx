@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Stories of Hope – Find Hope Through Real Life Experiences | PaTan' },
+    { title: 'Stories of Hope – Find Hope Through Real Life Experiences | PaTan™' },
     {
       name: 'description',
       content: 'Discover powerful stories of hope from people who found light in dark times. Read real testimonies of faith, perseverance, and the human spirit triumphing over adversity.',

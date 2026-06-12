@@ -229,7 +229,7 @@ export function Navigation({ user }: { user: SessionUser | null }) {
           <Link
             to="/"
             className="flex items-center gap-2.5 sm:gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 rounded-lg group min-h-[44px] shrink-0"
-            aria-label="PaTan home"
+            aria-label="PaTan™ home"
             onClick={() => isMenuOpen && closeMenu()}
           >
             <div className="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center">
@@ -241,7 +241,7 @@ export function Navigation({ user }: { user: SessionUser | null }) {
               />
             </div>
             <span className={`font-heading text-xl sm:text-2xl font-bold tracking-tight transition-colors duration-300 motion-reduce:transition-none ${isScrolled ? 'text-midnight' : 'text-midnight drop-shadow-sm'}`}>
-              PaTan
+              PaTan™
             </span>
           </Link>
 
