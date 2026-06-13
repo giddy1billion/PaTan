@@ -19,6 +19,8 @@ import { verifyCsrfToken } from "~/utils/csrf.server";
 import { db } from "~/utils/db.server";
 import { issueEmailVerification } from "~/utils/email-verification.server";
 import { enforceAuthRateLimit } from "~/utils/rate-limit.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
+import { SubmitButton } from "~/components/ui";
 
 function getSafeRedirectTarget(target: string | null | undefined) {
   if (!target || !target.startsWith("/") || target.startsWith("//")) {
@@ -208,6 +210,13 @@ export default function VerifyEmailStatusRoute() {
   const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
   const destination = getSafeRedirectTarget(searchParams.get("redirectTo") ?? redirectTo);
   const isRefreshing = navigation.state === "loading";
+  const submittingIntent =
+    navigation.state === "submitting"
+      ? String(navigation.formData?.get("intent") ?? "")
+      : "";
+  const isResending = submittingIntent === "resend";
+  const isSigningOut =
+    navigation.state === "submitting" && navigation.formAction === "/logout";
 
   const statusMessage =
     securityCode === "verification-email-sent"
@@ -256,25 +265,17 @@ export default function VerifyEmailStatusRoute() {
               Keep your account secure before accessing the full PaTan experience.
             </p>
 
-            {authError ? (
-              <div
-                className="mt-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
-                role="alert"
-                aria-live="polite"
-              >
-                {authError}
-              </div>
-            ) : null}
+            <AutoDismissAlert
+              tone="error"
+              message={authError}
+              className="mt-4"
+            />
 
-            {statusMessage ? (
-              <div
-                className="mt-4 rounded-xl border border-[#2E6F40]/30 bg-[#DCFCE7]/60 px-4 py-3 text-sm text-[#14532D]"
-                role="status"
-                aria-live="polite"
-              >
-                {statusMessage}
-              </div>
-            ) : null}
+            <AutoDismissAlert
+              tone="success"
+              message={statusMessage}
+              className="mt-4"
+            />
 
             <section className="mt-6 rounded-2xl border border-midnight/10 bg-white p-5 sm:p-6" aria-labelledby="verification-status-heading">
               <h2
@@ -308,13 +309,14 @@ export default function VerifyEmailStatusRoute() {
                   <input type="hidden" name="intent" value="resend" />
                   <input type="hidden" name="redirectTo" value={destination} />
                   <input type="hidden" name={csrfFieldName} value={csrfToken} />
-                  <button
-                    type="submit"
+                  <SubmitButton
                     className="min-h-[44px] w-full sm:w-auto rounded-xl border border-midnight/15 bg-white px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
                     aria-label="Resend verification link"
+                    busy={isResending}
+                    pendingLabel="Sending…"
                   >
                     Resend verification link
-                  </button>
+                  </SubmitButton>
                   <p className="text-xs text-night/60">
                     We always keep only the newest verification link active for your account.
                   </p>
@@ -356,12 +358,13 @@ export default function VerifyEmailStatusRoute() {
               </Link>
               <Form method="post" action="/logout" className="w-full">
                 <input type="hidden" name={csrfFieldName} value={csrfToken} />
-                <button
-                  type="submit"
+                <SubmitButton
                   className="min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-white px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
+                  busy={isSigningOut}
+                  pendingLabel="Signing out…"
                 >
                   Sign out
-                </button>
+                </SubmitButton>
               </Form>
             </div>
           </div>

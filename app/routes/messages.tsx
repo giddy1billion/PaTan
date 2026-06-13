@@ -19,6 +19,7 @@ import {
   createNotification,
   resolveMentionedUsers,
 } from "~/utils/notifications.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 
 type ActionData = {
   error?: string;
@@ -469,24 +470,17 @@ export default function MessagesRoute() {
               ) : null}
             </div>
 
-            {actionData?.error ? (
-              <p
-                className="mt-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
-                role="alert"
-              >
-                {actionData.error}
-              </p>
-            ) : null}
+            <AutoDismissAlert
+              tone="error"
+              message={actionData?.error}
+              className="mt-4"
+            />
 
-            {showSentNotice ? (
-              <p
-                className="mt-4 rounded-xl border border-forest/30 bg-[#ECF9F0] px-4 py-3 text-sm text-forest"
-                role="status"
-                aria-live="polite"
-              >
-                Message sent.
-              </p>
-            ) : null}
+            <AutoDismissAlert
+              tone="success"
+              message={showSentNotice ? "Message sent." : undefined}
+              className="mt-4"
+            />
 
             {activeRecipient ? (
               <>

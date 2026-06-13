@@ -11,6 +11,7 @@ import {
   useLoaderData,
   useNavigation,
 } from "react-router";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
 
@@ -333,11 +334,11 @@ export default function StoryEditRoute() {
           </Link>
         </div>
 
-        {actionData?.error ? (
-          <p className="mt-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]" role="alert" aria-live="polite">
-            {actionData.error}
-          </p>
-        ) : null}
+        <AutoDismissAlert
+          tone="error"
+          message={actionData?.error}
+          className="mt-4"
+        />
 
         <Form method="post" className="mt-6 space-y-6 rounded-2xl border border-midnight/10 bg-white p-6 shadow-sm">
           <div>

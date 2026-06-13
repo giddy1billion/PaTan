@@ -11,6 +11,8 @@ import {
 import { useEffect } from "react";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
+import { SubmitButton } from "~/components/ui";
 
 const CATEGORY_ALIASES: Record<string, string> = {
   "hope-faith": "hope-and-faith",
@@ -77,6 +79,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const showOnboardingWelcome =
     url.searchParams.get("welcome") === "onboarding-complete";
   const showStoryPublishedNotice = url.searchParams.get("published") === "story";
+  const showStoryArchivedNotice = url.searchParams.get("archived") === "story";
+  const showStoryDeletedNotice = url.searchParams.get("deleted") === "story";
 
   const discoverVisibility = {
     OR: [{ privacy: "PUBLIC" as const }, { authorId: sessionUser.id }],
@@ -164,6 +168,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     searchQuery,
     showOnboardingWelcome,
     showStoryPublishedNotice,
+    showStoryArchivedNotice,
+    showStoryDeletedNotice,
   };
 }
 
@@ -176,6 +182,8 @@ export default function Discover() {
     searchQuery,
     showOnboardingWelcome,
     showStoryPublishedNotice,
+    showStoryArchivedNotice,
+    showStoryDeletedNotice,
   } = useLoaderData<typeof loader>();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigation = useNavigation();
@@ -220,12 +228,29 @@ export default function Discover() {
       shouldReplace = true;
     }
 
+    if (showStoryArchivedNotice) {
+      nextParams.delete("archived");
+      shouldReplace = true;
+    }
+
+    if (showStoryDeletedNotice) {
+      nextParams.delete("deleted");
+      shouldReplace = true;
+    }
+
     if (!shouldReplace) {
       return;
     }
 
     setSearchParams(nextParams, { replace: true, preventScrollReset: true });
-  }, [showOnboardingWelcome, showStoryPublishedNotice, searchParams, setSearchParams]);
+  }, [
+    showOnboardingWelcome,
+    showStoryPublishedNotice,
+    showStoryArchivedNotice,
+    showStoryDeletedNotice,
+    searchParams,
+    setSearchParams,
+  ]);
 
   return (
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
@@ -246,30 +271,29 @@ export default function Discover() {
             perspective, or remind you that you're not alone.
           </p>
 
-          {showOnboardingWelcome ? (
-            <div
-              className="mt-6 mx-auto max-w-xl rounded-xl border border-[#F5B942]/40 bg-white/95 text-midnight px-4 py-3 shadow-sm"
-              role="status"
-              aria-live="polite"
-            >
-              <p className="text-sm font-medium">
-                Welcome to PaTan. Your profile setup is complete and your feed
-                is now personalized.
-              </p>
-            </div>
-          ) : null}
+          <AutoDismissAlert
+            tone="success"
+            message={showOnboardingWelcome ? "Welcome to PaTan. Your profile setup is complete and your feed is now personalized." : undefined}
+            className="mt-6 mx-auto max-w-xl"
+          />
 
-          {showStoryPublishedNotice ? (
-            <div
-              className="mt-4 mx-auto max-w-xl rounded-xl border border-[#2E6F40]/35 bg-white/95 px-4 py-3 text-[#1F4D2C] shadow-sm"
-              role="status"
-              aria-live="polite"
-            >
-              <p className="text-sm font-medium">
-                Your story is now live. Thank you for sharing your voice with the community.
-              </p>
-            </div>
-          ) : null}
+          <AutoDismissAlert
+            tone="success"
+            message={showStoryPublishedNotice ? "Your story is now live. Thank you for sharing your voice with the community." : undefined}
+            className="mt-4 mx-auto max-w-xl"
+          />
+
+          <AutoDismissAlert
+            tone="success"
+            message={showStoryArchivedNotice ? "Story archived. It is now hidden from public discovery." : undefined}
+            className="mt-4 mx-auto max-w-xl"
+          />
+
+          <AutoDismissAlert
+            tone="success"
+            message={showStoryDeletedNotice ? "Story deleted from your feed." : undefined}
+            className="mt-4 mx-auto max-w-xl"
+          />
 
           {/* Search */}
           <Form method="get" className="mt-8 max-w-xl mx-auto" role="search">
@@ -305,12 +329,13 @@ export default function Discover() {
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-              <button
-                type="submit"
+              <SubmitButton
                 className="absolute right-1 top-1 min-h-[44px] rounded-full bg-golden px-4 text-midnight font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                busy={isRefreshing}
+                pendingLabel="Searching…"
               >
                 Search
-              </button>
+              </SubmitButton>
             </div>
           </Form>
           {selectedTag ? (
@@ -408,19 +433,20 @@ export default function Discover() {
                 return (
                   <article
                     key={story.id}
-                    className="card hover:shadow-lg transition-shadow"
+                    className="group relative card hover:shadow-lg transition-shadow"
                   >
+                    <Link
+                      to={`/stories/${story.id}`}
+                      className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                      aria-label={`Read story: ${story.title}`}
+                    />
+
                     <span className="inline-block px-3 py-1 bg-golden/10 text-golden text-sm font-medium rounded-full">
                       {story.category.name}
                     </span>
 
-                    <h2 className="mt-4 font-heading text-xl font-bold text-midnight">
-                      <Link
-                        to={`/stories/${story.id}`}
-                        className="hover:text-golden transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
-                      >
-                        {story.title}
-                      </Link>
+                    <h2 className="mt-4 font-heading text-xl font-bold text-midnight transition-colors group-hover:text-golden">
+                      {story.title}
                     </h2>
 
                     <p className="mt-2 text-night/70 line-clamp-2">
@@ -490,19 +516,19 @@ export function ErrorBoundary() {
   return (
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
       <section className="max-w-3xl mx-auto px-4 py-14">
-        <div className="rounded-2xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-5 py-4 text-[#7C2D12]">
+        <AutoDismissAlert tone="error" message={message} timeoutMs={10000} />
+        <div className="mt-4 rounded-2xl border border-midnight/10 bg-white px-5 py-4 text-midnight">
           <h1 className="font-heading text-2xl">Discover unavailable</h1>
-          <p className="mt-2 text-sm">{message}</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Link
               to="/discover"
-              className="inline-flex min-h-[44px] items-center rounded-lg border border-[#7C2D12]/30 px-3 py-2 text-sm font-semibold"
+              className="inline-flex min-h-[44px] items-center rounded-lg border border-midnight/20 px-3 py-2 text-sm font-semibold hover:bg-surface"
             >
               Retry discover
             </Link>
             <Link
               to="/dashboard"
-              className="inline-flex min-h-[44px] items-center rounded-lg border border-[#7C2D12]/30 px-3 py-2 text-sm font-semibold"
+              className="inline-flex min-h-[44px] items-center rounded-lg border border-midnight/20 px-3 py-2 text-sm font-semibold hover:bg-surface"
             >
               Back to dashboard
             </Link>

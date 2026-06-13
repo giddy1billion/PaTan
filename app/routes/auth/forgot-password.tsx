@@ -1,5 +1,6 @@
 import type { MetaFunction } from "react-router";
-import { Link, Form } from "react-router";
+import { Link, Form, useNavigation } from "react-router";
+import { SubmitButton } from "~/components/ui";
 
 export const meta: MetaFunction = () => {
   return [
@@ -12,6 +13,8 @@ export const meta: MetaFunction = () => {
 };
 
 export default function ForgotPassword() {
+  const navigation = useNavigation();
+  const isSending = navigation.state === "submitting";
   return (
     <div className="min-h-screen page-modern flex flex-col">
       {/* Header */}
@@ -66,12 +69,13 @@ export default function ForgotPassword() {
                 />
               </div>
 
-              <button
-                type="submit"
+              <SubmitButton
                 className="w-full btn-primary py-3 text-base"
+                busy={isSending}
+                pendingLabel="Sending reset link…"
               >
                 Send Reset Link
-              </button>
+              </SubmitButton>
             </Form>
 
             <p className="mt-8 text-center text-sm text-night/60">

@@ -11,8 +11,10 @@ import {
   useNavigation,
   useSearchParams,
 } from "react-router";
+import { useEffect, useState } from "react";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 
 type ActionData = {
   error?: string;
@@ -91,6 +93,17 @@ function formatDate(value: Date) {
     hour: "numeric",
     minute: "2-digit",
   }).format(value);
+}
+
+function BulkReadIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 7h16" />
+      <path d="M4 12h16" />
+      <path d="M4 17h10" />
+      <path d="m17 16 2 2 3-4" />
+    </svg>
+  );
 }
 
 export const meta: MetaFunction = () => {
@@ -253,8 +266,15 @@ export default function NotificationsRoute() {
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [pendingBulkIntent, setPendingBulkIntent] = useState<"mark-filter-read" | "mark-all-read" | null>(null);
 
   const isSubmitting = navigation.state === "submitting";
+
+  useEffect(() => {
+    if (navigation.state === "idle") {
+      setPendingBulkIntent(null);
+    }
+  }, [navigation.state]);
 
   return (
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
@@ -276,17 +296,17 @@ export default function NotificationsRoute() {
 
       <section className="py-8 sm:py-10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          {actionData?.error ? (
-            <p className="mb-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]" role="alert" aria-live="polite">
-              {actionData.error}
-            </p>
-          ) : null}
+          <AutoDismissAlert
+            tone="error"
+            message={actionData?.error}
+            className="mb-4"
+          />
 
-          {actionData?.success ? (
-            <p className="mb-4 rounded-xl border border-forest/30 bg-[#ECF9F0] px-4 py-3 text-sm text-forest" role="status" aria-live="polite">
-              {actionData.success}
-            </p>
-          ) : null}
+          <AutoDismissAlert
+            tone="success"
+            message={actionData?.success}
+            className="mb-4"
+          />
 
           <section className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm" aria-label="Notification filters">
             <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
@@ -347,32 +367,112 @@ export default function NotificationsRoute() {
                 </select>
               </div>
 
-              <div className="flex gap-2">
-                <Form method="post">
-                  <input type="hidden" name="intent" value="mark-filter-read" />
-                  <input type="hidden" name="view" value={view} />
-                  <input type="hidden" name="type" value={type} />
+              <div className="grid gap-2 sm:grid-cols-2">
+                <div className="rounded-xl border border-midnight/15 bg-white p-2">
                   <button
-                    type="submit"
-                    className="min-h-[44px] rounded-xl border border-midnight/15 px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
-                    disabled={isSubmitting}
-                    aria-busy={isSubmitting}
+                    type="button"
+                    className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                    onClick={() =>
+                      setPendingBulkIntent((current) =>
+                        current === "mark-filter-read" ? null : "mark-filter-read",
+                      )
+                    }
+                    aria-expanded={pendingBulkIntent === "mark-filter-read"}
+                    aria-controls="confirm-mark-filter-read"
                   >
-                    Mark filtered read
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-midnight/15 bg-white">
+                      <BulkReadIcon />
+                    </span>
+                    <span>Mark filtered read</span>
                   </button>
-                </Form>
 
-                <Form method="post">
-                  <input type="hidden" name="intent" value="mark-all-read" />
-                  <button
-                    type="submit"
-                    className="btn-primary min-h-[44px]"
-                    disabled={isSubmitting}
-                    aria-busy={isSubmitting}
+                  <div
+                    id="confirm-mark-filter-read"
+                    className={`overflow-hidden transition-all duration-200 motion-reduce:transition-none ${
+                      pendingBulkIntent === "mark-filter-read" ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"
+                    }`}
                   >
-                    Mark all read
+                    <div className="rounded-lg border border-[#F59E0B]/35 bg-[#FEF3C7]/55 px-3 py-2">
+                      <p className="text-xs text-[#7C2D12]">
+                        Mark unread notifications in this filter as read?
+                      </p>
+                      <div className="mt-2 flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                          onClick={() => setPendingBulkIntent(null)}
+                        >
+                          Cancel
+                        </button>
+                        <Form method="post">
+                          <input type="hidden" name="intent" value="mark-filter-read" />
+                          <input type="hidden" name="view" value={view} />
+                          <input type="hidden" name="type" value={type} />
+                          <button
+                            type="submit"
+                            className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            disabled={isSubmitting}
+                            aria-busy={isSubmitting}
+                          >
+                            Continue
+                          </button>
+                        </Form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-midnight/15 bg-white p-2">
+                  <button
+                    type="button"
+                    className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                    onClick={() =>
+                      setPendingBulkIntent((current) =>
+                        current === "mark-all-read" ? null : "mark-all-read",
+                      )
+                    }
+                    aria-expanded={pendingBulkIntent === "mark-all-read"}
+                    aria-controls="confirm-mark-all-read"
+                  >
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-midnight/15 bg-white">
+                      <BulkReadIcon />
+                    </span>
+                    <span>Mark all read</span>
                   </button>
-                </Form>
+
+                  <div
+                    id="confirm-mark-all-read"
+                    className={`overflow-hidden transition-all duration-200 motion-reduce:transition-none ${
+                      pendingBulkIntent === "mark-all-read" ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="rounded-lg border border-[#F59E0B]/35 bg-[#FEF3C7]/55 px-3 py-2">
+                      <p className="text-xs text-[#7C2D12]">
+                        Mark every unread notification as read?
+                      </p>
+                      <div className="mt-2 flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                          onClick={() => setPendingBulkIntent(null)}
+                        >
+                          Cancel
+                        </button>
+                        <Form method="post">
+                          <input type="hidden" name="intent" value="mark-all-read" />
+                          <button
+                            type="submit"
+                            className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            disabled={isSubmitting}
+                            aria-busy={isSubmitting}
+                          >
+                            Continue
+                          </button>
+                        </Form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -481,6 +581,7 @@ export default function NotificationsRoute() {
                   type,
                   page: String(Math.max(1, page - 1)),
                 }).toString()}`}
+                preventScrollReset
                 aria-disabled={page <= 1}
                 className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page <= 1 ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
               >
@@ -497,6 +598,7 @@ export default function NotificationsRoute() {
                   type,
                   page: String(Math.min(totalPages, page + 1)),
                 }).toString()}`}
+                preventScrollReset
                 aria-disabled={page >= totalPages}
                 className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page >= totalPages ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
               >

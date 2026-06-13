@@ -7,6 +7,8 @@ import {
   useNavigation,
   useRouteLoaderData,
 } from 'react-router';
+import { useState } from 'react';
+import { AutoDismissAlert } from '~/components/auto-dismiss-alert';
 import { getUser } from '~/utils/auth.server';
 import { verifyCsrfToken } from '~/utils/csrf.server';
 import { db } from '~/utils/db.server';
@@ -18,6 +20,8 @@ type ActionData = {
     content: string;
   };
 };
+
+type StoryLifecycleIntent = 'archive-story' | 'delete-story';
 
 type WorkspaceData = {
   storyDraftsCount: number;
@@ -66,6 +70,29 @@ function formatStatus(value: string) {
     .join(' ');
 }
 
+function ArchiveStoryIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 7h18" />
+      <path d="M5 7v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7" />
+      <path d="m10 12 2 2 2-2" />
+      <path d="M12 8v6" />
+    </svg>
+  );
+}
+
+function DeleteStoryIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 7h16" />
+      <path d="M10 11v6" />
+      <path d="M14 11v6" />
+      <path d="M7 7l1 12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2l1-12" />
+      <path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+    </svg>
+  );
+}
+
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) {
     return [
@@ -107,7 +134,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     },
     select: {
       id: true,
+      slug: true,
       title: true,
+      authorId: true,
       content: true,
       excerpt: true,
       readingTimeMinutes: true,
@@ -170,6 +199,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     return {
       story,
       reflections,
+      isOwner: false,
       isAuthenticated: false,
       workspace: null,
     };
@@ -252,6 +282,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   return {
     story,
     reflections,
+    isOwner: story.authorId === user.id,
     isAuthenticated: true,
     workspace: {
       storyDraftsCount,
@@ -294,13 +325,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const csrfToken = String(formData.get('csrfToken') ?? '');
   const content = String(formData.get('content') ?? '').trim();
 
-  if (!submittedStoryId) {
-    return {
-      error: 'Invalid story context. Please refresh and try again.',
-      values: { content },
-    } satisfies ActionData;
-  }
-
   const hasValidCsrf = await verifyCsrfToken({
     request,
     submittedToken: csrfToken,
@@ -309,6 +333,69 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (!hasValidCsrf) {
     return {
       error: 'Your session could not be verified. Please refresh and try again.',
+      values: { content },
+    } satisfies ActionData;
+  }
+
+  if (intent === 'archive-story' || intent === 'delete-story') {
+    const ownerStory = await db.story.findFirst({
+      where: {
+        deletedAt: null,
+        authorId: user.id,
+        OR: [{ id: storyParam }, { slug: storyParam }],
+      },
+      select: {
+        id: true,
+        status: true,
+      },
+    });
+
+    if (!ownerStory) {
+      return {
+        error: 'You can only manage stories you own.',
+        values: { content },
+      } satisfies ActionData;
+    }
+
+    if (intent === 'archive-story') {
+      if (ownerStory.status !== 'ARCHIVED') {
+        await db.story.update({
+          where: { id: ownerStory.id },
+          data: {
+            status: 'ARCHIVED',
+            publishedAt: null,
+          },
+        });
+      }
+
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: '/discover?archived=story',
+        },
+      });
+    }
+
+    await db.story.update({
+      where: { id: ownerStory.id },
+      data: {
+        status: 'ARCHIVED',
+        publishedAt: null,
+        deletedAt: new Date(),
+      },
+    });
+
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: '/discover?deleted=story',
+      },
+    });
+  }
+
+  if (!submittedStoryId) {
+    return {
+      error: 'Invalid story context. Please refresh and try again.',
       values: { content },
     } satisfies ActionData;
   }
@@ -393,7 +480,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function StoryDetailRoute() {
   const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>('root');
-  const { story, reflections, workspace, isAuthenticated } = useLoaderData<typeof loader>();
+  const { story, reflections, isOwner, workspace, isAuthenticated } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
 
@@ -407,6 +494,9 @@ export default function StoryDetailRoute() {
 
   const isSharing = submittingIntent === 'share-reflection';
   const isSavingPrivate = submittingIntent === 'save-private-reflection';
+  const isArchivingStory = submittingIntent === 'archive-story';
+  const isDeletingStory = submittingIntent === 'delete-story';
+  const [pendingStoryLifecycleIntent, setPendingStoryLifecycleIntent] = useState<StoryLifecycleIntent | null>(null);
 
   const locationText = [story.author.city, story.author.country].filter(Boolean).join(', ');
   const reflectionDraft = actionData?.values?.content ?? '';
@@ -480,6 +570,117 @@ export default function StoryDetailRoute() {
               </div>
             </div>
 
+            {isOwner ? (
+              <section className="mt-6 rounded-2xl border border-midnight/10 bg-white p-4 sm:p-5" aria-labelledby="story-controls-heading">
+                <h2 id="story-controls-heading" className="text-sm font-semibold text-midnight">Story controls</h2>
+                <p className="mt-1 text-xs text-night/65">Archive to hide this story from public feeds, or delete to remove it from your account.</p>
+
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <div className="rounded-xl border border-midnight/15 bg-white p-2">
+                    <button
+                      type="button"
+                      className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                      onClick={() =>
+                        setPendingStoryLifecycleIntent((current) =>
+                          current === 'archive-story' ? null : 'archive-story',
+                        )
+                      }
+                      aria-expanded={pendingStoryLifecycleIntent === 'archive-story'}
+                      aria-controls="confirm-archive-story"
+                    >
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-midnight/15 bg-white">
+                        <ArchiveStoryIcon />
+                      </span>
+                      <span>Archive story</span>
+                    </button>
+
+                    <div
+                      id="confirm-archive-story"
+                      className={`overflow-hidden transition-all duration-200 motion-reduce:transition-none ${
+                        pendingStoryLifecycleIntent === 'archive-story' ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'
+                      }`}
+                    >
+                      <div className="rounded-lg border border-[#F59E0B]/35 bg-[#FEF3C7]/55 px-3 py-2">
+                        <p className="text-xs text-[#7C2D12]">Archive this story and remove it from public discovery?</p>
+                        <div className="mt-2 flex items-center justify-end gap-2">
+                          <button
+                            type="button"
+                            className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            onClick={() => setPendingStoryLifecycleIntent(null)}
+                          >
+                            Cancel
+                          </button>
+                          <Form method="post">
+                            <input type="hidden" name="intent" value="archive-story" />
+                            <input type="hidden" name={csrfFieldName} value={csrfToken} />
+                            <button
+                              type="submit"
+                              className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                              disabled={isArchivingStory}
+                              aria-busy={isArchivingStory}
+                            >
+                              {isArchivingStory ? 'Archiving...' : 'Continue'}
+                            </button>
+                          </Form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-midnight/15 bg-white p-2">
+                    <button
+                      type="button"
+                      className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-[#7C2D12] hover:bg-[#FEF3C7]/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                      onClick={() =>
+                        setPendingStoryLifecycleIntent((current) =>
+                          current === 'delete-story' ? null : 'delete-story',
+                        )
+                      }
+                      aria-expanded={pendingStoryLifecycleIntent === 'delete-story'}
+                      aria-controls="confirm-delete-story"
+                    >
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#F59E0B]/45 bg-[#FFF7E8]">
+                        <DeleteStoryIcon />
+                      </span>
+                      <span>Delete story</span>
+                    </button>
+
+                    <div
+                      id="confirm-delete-story"
+                      className={`overflow-hidden transition-all duration-200 motion-reduce:transition-none ${
+                        pendingStoryLifecycleIntent === 'delete-story' ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'
+                      }`}
+                    >
+                      <div className="rounded-lg border border-[#F59E0B]/40 bg-[#FEF3C7]/55 px-3 py-2">
+                        <p className="text-xs text-[#7C2D12]">Delete this story? This action removes it from your account feed.</p>
+                        <div className="mt-2 flex items-center justify-end gap-2">
+                          <button
+                            type="button"
+                            className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            onClick={() => setPendingStoryLifecycleIntent(null)}
+                          >
+                            Cancel
+                          </button>
+                          <Form method="post">
+                            <input type="hidden" name="intent" value="delete-story" />
+                            <input type="hidden" name={csrfFieldName} value={csrfToken} />
+                            <button
+                              type="submit"
+                              className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                              disabled={isDeletingStory}
+                              aria-busy={isDeletingStory}
+                            >
+                              {isDeletingStory ? 'Deleting...' : 'Continue'}
+                            </button>
+                          </Form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            ) : null}
+
             <section className="mt-10" aria-labelledby="reflections-heading">
               <h2 id="reflections-heading" className="font-heading text-2xl font-bold text-midnight">
                 Reflections
@@ -489,17 +690,17 @@ export default function StoryDetailRoute() {
                 <div className="mt-4 rounded-2xl border border-midnight/10 bg-white p-4 sm:p-5">
                   <h3 className="text-sm font-semibold text-midnight">Share or save your reflection</h3>
 
-                  {actionData?.error ? (
-                    <p className="mt-3 rounded-lg border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-3 py-2 text-sm text-[#7C2D12]" role="alert">
-                      {actionData.error}
-                    </p>
-                  ) : null}
+                  <AutoDismissAlert
+                    tone="error"
+                    message={actionData?.error}
+                    className="mt-3"
+                  />
 
-                  {actionData?.success ? (
-                    <p className="mt-3 rounded-lg border border-forest/30 bg-[#ECF9F0] px-3 py-2 text-sm text-forest" role="status" aria-live="polite">
-                      {actionData.success}
-                    </p>
-                  ) : null}
+                  <AutoDismissAlert
+                    tone="success"
+                    message={actionData?.success}
+                    className="mt-3"
+                  />
 
                   <Form method="post" className="mt-3 space-y-3">
                     <input type="hidden" name="storyId" value={story.id} />

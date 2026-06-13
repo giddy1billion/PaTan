@@ -21,6 +21,7 @@ import {
   updateProfile,
   upsertProfileSafetySettings,
 } from "~/utils/users.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 type VisibilityValue = "PUBLIC" | "FOLLOWERS_ONLY" | "PRIVATE";
 type ActionData = {
   error?: string;
@@ -370,26 +371,14 @@ export default function ProfileEditRoute() {
           </aside>{" "}
           <div className="space-y-5 lg:col-span-2">
             {" "}
-            {actionData?.error ? (
-              <div
-                className="rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
-                role="alert"
-                aria-live="polite"
-              >
-                {" "}
-                {actionData.error}{" "}
-              </div>
-            ) : null}{" "}
-            {actionData?.success ? (
-              <div
-                className="rounded-xl border border-forest/30 bg-[#ECF9F0] px-4 py-3 text-sm text-forest"
-                role="status"
-                aria-live="polite"
-              >
-                {" "}
-                {actionData.success}{" "}
-              </div>
-            ) : null}{" "}
+            <AutoDismissAlert
+              tone="error"
+              message={actionData?.error}
+            />{" "}
+            <AutoDismissAlert
+              tone="success"
+              message={actionData?.success}
+            />{" "}
             <Form method="post" className="space-y-5">
               {" "}
               <section
@@ -737,7 +726,8 @@ export default function ProfileEditRoute() {
                 </div>{" "}
               </section>{" "}
               <section
-                className="rounded-2xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm"
+                id="preferences"
+                className="rounded-2xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm scroll-mt-24"
                 aria-labelledby="notification-preferences-heading"
                 aria-busy={isSubmitting}
               >
@@ -838,21 +828,20 @@ export function ErrorBoundary() {
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
       {" "}
       <section className="max-w-3xl mx-auto px-4 py-14">
-        {" "}
-        <div className="rounded-2xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-5 py-4 text-[#7C2D12]">
-          {" "}
-          <h1 className="font-heading text-2xl">Profile error state</h1>{" "}
-          <p className="mt-2 text-sm">
-            We could not load your profile settings right now.
-          </p>{" "}
+        <AutoDismissAlert
+          tone="error"
+          message="We could not load your profile settings right now."
+          timeoutMs={10000}
+        />
+        <div className="mt-4 rounded-2xl border border-midnight/10 bg-white px-5 py-4 text-midnight">
+          <h1 className="font-heading text-2xl">Profile error state</h1>
           <Link
             to="/dashboard"
-            className="mt-4 inline-flex rounded-lg border border-[#7C2D12]/30 px-3 py-2 text-sm font-semibold"
+            className="mt-4 inline-flex min-h-[44px] items-center rounded-lg border border-midnight/20 px-3 py-2 text-sm font-semibold hover:bg-surface"
           >
-            {" "}
-            Back to dashboard{" "}
-          </Link>{" "}
-        </div>{" "}
+            Back to dashboard
+          </Link>
+        </div>
       </section>{" "}
     </main>
   );

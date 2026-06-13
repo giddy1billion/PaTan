@@ -3,8 +3,9 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "react-router";
-import { Link, Form, redirect, useSearchParams } from "react-router";
+import { Link, Form, redirect, useNavigation, useSearchParams } from "react-router";
 import { createUserSession, getUser } from "~/utils/auth.server";
+import { SubmitButton } from "~/components/ui";
 import { getAuthErrorMessage } from "~/utils/auth-errors";
 import { logAuthSecurityEvent } from "~/utils/auth-security.server";
 import { issueEmailVerification } from "~/utils/email-verification.server";
@@ -12,6 +13,7 @@ import {
   createLocalUser,
   getPostAuthRedirectForUser,
 } from "~/utils/users.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 
 export const meta: MetaFunction = () => {
   return [
@@ -146,6 +148,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Signup() {
   const [searchParams] = useSearchParams();
+  const navigation = useNavigation();
+  const isCreatingAccount = navigation.state === "submitting";
   const redirectTo = searchParams.get("redirectTo") ?? "/discover";
   const authError = getAuthErrorMessage(searchParams.get("error"));
   const oauthGoogleUrl = `/oauth/google?mode=signup&redirectTo=${encodeURIComponent(redirectTo)}`;
@@ -186,15 +190,11 @@ export default function Signup() {
               Your story could light someone else's path
             </p>
 
-            {authError ? (
-              <div
-                className="mt-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
-                role="alert"
-                aria-live="polite"
-              >
-                {authError}
-              </div>
-            ) : null}
+            <AutoDismissAlert
+              tone="error"
+              message={authError}
+              className="mt-4"
+            />
 
             <Form method="post" className="form-modern mt-8 space-y-6">
               <input type="hidden" name="redirectTo" value={redirectTo} />
@@ -303,12 +303,13 @@ export default function Signup() {
                 </label>
               </div>
 
-              <button
-                type="submit"
+              <SubmitButton
                 className="w-full btn-primary py-3 text-base"
+                busy={isCreatingAccount}
+                pendingLabel="Creating account…"
               >
                 Create Account
-              </button>
+              </SubmitButton>
             </Form>
 
             {/* Social Login */}

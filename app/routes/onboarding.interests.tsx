@@ -9,12 +9,15 @@ import {
   redirect,
   useActionData,
   useLoaderData,
+  useNavigation,
 } from "react-router";
 import { requireVerifiedUser } from "~/utils/auth.server";
 import {
   completeOnboardingWithInterests,
   getOnboardingProfile,
 } from "~/utils/users.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
+import { SubmitButton } from "~/components/ui";
 type ActionData = { error?: string };
 const INTEREST_OPTIONS = [
   "Gratitude",
@@ -87,6 +90,8 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function OnboardingInterestsRoute() {
   const { redirectTo, selectedInterests } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
+  const navigation = useNavigation();
+  const isCompleting = navigation.state === "submitting";
   return (
     <div className="min-h-screen page-modern flex flex-col">
       {" "}
@@ -128,16 +133,11 @@ export default function OnboardingInterestsRoute() {
             Pick the topics you want to see first in your dashboard and
             discovery feed.{" "}
           </p>{" "}
-          {actionData?.error ? (
-            <div
-              className="mt-5 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
-              role="alert"
-              aria-live="polite"
-            >
-              {" "}
-              {actionData.error}{" "}
-            </div>
-          ) : null}{" "}
+          <AutoDismissAlert
+            tone="error"
+            message={actionData?.error}
+            className="mt-5"
+          />{" "}
           <Form method="post" className="mt-6 space-y-6">
             {" "}
             <input type="hidden" name="redirectTo" value={redirectTo} />{" "}
@@ -181,13 +181,14 @@ export default function OnboardingInterestsRoute() {
                 {" "}
                 Back{" "}
               </Link>{" "}
-              <button
-                type="submit"
+              <SubmitButton
                 className="btn-primary min-h-[44px] px-5 py-2.5 text-sm sm:text-base"
+                busy={isCompleting}
+                pendingLabel="Completing…"
               >
                 {" "}
                 Complete onboarding{" "}
-              </button>{" "}
+              </SubmitButton>{" "}
             </div>{" "}
           </Form>{" "}
         </section>{" "}

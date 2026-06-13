@@ -1,4 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("~/utils/db.server", () => ({
+  db: {},
+  pool: {},
+}));
 
 import { shouldRevalidate } from "~/routes/dashboard";
 

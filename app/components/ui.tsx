@@ -79,6 +79,75 @@ export function Button({
   );
 }
 
+/**
+ * Inline loading spinner used by action buttons.
+ * Hidden when the user prefers reduced motion.
+ */
+export function ButtonSpinner({ className = '' }: { className?: string }) {
+  return (
+    <svg
+      className={`h-4 w-4 animate-spin motion-reduce:animate-none ${className}`}
+      fill="none"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+      />
+    </svg>
+  );
+}
+
+interface SubmitButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  /** Whether this button's action is currently in flight. */
+  busy?: boolean;
+  /** Optional label shown while busy. Falls back to children when omitted. */
+  pendingLabel?: ReactNode;
+  children: ReactNode;
+}
+
+/**
+ * Action button with a built-in, accessible loading state.
+ *
+ * Preserves the caller's existing className (e.g. `btn-primary`) so it can be
+ * dropped into existing forms. When `busy` is true it disables the button,
+ * sets `aria-busy`, and shows a spinner alongside an optional pending label.
+ */
+export function SubmitButton({
+  busy = false,
+  pendingLabel,
+  disabled,
+  children,
+  className = '',
+  type = 'submit',
+  ...props
+}: SubmitButtonProps) {
+  return (
+    <button
+      type={type}
+      className={className}
+      disabled={disabled || busy}
+      aria-busy={busy || undefined}
+      {...props}
+    >
+      <span className="inline-flex items-center justify-center gap-2">
+        {busy ? <ButtonSpinner /> : null}
+        <span>{busy ? (pendingLabel ?? children) : children}</span>
+      </span>
+    </button>
+  );
+}
+
 // ============================================================================
 // ENGAGEMENT BUTTONS
 // ============================================================================

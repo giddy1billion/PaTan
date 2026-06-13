@@ -8,6 +8,7 @@ import {
   Link,
   redirect,
   useLoaderData,
+  useNavigation,
   useRouteLoaderData,
   useSearchParams,
 } from "react-router";
@@ -22,6 +23,8 @@ import { verifyCsrfToken } from "~/utils/csrf.server";
 import { db } from "~/utils/db.server";
 import { createMfaChallenge, verifyMfaChallenge } from "~/utils/mfa.server";
 import { enforceAuthRateLimit } from "~/utils/rate-limit.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
+import { SubmitButton } from "~/components/ui";
 export const meta: MetaFunction = () => {
   return [
     { title: "Verification Required | PaTan" },
@@ -228,6 +231,12 @@ export default function MfaRoute() {
   const authError = getAuthErrorMessage(errorCode);
   const csrfToken = rootData?.csrfToken ?? "";
   const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
+  const navigation = useNavigation();
+  const navIntent = navigation.formData?.get("intent");
+  const isVerifying =
+    navigation.state === "submitting" && navIntent !== "resend";
+  const isResending =
+    navigation.state === "submitting" && navIntent === "resend";
   return (
     <div className="min-h-screen page-modern flex flex-col">
       {" "}
@@ -265,16 +274,11 @@ export default function MfaRoute() {
             <p className="mt-2 text-center text-[#64748B]">
               We sent a verification code to {emailHint}
             </p>{" "}
-            {authError ? (
-              <div
-                className="mt-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
-                role="alert"
-                aria-live="polite"
-              >
-                {" "}
-                {authError}{" "}
-              </div>
-            ) : null}{" "}
+            <AutoDismissAlert
+              tone="error"
+              message={authError}
+              className="mt-4"
+            />{" "}
             <Form method="post" className="form-modern mt-8 space-y-6">
               {" "}
               <input type="hidden" name="intent" value="verify" />{" "}
@@ -300,26 +304,28 @@ export default function MfaRoute() {
                   placeholder="Enter 6-digit code"
                 />{" "}
               </div>{" "}
-              <button
-                type="submit"
+              <SubmitButton
                 className="w-full btn-primary py-3 text-base"
+                busy={isVerifying}
+                pendingLabel="Verifying…"
               >
                 {" "}
                 Verify and Continue{" "}
-              </button>{" "}
+              </SubmitButton>{" "}
             </Form>{" "}
             <Form method="post" className="mt-4">
               {" "}
               <input type="hidden" name="intent" value="resend" />{" "}
               <input type="hidden" name="challengeId" value={challengeId} />{" "}
               <input type="hidden" name={csrfFieldName} value={csrfToken} />{" "}
-              <button
-                type="submit"
+              <SubmitButton
                 className="w-full btn-tertiary py-3 text-base border border-mist rounded-lg"
+                busy={isResending}
+                pendingLabel="Resending…"
               >
                 {" "}
                 Resend Code{" "}
-              </button>{" "}
+              </SubmitButton>{" "}
             </Form>{" "}
           </div>{" "}
         </div>{" "}

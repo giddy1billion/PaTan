@@ -11,6 +11,8 @@ import {
   useNavigation,
   useSearchParams,
 } from "react-router";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
+import { SubmitButton } from "~/components/ui";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
 import { createNotification } from "~/utils/notifications.server";
@@ -111,6 +113,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const q = String(url.searchParams.get("q") ?? "").trim().slice(0, 80);
   const page = parsePage(url.searchParams.get("page"));
   const showCreatedNotice = url.searchParams.get("created") === "1";
+  const showArchivedNotice = url.searchParams.get("archived") === "aspiration";
+  const showDeletedNotice = url.searchParams.get("deleted") === "aspiration";
 
   const visibilityWhere = {
     OR: [
@@ -218,6 +222,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     totalPages,
     totalCount,
     showCreatedNotice,
+    showArchivedNotice,
+    showDeletedNotice,
     aspirations: aspirations.map((aspiration) => {
       const completedMilestones = aspiration.milestones.filter((item) => item.isCompleted).length;
       const totalMilestones = aspiration.milestones.length;
@@ -351,11 +357,19 @@ export default function AspirationsIndex() {
     totalPages,
     totalCount,
     showCreatedNotice,
+    showArchivedNotice,
+    showDeletedNotice,
   } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const isSubmitting = navigation.state === "submitting";
+  const supportingAspirationId =
+    navigation.state === "submitting" &&
+    navigation.formData?.get("intent") === "support-aspiration"
+      ? String(navigation.formData?.get("aspirationId") ?? "")
+      : "";
+  const isFiltering =
+    navigation.state === "loading" && navigation.formMethod === "GET";
 
   return (
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
@@ -402,9 +416,9 @@ export default function AspirationsIndex() {
                 </option>
               ))}
             </select>
-            <button type="submit" className="btn-secondary min-h-[44px]">
+            <SubmitButton className="btn-secondary min-h-[44px]" busy={isFiltering} pendingLabel="Applying…">
               Apply filters
-            </button>
+            </SubmitButton>
           </Form>
 
           <nav className="mt-3 flex flex-wrap gap-2" aria-label="Quick status filters">
@@ -413,10 +427,17 @@ export default function AspirationsIndex() {
                 key={option.value}
                 type="button"
                 onClick={() => {
+                  if (searchParams.get("status") === option.value) {
+                    return;
+                  }
+
                   const next = new URLSearchParams(searchParams);
                   next.set("status", option.value);
                   next.set("page", "1");
-                  setSearchParams(next);
+                  setSearchParams(next, {
+                    replace: true,
+                    preventScrollReset: true,
+                  });
                 }}
                 className={`min-h-[44px] rounded-full px-4 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${
                   status === option.value
@@ -434,23 +455,35 @@ export default function AspirationsIndex() {
 
       <section className="py-10 sm:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {showCreatedNotice ? (
-            <p className="mb-4 rounded-xl border border-forest/30 bg-[#ECF9F0] px-4 py-3 text-sm text-forest" role="status" aria-live="polite">
-              Your aspiration has been shared.
-            </p>
-          ) : null}
+          <AutoDismissAlert
+            tone="success"
+            message={showCreatedNotice ? "Your aspiration has been shared." : undefined}
+            className="mb-4"
+          />
 
-          {actionData?.error ? (
-            <p className="mb-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]" role="alert" aria-live="polite">
-              {actionData.error}
-            </p>
-          ) : null}
+          <AutoDismissAlert
+            tone="success"
+            message={showArchivedNotice ? "Aspiration archived. It is now private to your account." : undefined}
+            className="mb-4"
+          />
 
-          {actionData?.success ? (
-            <p className="mb-4 rounded-xl border border-forest/30 bg-[#ECF9F0] px-4 py-3 text-sm text-forest" role="status" aria-live="polite">
-              {actionData.success}
-            </p>
-          ) : null}
+          <AutoDismissAlert
+            tone="success"
+            message={showDeletedNotice ? "Aspiration deleted from your list." : undefined}
+            className="mb-4"
+          />
+
+          <AutoDismissAlert
+            tone="error"
+            message={actionData?.error}
+            className="mb-4"
+          />
+
+          <AutoDismissAlert
+            tone="success"
+            message={actionData?.success}
+            className="mb-4"
+          />
 
           <p className="mb-4 text-sm text-night/70" role="status">
             {totalCount} aspiration{totalCount === 1 ? "" : "s"} found.
@@ -499,15 +532,15 @@ export default function AspirationsIndex() {
                     <Form method="post" className="sm:w-[14rem]">
                       <input type="hidden" name="intent" value="support-aspiration" />
                       <input type="hidden" name="aspirationId" value={aspiration.id} />
-                      <button
-                        type="submit"
+                      <SubmitButton
                         className="min-h-[44px] w-full rounded-xl border border-golden/40 bg-white px-4 py-2 text-sm font-semibold text-midnight hover:bg-[#FFF7E6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden disabled:opacity-60 disabled:cursor-not-allowed"
-                        disabled={isSubmitting || aspiration.isSupported || aspiration.isOwner || aspiration.authorId === sessionUserId}
-                        aria-busy={isSubmitting}
+                        disabled={aspiration.isSupported || aspiration.isOwner || aspiration.authorId === sessionUserId}
+                        busy={supportingAspirationId === aspiration.id}
+                        pendingLabel="Supporting…"
                         aria-label={aspiration.isSupported ? "You already support this aspiration" : `Support aspiration ${aspiration.title}`}
                       >
                         {aspiration.isSupported ? "Supported" : "Support aspiration"}
-                      </button>
+                      </SubmitButton>
                     </Form>
                   </div>
 
@@ -537,6 +570,7 @@ export default function AspirationsIndex() {
                   status,
                   page: String(Math.max(1, page - 1)),
                 }).toString()}`}
+                preventScrollReset
                 aria-disabled={page <= 1}
                 className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page <= 1 ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
               >
@@ -553,6 +587,7 @@ export default function AspirationsIndex() {
                   status,
                   page: String(Math.min(totalPages, page + 1)),
                 }).toString()}`}
+                preventScrollReset
                 aria-disabled={page >= totalPages}
                 className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page >= totalPages ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
               >

@@ -75,7 +75,6 @@ describe("Flow action behavior checks", () => {
     const request = postRequest("http://localhost/u/jane", {
       intent: "block-user",
       username: "jane",
-      blockReason: "safety",
     });
 
     const result = await publicProfileAction({
@@ -87,7 +86,6 @@ describe("Flow action behavior checks", () => {
     expect(blockUserByUsername).toHaveBeenCalledWith({
       blockerId: "user-1",
       blockedUsername: "jane",
-      reason: "safety",
     });
     expect(result).toEqual({ success: "You blocked @jane." });
   });
@@ -96,7 +94,6 @@ describe("Flow action behavior checks", () => {
     const request = postRequest("http://localhost/u/jane", {
       intent: "report-user",
       username: "jane",
-      reportDescription: "harassment",
     });
 
     const result = await publicProfileAction({
@@ -108,9 +105,10 @@ describe("Flow action behavior checks", () => {
     expect(reportUserByUsername).toHaveBeenCalledWith({
       reporterId: "user-1",
       reportedUsername: "jane",
-      description: "harassment",
     });
-    expect(result).toEqual({ success: "You reported @jane." });
+    expect(result).toEqual({
+      success: "Thank you. Our moderation team will review @jane.",
+    });
   });
 
   it("marks one dashboard notification as read", async () => {

@@ -7,10 +7,12 @@ import {
   Link,
   Form,
   redirect,
+  useNavigation,
   useRouteLoaderData,
   useSearchParams,
 } from "react-router";
 import { createUserSession, getUser } from "~/utils/auth.server";
+import { SubmitButton } from "~/components/ui";
 import { getAuthErrorMessage } from "~/utils/auth-errors";
 import { logAuthSecurityEvent } from "~/utils/auth-security.server";
 import { verifyCsrfToken } from "~/utils/csrf.server";
@@ -21,6 +23,7 @@ import {
   getPostAuthRedirectForUser,
   verifyLocalUser,
 } from "~/utils/users.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 
 export const meta: MetaFunction = () => {
   return [
@@ -244,6 +247,12 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Login() {
   const [searchParams] = useSearchParams();
+  const navigation = useNavigation();
+  const navIntent = navigation.formData?.get("intent");
+  const isLoggingIn =
+    navigation.state === "submitting" && navIntent !== "resend-verification";
+  const isResendingVerification =
+    navigation.state === "submitting" && navIntent === "resend-verification";
   const rootData = useRouteLoaderData<{
     csrfToken?: string;
     csrfFieldName?: string;
@@ -291,15 +300,11 @@ export default function Login() {
               Log in to continue your journey
             </p>
 
-            {authError ? (
-              <div
-                className="mt-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
-                role="alert"
-                aria-live="polite"
-              >
-                {authError}
-              </div>
-            ) : null}
+            <AutoDismissAlert
+              tone="error"
+              message={authError}
+              className="mt-4"
+            />
 
             <Form method="post" className="form-modern mt-8 space-y-6">
               <input type="hidden" name="intent" value="login" />
@@ -364,12 +369,13 @@ export default function Login() {
                 </label>
               </div>
 
-              <button
-                type="submit"
+              <SubmitButton
                 className="w-full btn-primary py-3 text-base"
+                busy={isLoggingIn}
+                pendingLabel="Logging in…"
               >
                 Log In
-              </button>
+              </SubmitButton>
             </Form>
 
             {searchParams.get("error") === "email-not-verified" ? (
@@ -377,13 +383,14 @@ export default function Login() {
                 <input type="hidden" name="intent" value="resend-verification" />
                 <input type="hidden" name="email" value={emailHint} />
                 <input type="hidden" name={csrfFieldName} value={csrfToken} />
-                <button
-                  type="submit"
+                <SubmitButton
                   className="w-full btn-tertiary py-3 text-base border border-mist rounded-lg"
                   disabled={!emailHint}
+                  busy={isResendingVerification}
+                  pendingLabel="Sending link…"
                 >
                   Send verification link again
-                </button>
+                </SubmitButton>
                 <p className="text-xs text-night/60 text-center">
                   Use the latest email we send, older links are replaced for security.
                 </p>

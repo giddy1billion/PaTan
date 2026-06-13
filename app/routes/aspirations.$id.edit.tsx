@@ -11,6 +11,8 @@ import {
   useLoaderData,
   useNavigation,
 } from "react-router";
+import { useState } from "react";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
 
@@ -64,6 +66,18 @@ function parseAspirationStatus(input: string) {
   }
 
   return "PENDING";
+}
+
+function RemoveMilestoneIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 7h16" />
+      <path d="M10 11v6" />
+      <path d="M14 11v6" />
+      <path d="M7 7l1 12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2l1-12" />
+      <path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+    </svg>
+  );
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -256,6 +270,8 @@ export default function AspirationEditRoute() {
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const [pendingMilestoneRemovalId, setPendingMilestoneRemovalId] = useState<string | null>(null);
+  const [confirmedMilestoneRemovals, setConfirmedMilestoneRemovals] = useState<Record<string, boolean>>({});
 
   return (
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
@@ -270,11 +286,11 @@ export default function AspirationEditRoute() {
           </Link>
         </div>
 
-        {actionData?.error ? (
-          <p className="mt-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]" role="alert" aria-live="polite">
-            {actionData.error}
-          </p>
-        ) : null}
+        <AutoDismissAlert
+          tone="error"
+          message={actionData?.error}
+          className="mt-4"
+        />
 
         <Form method="post" className="mt-6 space-y-6 rounded-2xl border border-midnight/10 bg-white p-6 shadow-sm">
           <div>
@@ -368,6 +384,9 @@ export default function AspirationEditRoute() {
                 {aspiration.milestones.map((milestone) => (
                   <li key={milestone.id} className="rounded-xl border border-midnight/10 p-4">
                     <input type="hidden" name="milestoneId" value={milestone.id} />
+                    {confirmedMilestoneRemovals[milestone.id] ? (
+                      <input type="hidden" name={`removeMilestone-${milestone.id}`} value="on" />
+                    ) : null}
                     <label htmlFor={`milestone-title-${milestone.id}`} className="block text-xs font-medium text-night">
                       Milestone title
                     </label>
@@ -386,10 +405,81 @@ export default function AspirationEditRoute() {
                         />
                         Completed
                       </label>
-                      <label className="flex min-h-[44px] items-center gap-2 rounded-xl border border-mist px-3 py-2 text-sm text-night">
-                        <input type="checkbox" name={`removeMilestone-${milestone.id}`} />
-                        Remove milestone
-                      </label>
+
+                      {confirmedMilestoneRemovals[milestone.id] ? (
+                        <div className="rounded-xl border border-[#F59E0B]/45 bg-[#FEF3C7]/60 px-3 py-2">
+                          <p className="text-sm font-semibold text-[#7C2D12]">Milestone will be removed on save.</p>
+                          <button
+                            type="button"
+                            className="mt-2 min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            onClick={() => {
+                              setConfirmedMilestoneRemovals((current) => ({
+                                ...current,
+                                [milestone.id]: false,
+                              }));
+                              setPendingMilestoneRemovalId(null);
+                            }}
+                          >
+                            Undo remove
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="rounded-xl border border-midnight/15 bg-white p-2">
+                          <button
+                            type="button"
+                            className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-[#7C2D12] transition-colors duration-200 hover:bg-[#FEF3C7]/65 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            onClick={() =>
+                              setPendingMilestoneRemovalId((current) =>
+                                current === milestone.id ? null : milestone.id,
+                              )
+                            }
+                            aria-expanded={pendingMilestoneRemovalId === milestone.id}
+                            aria-controls={`confirm-remove-milestone-${milestone.id}`}
+                          >
+                            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#F59E0B]/45 bg-[#FFF7E8]">
+                              <RemoveMilestoneIcon />
+                            </span>
+                            <span>Remove milestone</span>
+                          </button>
+
+                          <div
+                            id={`confirm-remove-milestone-${milestone.id}`}
+                            className={`overflow-hidden transition-all duration-200 motion-reduce:transition-none ${
+                              pendingMilestoneRemovalId === milestone.id
+                                ? "max-h-40 opacity-100 mt-2"
+                                : "max-h-0 opacity-0"
+                            }`}
+                          >
+                            <div className="rounded-lg border border-[#F59E0B]/40 bg-[#FEF3C7]/55 px-3 py-2">
+                              <p className="text-xs text-[#7C2D12]">
+                                Remove this milestone from the aspiration after you save changes?
+                              </p>
+                              <div className="mt-2 flex items-center justify-end gap-2">
+                                <button
+                                  type="button"
+                                  className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                  onClick={() => setPendingMilestoneRemovalId(null)}
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  type="button"
+                                  className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                  onClick={() => {
+                                    setConfirmedMilestoneRemovals((current) => ({
+                                      ...current,
+                                      [milestone.id]: true,
+                                    }));
+                                    setPendingMilestoneRemovalId(null);
+                                  }}
+                                >
+                                  Continue
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </li>
                 ))}

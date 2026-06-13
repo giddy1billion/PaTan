@@ -11,10 +11,11 @@ import {
   useLoaderData,
   useNavigation,
 } from "react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
 import { createNotification } from "~/utils/notifications.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 
 type ActionData = {
   error?: string;
@@ -75,6 +76,41 @@ function formatReason(value: string) {
 
 function formatStatus(value: TriageStatus) {
   return value.toLowerCase().replace("_", " ");
+}
+
+function TriageStatusIcon({ status }: { status: TriageStatus }) {
+  if (status === "RESOLVED") {
+    return (
+      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="m5 13 4 4L19 7" />
+      </svg>
+    );
+  }
+
+  if (status === "DISMISSED") {
+    return (
+      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="8" />
+        <path d="m9 15 6-6" />
+      </svg>
+    );
+  }
+
+  if (status === "UNDER_REVIEW") {
+    return (
+      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 4v8l5 3" />
+        <circle cx="12" cy="12" r="8" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="8" />
+      <circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none" />
+    </svg>
+  );
 }
 
 async function requireModerationRole(request: Request) {
@@ -277,7 +313,10 @@ export default function ModerationReportsRoute() {
   const [activeReportId, setActiveReportId] = useState<string | null>(reportIds[0] ?? null);
   const [shortcutMessage, setShortcutMessage] = useState("");
   const [resolutionDrafts, setResolutionDrafts] = useState<Record<string, string>>({});
-  const quickFormRefs = useRef<Record<string, Partial<Record<TriageStatus, HTMLFormElement | null>>>>({});
+  const [pendingQuickAction, setPendingQuickAction] = useState<{
+    reportId: string;
+    nextStatus: TriageStatus;
+  } | null>(null);
 
   useEffect(() => {
     if (!activeReportId || !reportIds.includes(activeReportId)) {
@@ -292,6 +331,17 @@ export default function ModerationReportsRoute() {
     }
     setResolutionDrafts(nextDrafts);
   }, [reports]);
+
+  useEffect(() => {
+    if (!pendingQuickAction) {
+      return;
+    }
+
+    const isReportVisible = reports.some((report) => report.id === pendingQuickAction.reportId);
+    if (!isReportVisible) {
+      setPendingQuickAction(null);
+    }
+  }, [pendingQuickAction, reports]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -344,15 +394,9 @@ export default function ModerationReportsRoute() {
       if (!nextStatus) {
         return;
       }
-
-      const form = quickFormRefs.current[activeReportId]?.[nextStatus];
-      if (!form) {
-        return;
-      }
-
       event.preventDefault();
-      form.requestSubmit();
-      setShortcutMessage(`Applied ${formatStatus(nextStatus)} to selected report.`);
+      setPendingQuickAction({ reportId: activeReportId, nextStatus });
+      setShortcutMessage(`Ready to set selected report to ${formatStatus(nextStatus)}. Confirm with Continue.`);
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -360,14 +404,6 @@ export default function ModerationReportsRoute() {
   }, [activeReportId, reportIds]);
 
   const isSubmitting = navigation.state === "submitting";
-
-  const setQuickFormRef = (reportId: string, nextStatus: TriageStatus, element: HTMLFormElement | null) => {
-    if (!quickFormRefs.current[reportId]) {
-      quickFormRefs.current[reportId] = {};
-    }
-
-    quickFormRefs.current[reportId][nextStatus] = element;
-  };
 
   return (
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
@@ -389,17 +425,17 @@ export default function ModerationReportsRoute() {
             {shortcutMessage}
           </p>
 
-          {actionData?.error ? (
-            <p className="mb-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]" role="alert" aria-live="polite">
-              {actionData.error}
-            </p>
-          ) : null}
+          <AutoDismissAlert
+            tone="error"
+            message={actionData?.error}
+            className="mb-4"
+          />
 
-          {actionData?.success ? (
-            <p className="mb-4 rounded-xl border border-forest/30 bg-[#ECF9F0] px-4 py-3 text-sm text-forest" role="status" aria-live="polite">
-              {actionData.success}
-            </p>
-          ) : null}
+          <AutoDismissAlert
+            tone="success"
+            message={actionData?.success}
+            className="mb-4"
+          />
 
           <section className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm" aria-label="Report filters">
             <div className="flex flex-wrap items-center gap-2">
@@ -539,26 +575,70 @@ export default function ModerationReportsRoute() {
                               { status: "RESOLVED", label: "Resolved", keyHint: "3" },
                               { status: "DISMISSED", label: "Dismissed", keyHint: "4" },
                             ] as Array<{ status: TriageStatus; label: string; keyHint: string }>).map((entry) => (
-                              <Form
+                              <button
                                 key={entry.status}
-                                method="post"
-                                ref={(node) => setQuickFormRef(report.id, entry.status, node)}
+                                type="button"
+                                className={`min-h-[44px] w-full rounded-lg border px-2 py-2 text-xs font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${
+                                  pendingQuickAction?.reportId === report.id && pendingQuickAction.nextStatus === entry.status
+                                    ? "border-[#F59E0B]/55 bg-[#FEF3C7]/70 text-[#7C2D12]"
+                                    : "border-midnight/15 text-midnight hover:bg-surface"
+                                }`}
+                                onClick={() =>
+                                  setPendingQuickAction((current) =>
+                                    current?.reportId === report.id && current.nextStatus === entry.status
+                                      ? null
+                                      : { reportId: report.id, nextStatus: entry.status },
+                                  )
+                                }
+                                aria-expanded={pendingQuickAction?.reportId === report.id && pendingQuickAction.nextStatus === entry.status}
+                                aria-controls={`confirm-quick-triage-${report.id}`}
+                                aria-label={`Set report to ${entry.label}. Shortcut ${entry.keyHint}.`}
                               >
-                                <input type="hidden" name="intent" value="set-report-status" />
-                                <input type="hidden" name="reportId" value={report.id} />
-                                <input type="hidden" name="nextStatus" value={entry.status} />
-                                <input type="hidden" name="resolution" value={resolutionDrafts[report.id] ?? ""} />
-                                <button
-                                  type="submit"
-                                  className="min-h-[44px] w-full rounded-lg border border-midnight/15 px-2 py-2 text-xs font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
-                                  disabled={isSubmitting}
-                                  aria-busy={isSubmitting}
-                                  aria-label={`Set report to ${entry.label}. Shortcut ${entry.keyHint}.`}
-                                >
+                                <span className="inline-flex items-center gap-1">
+                                  <TriageStatusIcon status={entry.status} />
                                   {entry.label} ({entry.keyHint})
-                                </button>
-                              </Form>
+                                </span>
+                              </button>
                             ))}
+                          </div>
+
+                          <div
+                            id={`confirm-quick-triage-${report.id}`}
+                            className={`overflow-hidden transition-all duration-200 motion-reduce:transition-none ${
+                              pendingQuickAction?.reportId === report.id ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"
+                            }`}
+                          >
+                            {pendingQuickAction?.reportId === report.id ? (
+                              <div className="rounded-lg border border-[#F59E0B]/40 bg-[#FEF3C7]/55 px-3 py-2">
+                                <p className="text-xs text-[#7C2D12]">
+                                  Set this report to {formatStatus(pendingQuickAction.nextStatus)}?
+                                </p>
+                                <div className="mt-2 flex items-center justify-end gap-2">
+                                  <button
+                                    type="button"
+                                    className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                    onClick={() => setPendingQuickAction(null)}
+                                  >
+                                    Cancel
+                                  </button>
+                                  <Form method="post">
+                                    <input type="hidden" name="intent" value="set-report-status" />
+                                    <input type="hidden" name="reportId" value={report.id} />
+                                    <input type="hidden" name="nextStatus" value={pendingQuickAction.nextStatus} />
+                                    <input type="hidden" name="resolution" value={resolutionDrafts[report.id] ?? ""} />
+                                    <button
+                                      type="submit"
+                                      className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                      disabled={isSubmitting}
+                                      aria-busy={isSubmitting}
+                                      onClick={() => setPendingQuickAction(null)}
+                                    >
+                                      Continue
+                                    </button>
+                                  </Form>
+                                </div>
+                              </div>
+                            ) : null}
                           </div>
                         </div>
 
@@ -618,6 +698,7 @@ export default function ModerationReportsRoute() {
             <nav className="mt-6 flex items-center justify-center gap-2" aria-label="Moderation pagination">
               <Link
                 to={`/moderation/reports?status=${status}&page=${Math.max(1, page - 1)}`}
+                preventScrollReset
                 aria-disabled={page <= 1}
                 className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page <= 1 ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
               >
@@ -628,6 +709,7 @@ export default function ModerationReportsRoute() {
               </span>
               <Link
                 to={`/moderation/reports?status=${status}&page=${Math.min(totalPages, page + 1)}`}
+                preventScrollReset
                 aria-disabled={page >= totalPages}
                 className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page >= totalPages ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
               >

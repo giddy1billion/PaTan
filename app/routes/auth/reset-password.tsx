@@ -8,10 +8,12 @@ import {
   Link,
   redirect,
   useLoaderData,
+  useNavigation,
   useRouteLoaderData,
   useSearchParams,
 } from "react-router";
 import { getAuthErrorMessage } from "~/utils/auth-errors";
+import { SubmitButton } from "~/components/ui";
 import {
   isBotChallengeRequired,
   logAuthSecurityEvent,
@@ -26,6 +28,7 @@ import {
 import { validateSecurePassword } from "~/utils/password-security.server";
 import { enforceAuthRateLimit } from "~/utils/rate-limit.server";
 import { hashLocalPassword } from "~/utils/users.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 export const meta: MetaFunction = () => {
   return [
     { title: "Set New Password | PaTan" },
@@ -204,6 +207,8 @@ export default function ResetPasswordRoute() {
   const [searchParams] = useSearchParams();
   const errorCode = searchParams.get("error");
   const authError = getAuthErrorMessage(errorCode);
+  const navigation = useNavigation();
+  const isUpdatingPassword = navigation.state === "submitting";
   const csrfToken = rootData?.csrfToken ?? "";
   const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
   const shouldRenderBotChallenge =
@@ -249,16 +254,11 @@ export default function ResetPasswordRoute() {
             <p className="mt-2 text-center text-[#64748B]">
               Account: {emailHint}
             </p>{" "}
-            {authError ? (
-              <div
-                className="mt-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
-                role="alert"
-                aria-live="polite"
-              >
-                {" "}
-                {authError}{" "}
-              </div>
-            ) : null}{" "}
+            <AutoDismissAlert
+              tone="error"
+              message={authError}
+              className="mt-4"
+            />{" "}
             <Form method="post" className="form-modern mt-8 space-y-6">
               {" "}
               <input type="hidden" name="token" value={token} />{" "}
@@ -334,13 +334,14 @@ export default function ResetPasswordRoute() {
                   />{" "}
                 </div>
               ) : null}{" "}
-              <button
-                type="submit"
+              <SubmitButton
                 className="w-full btn-primary py-3 text-base"
+                busy={isUpdatingPassword}
+                pendingLabel="Updating password…"
               >
                 {" "}
                 Update Password{" "}
-              </button>{" "}
+              </SubmitButton>{" "}
             </Form>{" "}
           </div>{" "}
         </div>{" "}

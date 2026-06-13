@@ -12,6 +12,7 @@ import {
   useNavigation,
   useSearchParams,
 } from "react-router";
+import { useState } from "react";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
 import { createNotification } from "~/utils/notifications.server";
@@ -20,6 +21,7 @@ import {
   getSuggestedFollows,
   type EngagementRange,
 } from "~/utils/users.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 const RANGE_OPTIONS: Array<{ value: EngagementRange; label: string }> = [
   { value: "7d", label: "7 days" },
   { value: "30d", label: "30 days" },
@@ -61,6 +63,17 @@ function formatDate(input: Date | string) {
     month: "short",
     day: "numeric",
   }).format(new Date(input));
+}
+
+function ReadAllIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 7h16" />
+      <path d="M4 12h16" />
+      <path d="M4 17h10" />
+      <path d="m17 16 2 2 3-4" />
+    </svg>
+  );
 }
 export const meta: MetaFunction = () => {
   return [
@@ -372,10 +385,11 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function DashboardRoute() {
-  const { summary, suggestions, showWelcome, activityFilter, range } =
+  const { summary, suggestions, showWelcome, range } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [pendingDashboardReadAll, setPendingDashboardReadAll] = useState(false);
   const navigationState = useNavigation();
   const submittingIntent =
     navigationState.state === "submitting"
@@ -391,12 +405,13 @@ export default function DashboardRoute() {
     submittingIntent === "unfollow-user" ||
     submittingIntent === "join-circle" ||
     submittingIntent === "leave-circle";
+  const activeActivityFilter = parseFilter(searchParams.get("activity"));
   const filteredStories =
-    activityFilter === "all" || activityFilter === "stories";
+    activeActivityFilter === "all" || activeActivityFilter === "stories";
   const filteredAspirations =
-    activityFilter === "all" || activityFilter === "aspirations";
+    activeActivityFilter === "all" || activeActivityFilter === "aspirations";
   const filteredNotifications =
-    activityFilter === "all" || activityFilter === "notifications";
+    activeActivityFilter === "all" || activeActivityFilter === "notifications";
   const reflectionPrompt =
     summary.unfinishedDrafts.length > 0
       ? "You have drafts waiting. Add one thoughtful paragraph to move them forward today."
@@ -421,16 +436,11 @@ export default function DashboardRoute() {
             This is your calm home for progress, reflection, and community
             growth.{" "}
           </p>{" "}
-          {showWelcome ? (
-            <div
-              className="mt-5 rounded-xl border border-golden/40 bg-white/95 text-midnight px-4 py-3"
-              role="status"
-              aria-live="polite"
-            >
-              {" "}
-              Onboarding complete. Your dashboard is now personalized.{" "}
-            </div>
-          ) : null}{" "}
+          <AutoDismissAlert
+            tone="success"
+            message={showWelcome ? "Onboarding complete. Your dashboard is now personalized." : undefined}
+            className="mt-5"
+          />{" "}
           {isRefreshing ? (
             <div
               className="mt-3 text-xs text-dawn/80"
@@ -446,24 +456,16 @@ export default function DashboardRoute() {
       <section className="py-8 sm:py-10">
         {" "}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-5 lg:grid-cols-3">
-          {actionData?.error ? (
-            <div
-              className="lg:col-span-3 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
-              role="alert"
-              aria-live="polite"
-            >
-              {actionData.error}
-            </div>
-          ) : null}
-          {actionData?.success ? (
-            <div
-              className="lg:col-span-3 rounded-xl border border-forest/30 bg-[#ECF9F0] px-4 py-3 text-sm text-forest"
-              role="status"
-              aria-live="polite"
-            >
-              {actionData.success}
-            </div>
-          ) : null}
+          <AutoDismissAlert
+            tone="error"
+            message={actionData?.error}
+            className="lg:col-span-3"
+          />
+          <AutoDismissAlert
+            tone="success"
+            message={actionData?.success}
+            className="lg:col-span-3"
+          />
           {" "}
           <article className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm lg:col-span-1">
             {" "}
@@ -649,6 +651,13 @@ export default function DashboardRoute() {
                 Edit profile{" "}
               </Link>{" "}
               <Link
+                to="/profile/settings#preferences"
+                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+              >
+                {" "}
+                Preferences{" "}
+              </Link>{" "}
+              <Link
                 to="/notifications"
                 className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
               >
@@ -688,8 +697,8 @@ export default function DashboardRoute() {
                         preventScrollReset: true,
                       });
                     }}
-                    className={`min-h-[44px] rounded-full px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${activityFilter === filter.value ? "bg-midnight text-white" : "bg-surface text-midnight hover:bg-mist"}`}
-                    aria-pressed={activityFilter === filter.value}
+                    className={`min-h-[44px] rounded-full px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${activeActivityFilter === filter.value ? "bg-midnight text-white" : "bg-surface text-midnight hover:bg-mist"}`}
+                    aria-pressed={activeActivityFilter === filter.value}
                   >
                     {" "}
                     {filter.label}{" "}
@@ -796,17 +805,52 @@ export default function DashboardRoute() {
                       </Link>
 
                       {summary.notifications.some((notification) => !notification.isRead) ? (
-                        <Form method="post">
-                          <input type="hidden" name="intent" value="mark-all-notifications-read" />
+                        <div className="rounded-lg border border-midnight/15 bg-white p-1.5">
                           <button
-                            type="submit"
-                            className="min-h-[44px] rounded-lg border border-midnight/15 px-3 py-2 text-xs font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
-                            disabled={isSubmittingNotificationAction}
-                            aria-busy={isSubmittingNotificationAction}
+                            type="button"
+                            className="min-h-[44px] inline-flex items-center gap-1.5 rounded-md px-2 py-2 text-xs font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            onClick={() => setPendingDashboardReadAll((current) => !current)}
+                            aria-expanded={pendingDashboardReadAll}
+                            aria-controls="dashboard-confirm-mark-all-read"
                           >
+                            <ReadAllIcon />
                             Mark all read
                           </button>
-                        </Form>
+
+                          <div
+                            id="dashboard-confirm-mark-all-read"
+                            className={`overflow-hidden transition-all duration-200 motion-reduce:transition-none ${
+                              pendingDashboardReadAll ? "max-h-40 opacity-100 mt-1" : "max-h-0 opacity-0"
+                            }`}
+                          >
+                            <div className="rounded-md border border-[#F59E0B]/35 bg-[#FEF3C7]/55 px-2 py-2">
+                              <p className="text-[11px] text-[#7C2D12]">
+                                Mark all unread dashboard notifications as read?
+                              </p>
+                              <div className="mt-1.5 flex items-center justify-end gap-1.5">
+                                <button
+                                  type="button"
+                                  className="min-h-[32px] rounded-md border border-[#F59E0B]/45 bg-white px-2 text-[11px] font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                  onClick={() => setPendingDashboardReadAll(false)}
+                                >
+                                  Cancel
+                                </button>
+                                <Form method="post">
+                                  <input type="hidden" name="intent" value="mark-all-notifications-read" />
+                                  <button
+                                    type="submit"
+                                    className="min-h-[32px] rounded-md bg-[#7C2D12] px-2 text-[11px] font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                    disabled={isSubmittingNotificationAction}
+                                    aria-busy={isSubmittingNotificationAction}
+                                    onClick={() => setPendingDashboardReadAll(false)}
+                                  >
+                                    Continue
+                                  </button>
+                                </Form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       ) : null}
                     </div>
                   </div>
@@ -1048,21 +1092,20 @@ export function ErrorBoundary() {
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
       {" "}
       <section className="max-w-3xl mx-auto px-4 py-14">
-        {" "}
-        <div className="rounded-2xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-5 py-4 text-[#7C2D12]">
-          {" "}
-          <h1 className="font-heading text-2xl">Dashboard error state</h1>{" "}
-          <p className="mt-2 text-sm">
-            We could not load your dashboard right now.
-          </p>{" "}
+        <AutoDismissAlert
+          tone="error"
+          message="We could not load your dashboard right now."
+          timeoutMs={10000}
+        />
+        <div className="mt-4 rounded-2xl border border-midnight/10 bg-white px-5 py-4 text-midnight">
+          <h1 className="font-heading text-2xl">Dashboard error state</h1>
           <Link
             to="/discover"
-            className="mt-4 inline-flex rounded-lg border border-[#7C2D12]/30 px-3 py-2 text-sm font-semibold"
+            className="mt-4 inline-flex min-h-[44px] items-center rounded-lg border border-midnight/20 px-3 py-2 text-sm font-semibold hover:bg-surface"
           >
-            {" "}
-            Back to discover{" "}
-          </Link>{" "}
-        </div>{" "}
+            Back to discover
+          </Link>
+        </div>
       </section>{" "}
     </main>
   );

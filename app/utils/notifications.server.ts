@@ -114,7 +114,7 @@ function evaluateDeliveryPlan(type: AppNotificationType, preferences: DeliveryPr
   const policy = NOTIFICATION_CHANNEL_POLICY[type];
   const emailDeferredToDigest =
     policy.digestEligible &&
-    policy.email &&
+    preferences.emailNotifications &&
     preferences.digestFrequency !== "realtime";
 
   return {
@@ -217,12 +217,13 @@ async function getDeliveryPreferencesForUsers(userIds: string[]) {
   }
 
   if (preferenceDelegate.findUnique) {
+    const findUnique = preferenceDelegate.findUnique;
     const unresolvedIds = uniqueIds.filter((userId) => !map.has(userId));
     if (unresolvedIds.length > 0) {
       await Promise.all(
         unresolvedIds.map(async (userId) => {
           try {
-            const row = await preferenceDelegate.findUnique({
+            const row = await findUnique({
               where: { userId },
               select: {
                 userId: true,

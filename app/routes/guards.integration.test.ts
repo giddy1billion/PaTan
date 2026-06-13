@@ -26,6 +26,9 @@ vi.mock('~/utils/db.server', () => ({
     userPreference: {
       findUnique: vi.fn(),
     },
+    notification: {
+      count: vi.fn(),
+    },
     story: {
       count: vi.fn(),
       findMany: vi.fn(),
@@ -51,6 +54,7 @@ describe('Route integration guards', () => {
     vi.mocked(db.user.findUnique).mockResolvedValue({
       emailVerified: new Date('2026-06-12T00:00:00.000Z'),
     } as any);
+    vi.mocked(db.notification.count).mockResolvedValue(0 as any);
     vi.mocked(requireVerifiedUser).mockResolvedValue({
       id: 'user-1',
       email: 'user@example.com',

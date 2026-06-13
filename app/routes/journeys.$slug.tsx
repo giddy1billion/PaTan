@@ -120,15 +120,15 @@ export default function JourneyDetail() {
             {stories.map((story) => (
               <article
                 key={story.id}
-                className="card hover:shadow-lg transition-shadow"
+                className="group relative card hover:shadow-lg transition-shadow"
               >
-                <h2 className="font-heading text-xl font-bold text-midnight">
-                  <Link
-                    to={`/stories/${story.id}`}
-                    className="hover:text-golden transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
-                  >
-                    {story.title}
-                  </Link>
+                <Link
+                  to={`/stories/${story.id}`}
+                  className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                  aria-label={`Read story: ${story.title}`}
+                />
+                <h2 className="font-heading text-xl font-bold text-midnight transition-colors group-hover:text-golden">
+                  {story.title}
                 </h2>
                 <p className="mt-2 text-night/70">{story.excerpt}</p>
                 <div className="mt-4 flex items-center justify-between">

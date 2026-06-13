@@ -10,6 +10,8 @@ import {
   useLoaderData,
   useNavigation,
 } from "react-router";
+import { useState } from "react";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
 import { createNotification, createNotifications } from "~/utils/notifications.server";
@@ -22,6 +24,8 @@ type ActionData = {
     updateMessage?: string;
   };
 };
+
+type AspirationLifecycleIntent = "archive-aspiration" | "delete-aspiration";
 
 function formatDate(value: Date | null) {
   if (!value) {
@@ -53,6 +57,29 @@ function getProgress(status: string, completedMilestones: number, totalMilestone
   }
 
   return Math.max(0, Math.min(100, Math.round((completedMilestones / totalMilestones) * 100)));
+}
+
+function ArchiveAspirationIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 7h18" />
+      <path d="M5 7v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7" />
+      <path d="m10 12 2 2 2-2" />
+      <path d="M12 8v6" />
+    </svg>
+  );
+}
+
+function DeleteAspirationIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 7h16" />
+      <path d="M10 11v6" />
+      <path d="M14 11v6" />
+      <path d="M7 7l1 12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2l1-12" />
+      <path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+    </svg>
+  );
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -231,6 +258,44 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   if (!aspiration || aspiration.deletedAt) {
     return { error: "Aspiration is unavailable." } satisfies ActionData;
+  }
+
+  if (intent === "archive-aspiration" || intent === "delete-aspiration") {
+    if (aspiration.authorId !== sessionUser.id) {
+      return { error: "Only the aspiration owner can manage lifecycle actions." } satisfies ActionData;
+    }
+
+    if (intent === "archive-aspiration") {
+      if (aspiration.privacy !== "PRIVATE") {
+        await db.aspiration.update({
+          where: { id: aspirationId },
+          data: {
+            privacy: "PRIVATE",
+          },
+        });
+      }
+
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: "/aspirations?archived=aspiration",
+        },
+      });
+    }
+
+    await db.aspiration.update({
+      where: { id: aspirationId },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/aspirations?deleted=aspiration",
+      },
+    });
   }
 
   if (intent === "support-aspiration") {
@@ -459,6 +524,12 @@ export default function AspirationDetail() {
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const submittingIntent = navigation.state === "submitting"
+    ? String(navigation.formData?.get("intent") ?? "")
+    : "";
+  const isArchivingAspiration = submittingIntent === "archive-aspiration";
+  const isDeletingAspiration = submittingIntent === "delete-aspiration";
+  const [pendingAspirationLifecycleIntent, setPendingAspirationLifecycleIntent] = useState<AspirationLifecycleIntent | null>(null);
 
   const authorLabel = aspiration.isAnonymous && !isOwner ? "Anonymous" : aspiration.author.displayName;
   const showProfileLink = !aspiration.isAnonymous || isOwner;
@@ -473,23 +544,23 @@ export default function AspirationDetail() {
           Back to aspirations
         </Link>
 
-        {actionData?.error ? (
-          <p className="mt-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]" role="alert" aria-live="polite">
-            {actionData.error}
-          </p>
-        ) : null}
+        <AutoDismissAlert
+          tone="error"
+          message={actionData?.error}
+          className="mt-4"
+        />
 
-        {actionData?.success ? (
-          <p className="mt-4 rounded-xl border border-forest/30 bg-[#ECF9F0] px-4 py-3 text-sm text-forest" role="status" aria-live="polite">
-            {actionData.success}
-          </p>
-        ) : null}
+        <AutoDismissAlert
+          tone="success"
+          message={actionData?.success}
+          className="mt-4"
+        />
 
-        {showUpdatedNotice ? (
-          <p className="mt-4 rounded-xl border border-forest/30 bg-[#ECF9F0] px-4 py-3 text-sm text-forest" role="status" aria-live="polite">
-            Aspiration updated successfully.
-          </p>
-        ) : null}
+        <AutoDismissAlert
+          tone="success"
+          message={showUpdatedNotice ? "Aspiration updated successfully." : undefined}
+          className="mt-4"
+        />
 
         <header className="mt-4 rounded-2xl border border-midnight/10 bg-white p-6 sm:p-8 shadow-sm">
           <p className="inline-flex rounded-full bg-golden/10 px-3 py-1 text-xs font-semibold text-golden">
@@ -530,6 +601,115 @@ export default function AspirationDetail() {
             ) : null}
           </div>
         </header>
+
+        {isOwner ? (
+          <section className="mt-6 rounded-2xl border border-midnight/10 bg-white p-4 sm:p-5" aria-labelledby="aspiration-controls-heading">
+            <h2 id="aspiration-controls-heading" className="text-sm font-semibold text-midnight">Aspiration controls</h2>
+            <p className="mt-1 text-xs text-night/65">Archive to make this aspiration private, or delete it to remove it from your account.</p>
+
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <div className="rounded-xl border border-midnight/15 bg-white p-2">
+                <button
+                  type="button"
+                  className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                  onClick={() =>
+                    setPendingAspirationLifecycleIntent((current) =>
+                      current === "archive-aspiration" ? null : "archive-aspiration",
+                    )
+                  }
+                  aria-expanded={pendingAspirationLifecycleIntent === "archive-aspiration"}
+                  aria-controls="confirm-archive-aspiration"
+                >
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-midnight/15 bg-white">
+                    <ArchiveAspirationIcon />
+                  </span>
+                  <span>Archive aspiration</span>
+                </button>
+
+                <div
+                  id="confirm-archive-aspiration"
+                  className={`overflow-hidden transition-all duration-200 motion-reduce:transition-none ${
+                    pendingAspirationLifecycleIntent === "archive-aspiration" ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <div className="rounded-lg border border-[#F59E0B]/35 bg-[#FEF3C7]/55 px-3 py-2">
+                    <p className="text-xs text-[#7C2D12]">Archive this aspiration and limit access to only your account?</p>
+                    <div className="mt-2 flex items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                        onClick={() => setPendingAspirationLifecycleIntent(null)}
+                      >
+                        Cancel
+                      </button>
+                      <Form method="post">
+                        <input type="hidden" name="intent" value="archive-aspiration" />
+                        <button
+                          type="submit"
+                          className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                          disabled={isArchivingAspiration}
+                          aria-busy={isArchivingAspiration}
+                        >
+                          {isArchivingAspiration ? "Archiving..." : "Continue"}
+                        </button>
+                      </Form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-midnight/15 bg-white p-2">
+                <button
+                  type="button"
+                  className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-[#7C2D12] hover:bg-[#FEF3C7]/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                  onClick={() =>
+                    setPendingAspirationLifecycleIntent((current) =>
+                      current === "delete-aspiration" ? null : "delete-aspiration",
+                    )
+                  }
+                  aria-expanded={pendingAspirationLifecycleIntent === "delete-aspiration"}
+                  aria-controls="confirm-delete-aspiration"
+                >
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#F59E0B]/45 bg-[#FFF7E8]">
+                    <DeleteAspirationIcon />
+                  </span>
+                  <span>Delete aspiration</span>
+                </button>
+
+                <div
+                  id="confirm-delete-aspiration"
+                  className={`overflow-hidden transition-all duration-200 motion-reduce:transition-none ${
+                    pendingAspirationLifecycleIntent === "delete-aspiration" ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <div className="rounded-lg border border-[#F59E0B]/40 bg-[#FEF3C7]/55 px-3 py-2">
+                    <p className="text-xs text-[#7C2D12]">Delete this aspiration? This removes it from your aspiration list.</p>
+                    <div className="mt-2 flex items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                        onClick={() => setPendingAspirationLifecycleIntent(null)}
+                      >
+                        Cancel
+                      </button>
+                      <Form method="post">
+                        <input type="hidden" name="intent" value="delete-aspiration" />
+                        <button
+                          type="submit"
+                          className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                          disabled={isDeletingAspiration}
+                          aria-busy={isDeletingAspiration}
+                        >
+                          {isDeletingAspiration ? "Deleting..." : "Continue"}
+                        </button>
+                      </Form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         <section className="mt-6 rounded-2xl border border-midnight/10 bg-white p-6 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-3">

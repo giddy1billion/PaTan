@@ -3,8 +3,10 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "react-router";
-import { Form, Link, redirect, useActionData, useLoaderData } from "react-router";
+import { Form, Link, redirect, useActionData, useLoaderData, useNavigation } from "react-router";
 import { useState } from "react";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
+import { SubmitButton } from "~/components/ui";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
 import { createNotification } from "~/utils/notifications.server";
@@ -264,6 +266,13 @@ const categories = [
 export default function NewStory() {
   const { safety } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
+  const navigation = useNavigation();
+  const submittingAction =
+    navigation.state === "submitting"
+      ? String(navigation.formData?.get("action") ?? "")
+      : "";
+  const isPublishing = submittingAction === "publish";
+  const isSavingDraft = submittingAction === "draft";
   const [isAnonymous, setIsAnonymous] = useState(safety.anonymousPublishingDefault);
   const [showAIPanel, setShowAIPanel] = useState(false);
   const defaultPrivacy =
@@ -325,25 +334,15 @@ export default function NewStory() {
           method="post"
           className="form-modern mt-8 sm:mt-10 space-y-6 sm:space-y-8"
         >
-          {actionData?.error ? (
-            <div
-              className="rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
-              role="alert"
-              aria-live="polite"
-            >
-              {actionData.error}
-            </div>
-          ) : null}
+          <AutoDismissAlert
+            tone="error"
+            message={actionData?.error}
+          />
 
-          {actionData?.success ? (
-            <div
-              className="rounded-xl border border-forest/30 bg-[#ECF9F0] px-4 py-3 text-sm text-forest"
-              role="status"
-              aria-live="polite"
-            >
-              {actionData.success}
-            </div>
-          ) : null}
+          <AutoDismissAlert
+            tone="success"
+            message={actionData?.success}
+          />
 
           <section
             className="rounded-2xl border border-[#E2E8F0] bg-white p-5 sm:p-7 shadow-sm space-y-6"
@@ -663,22 +662,24 @@ export default function NewStory() {
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
-            <button
-              type="submit"
+            <SubmitButton
               name="action"
               value="publish"
               className="btn-primary flex-1 py-3 text-base sm:text-lg"
+              busy={isPublishing}
+              pendingLabel="Publishing…"
             >
               Publish Story
-            </button>
-            <button
-              type="submit"
+            </SubmitButton>
+            <SubmitButton
               name="action"
               value="draft"
               className="btn-secondary flex-1 py-3 text-base sm:text-lg"
+              busy={isSavingDraft}
+              pendingLabel="Saving…"
             >
               Save as Draft
-            </button>
+            </SubmitButton>
           </div>
         </Form>
 

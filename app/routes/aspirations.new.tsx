@@ -3,8 +3,10 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "react-router";
-import { Form, Link, redirect, useActionData, useLoaderData } from "react-router";
+import { Form, Link, redirect, useActionData, useLoaderData, useNavigation } from "react-router";
 import { requireUser } from "~/utils/auth.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
+import { SubmitButton } from "~/components/ui";
 import { db } from "~/utils/db.server";
 import { getProfileSafetySettings } from "~/utils/users.server";
 
@@ -122,6 +124,8 @@ const categories = [
 export default function NewAspiration() {
   const { safety } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
+  const navigation = useNavigation();
+  const isSharing = navigation.state === "submitting";
   const defaultPrivacy =
     safety.defaultAspirationVisibility === "FOLLOWERS_ONLY"
       ? "followers"
@@ -163,15 +167,10 @@ export default function NewAspiration() {
         </div>
 
         <Form method="post" className="form-modern mt-8 sm:mt-10 space-y-8">
-          {actionData?.error ? (
-            <div
-              className="rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
-              role="alert"
-              aria-live="polite"
-            >
-              {actionData.error}
-            </div>
-          ) : null}
+          <AutoDismissAlert
+            tone="error"
+            message={actionData?.error}
+          />
 
           <section
             className="surface-modern p-5 sm:p-7 space-y-5"
@@ -376,12 +375,13 @@ export default function NewAspiration() {
           </fieldset>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
-            <button
-              type="submit"
+            <SubmitButton
               className="btn-primary flex-1 py-3 text-base sm:text-lg"
+              busy={isSharing}
+              pendingLabel="Sharing…"
             >
               Share Aspiration
-            </button>
+            </SubmitButton>
             <Link
               to="/aspirations"
               className="btn-secondary flex-1 py-3 text-center text-base sm:text-lg"

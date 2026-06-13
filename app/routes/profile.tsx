@@ -19,6 +19,8 @@ import { verifyCsrfToken } from "~/utils/csrf.server";
 import { db } from "~/utils/db.server";
 import { issueEmailVerification } from "~/utils/email-verification.server";
 import { enforceAuthRateLimit } from "~/utils/rate-limit.server";
+import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
+import { SubmitButton } from "~/components/ui";
 export const meta: MetaFunction = () => {
   return [
     { title: "Your Profile | PaTan" },
@@ -246,6 +248,12 @@ export default function ProfileRoute() {
   const isRefreshing =
     navigation.state === "loading" &&
     navigation.location?.pathname === "/profile";
+  const submittingIntent =
+    navigation.state === "submitting"
+      ? String(navigation.formData?.get("intent") ?? "")
+      : "";
+  const isSendingVerification = submittingIntent === "send-email-verification";
+  const isTogglingMfa = submittingIntent === "toggle-mfa";
   const csrfToken = rootData?.csrfToken ?? "";
   const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
   const authError = getAuthErrorMessage(searchParams.get("error"));
@@ -316,26 +324,16 @@ export default function ProfileRoute() {
               Refreshing profile data...{" "}
             </div>
           ) : null}{" "}
-          {authError ? (
-            <div
-              className="mb-4 rounded-xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-4 py-3 text-sm text-[#7C2D12]"
-              role="alert"
-              aria-live="polite"
-            >
-              {" "}
-              {authError}{" "}
-            </div>
-          ) : null}{" "}
-          {securityMessage ? (
-            <div
-              className="mb-4 rounded-xl border border-[#2E6F40]/30 bg-[#DCFCE7]/60 px-4 py-3 text-sm text-[#14532D]"
-              role="status"
-              aria-live="polite"
-            >
-              {" "}
-              {securityMessage}{" "}
-            </div>
-          ) : null}{" "}
+          <AutoDismissAlert
+            tone="error"
+            message={authError}
+            className="mb-4"
+          />{" "}
+          <AutoDismissAlert
+            tone="success"
+            message={securityMessage}
+            className="mb-4"
+          />{" "}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {" "}
             <article className="rounded-xl border border-midnight/10 bg-white p-4 shadow-sm">
@@ -526,13 +524,14 @@ export default function ProfileRoute() {
                   <p className="text-sm text-night/70">
                     Send a fresh verification link to {profile.email}.
                   </p>
-                  <button
-                    type="submit"
+                  <SubmitButton
                     className="min-h-[44px] shrink-0 rounded-xl border border-midnight/15 bg-white px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
                     aria-label="Send verification email"
+                    busy={isSendingVerification}
+                    pendingLabel="Sending…"
                   >
                     Send link
-                  </button>
+                  </SubmitButton>
                 </Form>
               ) : null}
               <Form
@@ -553,18 +552,19 @@ export default function ProfileRoute() {
                     ? "Disable high-risk MFA challenge requirements."
                     : "Enable MFA challenges when sign-in behavior appears suspicious."}{" "}
                 </p>{" "}
-                <button
-                  type="submit"
+                <SubmitButton
                   className="min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 border border-midnight/15 bg-white text-midnight hover:bg-surface"
                   aria-label={
                     profile.mfaEnabled
                       ? "Disable high-risk MFA protection"
                       : "Enable high-risk MFA protection"
                   }
+                  busy={isTogglingMfa}
+                  pendingLabel={profile.mfaEnabled ? "Disabling…" : "Enabling…"}
                 >
                   {" "}
                   {profile.mfaEnabled ? "Disable MFA" : "Enable MFA"}{" "}
-                </button>{" "}
+                </SubmitButton>{" "}
               </Form>{" "}
             </aside>{" "}
           </div>{" "}
@@ -578,31 +578,28 @@ export function ErrorBoundary() {
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
       {" "}
       <section className="max-w-3xl mx-auto px-4 py-14">
-        {" "}
-        <div className="rounded-2xl border border-[#F59E0B]/40 bg-[#FEF3C7]/70 px-5 py-4 text-[#7C2D12]">
-          {" "}
-          <h1 className="font-heading text-2xl">Profile error state</h1>{" "}
-          <p className="mt-2 text-sm">
-            We could not load your profile right now.
-          </p>{" "}
+        <AutoDismissAlert
+          tone="error"
+          message="We could not load your profile right now."
+          timeoutMs={10000}
+        />
+        <div className="mt-4 rounded-2xl border border-midnight/10 bg-white px-5 py-4 text-midnight">
+          <h1 className="font-heading text-2xl">Profile error state</h1>
           <div className="mt-4 flex flex-wrap gap-2">
-            {" "}
             <Link
               to="/dashboard"
-              className="inline-flex min-h-[44px] items-center rounded-lg border border-[#7C2D12]/30 px-3 py-2 text-sm font-semibold"
+              className="inline-flex min-h-[44px] items-center rounded-lg border border-midnight/20 px-3 py-2 text-sm font-semibold hover:bg-surface"
             >
-              {" "}
-              Back to dashboard{" "}
-            </Link>{" "}
+              Back to dashboard
+            </Link>
             <Link
               to="/profile"
-              className="inline-flex min-h-[44px] items-center rounded-lg border border-[#7C2D12]/30 px-3 py-2 text-sm font-semibold"
+              className="inline-flex min-h-[44px] items-center rounded-lg border border-midnight/20 px-3 py-2 text-sm font-semibold hover:bg-surface"
             >
-              {" "}
-              Retry profile{" "}
-            </Link>{" "}
-          </div>{" "}
-        </div>{" "}
+              Retry profile
+            </Link>
+          </div>
+        </div>
       </section>{" "}
     </main>
   );
