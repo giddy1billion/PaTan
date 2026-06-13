@@ -1,4 +1,4 @@
-import { Form, Link, NavLink, useRouteLoaderData } from 'react-router';
+import { Form, Link, NavLink, useFetchers, useNavigation, useRouteLoaderData } from 'react-router';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { SessionUser } from '~/utils/auth.server';
 
@@ -55,6 +55,73 @@ function getInitials(user: SessionUser) {
   }
 
   return source.slice(0, 2).toUpperCase();
+}
+
+/**
+ * Tracks global navigation activity (route transitions and in-flight fetcher
+ * submissions) and returns whether the header loading bar should be visible.
+ *
+ * Robustness safeguards:
+ * - A short show-delay avoids a flash on fast, near-instant navigations.
+ * - A minimum visible duration prevents an abrupt flicker once loading resolves.
+ */
+function useNavigationLoading() {
+  const navigation = useNavigation();
+  const fetchers = useFetchers();
+
+  const isBusy =
+    navigation.state !== 'idle' ||
+    fetchers.some((fetcher) => fetcher.state !== 'idle');
+
+  const [isVisible, setIsVisible] = useState(false);
+  const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const shownAtRef = useRef(0);
+
+  const SHOW_DELAY_MS = 120;
+  const MIN_VISIBLE_MS = 420;
+
+  useEffect(() => {
+    if (isBusy) {
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
+        hideTimerRef.current = null;
+      }
+
+      if (!isVisible && !showTimerRef.current) {
+        showTimerRef.current = setTimeout(() => {
+          shownAtRef.current = Date.now();
+          setIsVisible(true);
+          showTimerRef.current = null;
+        }, SHOW_DELAY_MS);
+      }
+
+      return;
+    }
+
+    if (showTimerRef.current) {
+      clearTimeout(showTimerRef.current);
+      showTimerRef.current = null;
+    }
+
+    if (isVisible && !hideTimerRef.current) {
+      const elapsed = Date.now() - shownAtRef.current;
+      const remaining = Math.max(0, MIN_VISIBLE_MS - elapsed);
+      hideTimerRef.current = setTimeout(() => {
+        setIsVisible(false);
+        hideTimerRef.current = null;
+      }, remaining);
+    }
+  }, [isBusy, isVisible]);
+
+  useEffect(() => {
+    return () => {
+      if (showTimerRef.current) clearTimeout(showTimerRef.current);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    };
+  }, []);
+
+  return isVisible;
 }
 
 function NotificationBellLink({
@@ -196,6 +263,8 @@ export function Navigation({
   const isDashboardShell = variant === 'dashboard' && Boolean(user);
   const shouldRenderTopNavMenu = !isDashboardShell;
 
+  const isNavigationLoading = useNavigationLoading();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -317,6 +386,15 @@ export function Navigation({
 
   return (
     <header className={headerClasses}>
+      <div
+        className={`nav-loader ${isNavigationLoading ? 'is-active' : ''}`}
+        aria-hidden="true"
+      >
+        <span className="nav-loader__bar" />
+      </div>
+      <span className="sr-only" role="status" aria-live="polite">
+        {isNavigationLoading ? 'Loading page' : ''}
+      </span>
       <nav className={navShellClasses} aria-label="Main navigation">
         <div className={`flex items-center ${isDashboardShell ? 'gap-2.5' : 'gap-3'}`}>
           <Link

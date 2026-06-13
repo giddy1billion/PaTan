@@ -37,10 +37,36 @@ vi.mock("~/utils/db.server", () => ({
   },
 }));
 
+vi.mock("~/utils/ai.server", () => ({
+  generateAiStorySuggestion: vi.fn(),
+  buildLocalStorySuggestion: vi.fn(),
+  normalizeAiSuggestionType: vi.fn((input: unknown) => {
+    const value = String(input ?? "reflection").trim().toLowerCase();
+    if (value === "grammar") return "grammar";
+    if (value === "structure") return "structure";
+    if (value === "title") return "title";
+    return "reflection";
+  }),
+}));
+
+vi.mock("~/utils/notifications.server", () => ({
+  createNotification: vi.fn(),
+}));
+
+vi.mock("~/utils/rate-limit.server", () => ({
+  enforceAuthRateLimit: vi.fn(),
+}));
+
 import { action as storyEditAction } from "~/routes/stories.$storyId.edit";
 import { action as aspirationEditAction } from "~/routes/aspirations.$id.edit";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
+import {
+  buildLocalStorySuggestion,
+  generateAiStorySuggestion,
+} from "~/utils/ai.server";
+import { createNotification } from "~/utils/notifications.server";
+import { enforceAuthRateLimit } from "~/utils/rate-limit.server";
 
 function postRequest(url: string, params: Record<string, string>) {
   return new Request(url, {
@@ -63,6 +89,66 @@ describe("Edit flow integration", () => {
     });
 
     vi.mocked(db.$transaction).mockImplementation(async (callback: any) => callback(db as any));
+
+    vi.mocked(generateAiStorySuggestion).mockResolvedValue({
+      ok: true,
+      suggestion: "AI guidance for edit flow.",
+      metadata: {
+        requestId: "req-edit-1",
+        endpoint: "https://example.openai.azure.com/openai/v1",
+        endpointKind: "openai-v1",
+        model: "gpt-4.1-mini",
+        latencyMs: 200,
+        attempts: 1,
+        statusCode: 200,
+      },
+    } as any);
+
+    vi.mocked(buildLocalStorySuggestion).mockReturnValue("Fallback edit suggestion.");
+
+    vi.mocked(enforceAuthRateLimit).mockResolvedValue({
+      allowed: true,
+      headers: new Headers(),
+    } as any);
+  });
+
+  it("generates AI suggestion in story edit mode without saving", async () => {
+    const request = postRequest("http://localhost/stories/story-1/edit", {
+      title: "Updated title",
+      content: "Updated story content with enough detail for an AI suggestion.",
+      category: "cat-2",
+      tags: "hope, growth",
+      privacy: "public",
+      status: "PUBLISHED",
+      suggestionType: "structure",
+    });
+
+    const result = await storyEditAction({
+      request,
+      params: { storyId: "story-1" },
+      context: {},
+    } as any);
+
+    expect(generateAiStorySuggestion).toHaveBeenCalledWith(
+      expect.objectContaining({
+        suggestionType: "structure",
+      }),
+    );
+
+    expect(createNotification).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: "user-1",
+        type: "AI_SUGGESTION",
+      }),
+    );
+
+    expect(db.story.update).not.toHaveBeenCalled();
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: "AI suggestion generated.",
+        aiSuggestion: "AI guidance for edit flow.",
+      }),
+    );
   });
 
   it("edits a story and creates a version snapshot", async () => {

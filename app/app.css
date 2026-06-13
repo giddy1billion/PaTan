@@ -1108,3 +1108,114 @@ h1, h2, h3, h4, h5, h6 {
   background-color: rgba(13, 43, 69, 0.08);
   color: var(--color-midnight);
 }
+
+/* ============================================================================
+   GLOBAL NAVIGATION LIQUID LOADER
+   A left-to-right liquid progress indicator anchored to the header's bottom
+   border. Shown during route navigations and in-flight fetcher submissions.
+   ============================================================================ */
+
+.nav-loader {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 60;
+}
+
+.nav-loader.is-active {
+  opacity: 1;
+}
+
+.nav-loader__bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 42%;
+  border-radius: 999px;
+  background-image: linear-gradient(
+    90deg,
+    rgba(13, 43, 69, 0) 0%,
+    var(--color-midnight) 22%,
+    var(--color-forest) 50%,
+    var(--color-golden) 78%,
+    rgba(245, 185, 66, 0) 100%
+  );
+  background-size: 220% 100%;
+  background-position: 0% 50%;
+  box-shadow:
+    0 0 12px rgba(245, 185, 66, 0.55),
+    0 0 6px rgba(46, 111, 64, 0.45);
+  transform: translateX(-110%);
+}
+
+.nav-loader.is-active .nav-loader__bar {
+  animation:
+    nav-liquid-sweep 1.25s cubic-bezier(0.45, 0, 0.25, 1) infinite,
+    nav-liquid-flow 1.25s linear infinite;
+}
+
+/* Leading droplet highlight that reinforces the liquid, flowing feel */
+.nav-loader__bar::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  right: 0;
+  height: 5px;
+  width: 18px;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle at 70% 50%,
+    rgba(245, 185, 66, 0.95),
+    rgba(245, 185, 66, 0) 70%
+  );
+  filter: blur(1px);
+}
+
+@keyframes nav-liquid-sweep {
+  0% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(255%);
+  }
+}
+
+@keyframes nav-liquid-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 220% 50%;
+  }
+}
+
+/* Reduced motion: replace the sweep with a static, steady indicator */
+@media (prefers-reduced-motion: reduce) {
+  .nav-loader {
+    transition: none;
+  }
+
+  .nav-loader.is-active .nav-loader__bar {
+    animation: none !important;
+    transform: none !important;
+    width: 100% !important;
+    opacity: 0.9;
+    background-image: linear-gradient(
+      90deg,
+      var(--color-midnight),
+      var(--color-forest),
+      var(--color-golden)
+    ) !important;
+  }
+
+  .nav-loader__bar::after {
+    display: none;
+  }
+}

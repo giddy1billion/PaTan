@@ -12,6 +12,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { GenericErrorView, NotFoundView } from "~/components/error-pages";
 import { getBotDefenseClientConfig } from "~/utils/bot-defense.server";
 import { issueCsrfToken } from "~/utils/csrf.server";
 import { startEmailVerificationRetryWorker } from "~/utils/email-verification.server";
@@ -172,30 +173,36 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
-  let stack: string | undefined;
+  const isNotFound = isRouteErrorResponse(error) && error.status === 404;
+
+  if (isNotFound) {
+    return (
+      <>
+        <title>Page not found (404) | PaTan™</title>
+        <meta name="robots" content="noindex, nofollow" />
+        <NotFoundView />
+      </>
+    );
+  }
+
+  let description: string | undefined;
+  let hint: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
-    stack = error.stack;
+    description =
+      error.statusText && error.statusText.trim().length > 0
+        ? error.statusText
+        : undefined;
+    hint = `Error ${error.status}`;
+  } else if (import.meta.env.DEV && error instanceof Error) {
+    description = error.message;
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+    <>
+      <title>Something went wrong | PaTan™</title>
+      <meta name="robots" content="noindex, nofollow" />
+      <GenericErrorView description={description} hint={hint} />
+    </>
   );
 }

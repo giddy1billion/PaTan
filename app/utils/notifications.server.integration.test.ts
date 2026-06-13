@@ -33,7 +33,7 @@ describe("Notification delivery preference gates", () => {
     vi.mocked(db.notification.createMany).mockResolvedValue({ count: 2 } as any);
   });
 
-  it("disables immediate email for digest-eligible types when digest is not realtime", async () => {
+  it("defers immediate email to digest for digest-eligible email types when digest is not realtime", async () => {
     vi.mocked(db.userPreference.findMany).mockResolvedValue([
       {
         userId: "user-1",
@@ -47,17 +47,17 @@ describe("Notification delivery preference gates", () => {
     await createNotification({
       userId: "user-1",
       actorId: "actor-1",
-      type: "NEW_FOLLOWER",
-      title: "New follower",
-      body: "Someone followed you.",
-      resourceId: "actor-1",
-      resourceType: "user",
+      type: "COMMUNITY_UPDATE",
+      title: "Community update",
+      body: "There is a new community update.",
+      resourceId: "resource-1",
+      resourceType: "report",
     });
 
     expect(db.notification.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
-          type: "NEW_FOLLOWER",
+          type: "COMMUNITY_UPDATE",
           data: expect.objectContaining({
             delivery: expect.objectContaining({
               inApp: true,

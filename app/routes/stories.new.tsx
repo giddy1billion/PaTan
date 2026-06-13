@@ -8,8 +8,15 @@ import { useState } from "react";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 import { SubmitButton } from "~/components/ui";
 import { requireUser } from "~/utils/auth.server";
+import {
+  type AiSuggestionType,
+  buildLocalStorySuggestion,
+  generateAiStorySuggestion,
+  normalizeAiSuggestionType,
+} from "~/utils/ai.server";
 import { db } from "~/utils/db.server";
 import { createNotification } from "~/utils/notifications.server";
+import { enforceAuthRateLimit } from "~/utils/rate-limit.server";
 import { getProfileSafetySettings } from "~/utils/users.server";
 
 type ActionData = {
@@ -63,25 +70,6 @@ function estimateReadingTime(wordCount: number) {
   return Math.max(1, Math.ceil(wordCount / 200));
 }
 
-function buildAiSuggestion(suggestionType: string, title: string, content: string) {
-  const storyLabel = title.trim() || "your story";
-  const preview = content.slice(0, 220).trim();
-
-  if (suggestionType === "grammar") {
-    return `Refine sentence clarity in ${storyLabel} by shortening long sentences and replacing repeated phrases. Keep the same voice while tightening wording around: "${preview}".`;
-  }
-
-  if (suggestionType === "structure") {
-    return `Structure ${storyLabel} into three parts: what happened, what changed, and what you learned. Add a short transition between each part so readers can follow your journey.`;
-  }
-
-  if (suggestionType === "title") {
-    return `Title ideas for ${storyLabel}: "Light Through the Hard Days", "How Hope Found Me Again", and "The Turning Point I Did Not Expect".`;
-  }
-
-  return `Reflection prompt for ${storyLabel}: What moment made you realize growth was possible, and what would you say to someone facing the same season today?`;
-}
-
 async function generateUniqueStorySlug(title: string) {
   const base = slugify(title) || "story";
 
@@ -121,7 +109,10 @@ export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
   const formData = await request.formData();
 
-  const intent = String(formData.get("action") ?? "publish");
+  const rawAction = String(formData.get("action") ?? "").trim().toLowerCase();
+  const selectedSuggestionType = formData.get("suggestionType");
+
+  const intent = rawAction || (selectedSuggestionType ? "ai-suggest" : "publish");
   const title = String(formData.get("title") ?? "").trim();
   const content = String(formData.get("content") ?? "").trim();
   const categoryName = String(formData.get("category") ?? "").trim();
@@ -129,7 +120,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const privacyInput = String(formData.get("privacy") ?? "public");
   const isAnonymous = String(formData.get("anonymous") ?? "") === "on";
   const hasContentWarning = String(formData.get("contentWarning") ?? "") === "on";
-  const suggestionType = String(formData.get("suggestionType") ?? "reflection").trim().toLowerCase();
+  const suggestionType = normalizeAiSuggestionType(selectedSuggestionType);
 
   if (intent === "ai-suggest") {
     if (!content) {
@@ -138,16 +129,42 @@ export async function action({ request }: ActionFunctionArgs) {
       } satisfies ActionData;
     }
 
-    const suggestion = buildAiSuggestion(suggestionType, title, content);
+    const rateLimitResult = await enforceAuthRateLimit({
+      request,
+      scope: "ai-suggest",
+      identifier: sessionUser.email,
+    });
+
+    if (!rateLimitResult.allowed) {
+      return {
+        error: `Too many AI requests. Please wait ${rateLimitResult.retryAfterSeconds} seconds before trying again.`,
+      } satisfies ActionData;
+    }
+
+    const aiResult = await generateAiStorySuggestion({
+      suggestionType,
+      title,
+      content,
+    });
+
+    const suggestion = aiResult.ok
+      ? aiResult.suggestion
+      : buildLocalStorySuggestion(suggestionType, title, content);
 
     await createNotification({
       userId: sessionUser.id,
       type: "AI_SUGGESTION",
-      title: "AI writing suggestion ready",
+      title: aiResult.ok ? "AI writing suggestion ready" : "AI writing suggestion ready (fallback mode)",
       body: suggestion.slice(0, 180),
       resourceType: "story_draft",
       data: {
         suggestionType,
+        fallbackUsed: !aiResult.ok,
+        requestId: aiResult.ok ? aiResult.metadata.requestId : aiResult.requestId,
+        endpoint: aiResult.ok ? aiResult.metadata.endpoint : null,
+        endpointKind: aiResult.ok ? aiResult.metadata.endpointKind : null,
+        model: aiResult.ok ? aiResult.metadata.model : null,
+        upstreamError: aiResult.ok ? null : aiResult.message,
       },
     });
 
@@ -469,7 +486,6 @@ export default function NewStory() {
                 <p className="mt-2 text-sm text-[#334155]">
                   Need help expressing your story? Our AI can assist with:
                 </p>
-                <input type="hidden" name="action" value="ai-suggest" />
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button
                     type="submit"

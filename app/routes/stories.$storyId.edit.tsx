@@ -11,12 +11,23 @@ import {
   useLoaderData,
   useNavigation,
 } from "react-router";
+import { useState } from "react";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
+import { SubmitButton } from "~/components/ui";
 import { requireUser } from "~/utils/auth.server";
+import {
+  buildLocalStorySuggestion,
+  generateAiStorySuggestion,
+  normalizeAiSuggestionType,
+} from "~/utils/ai.server";
 import { db } from "~/utils/db.server";
+import { createNotification } from "~/utils/notifications.server";
+import { enforceAuthRateLimit } from "~/utils/rate-limit.server";
 
 type ActionData = {
   error?: string;
+  success?: string;
+  aiSuggestion?: string;
   values?: {
     title: string;
     content: string;
@@ -160,6 +171,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
   const storyParam = params.storyId?.trim();
   const formData = await request.formData();
+  const rawAction = String(formData.get("action") ?? "").trim().toLowerCase();
+  const selectedSuggestionType = formData.get("suggestionType");
+  const intent = rawAction || (selectedSuggestionType ? "ai-suggest" : "save");
+  const suggestionType = normalizeAiSuggestionType(selectedSuggestionType);
 
   const values = {
     title: String(formData.get("title") ?? "").trim(),
@@ -174,6 +189,61 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   if (!storyParam) {
     return { error: "Story reference is missing.", values } satisfies ActionData;
+  }
+
+  if (intent === "ai-suggest") {
+    if (!values.content) {
+      return {
+        error: "Add a few sentences so AI can tailor a useful suggestion.",
+        values,
+      } satisfies ActionData;
+    }
+
+    const rateLimitResult = await enforceAuthRateLimit({
+      request,
+      scope: "ai-suggest",
+      identifier: sessionUser.email,
+    });
+
+    if (!rateLimitResult.allowed) {
+      return {
+        error: `Too many AI requests. Please wait ${rateLimitResult.retryAfterSeconds} seconds before trying again.`,
+        values,
+      } satisfies ActionData;
+    }
+
+    const aiResult = await generateAiStorySuggestion({
+      suggestionType,
+      title: values.title,
+      content: values.content,
+    });
+
+    const suggestion = aiResult.ok
+      ? aiResult.suggestion
+      : buildLocalStorySuggestion(suggestionType, values.title, values.content);
+
+    await createNotification({
+      userId: sessionUser.id,
+      type: "AI_SUGGESTION",
+      title: aiResult.ok ? "AI writing suggestion ready" : "AI writing suggestion ready (fallback mode)",
+      body: suggestion.slice(0, 180),
+      resourceType: "story_draft",
+      data: {
+        suggestionType,
+        fallbackUsed: !aiResult.ok,
+        requestId: aiResult.ok ? aiResult.metadata.requestId : aiResult.requestId,
+        endpoint: aiResult.ok ? aiResult.metadata.endpoint : null,
+        endpointKind: aiResult.ok ? aiResult.metadata.endpointKind : null,
+        model: aiResult.ok ? aiResult.metadata.model : null,
+        upstreamError: aiResult.ok ? null : aiResult.message,
+      },
+    });
+
+    return {
+      success: "AI suggestion generated.",
+      aiSuggestion: suggestion,
+      values,
+    } satisfies ActionData;
   }
 
   if (!values.title || !values.content || !values.category) {
@@ -314,7 +384,11 @@ export default function StoryEditRoute() {
   const { story, categories } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
+  const [showAIPanel, setShowAIPanel] = useState(false);
+
   const isSubmitting = navigation.state === "submitting";
+  const submittingAiSuggestion =
+    navigation.state === "submitting" && Boolean(navigation.formData?.get("suggestionType"));
 
   const selectedCategory = actionData?.values?.category ?? story.categoryId;
   const privacy = actionData?.values?.privacy ?? fromStoryPrivacy(story.privacy);
@@ -340,6 +414,12 @@ export default function StoryEditRoute() {
           className="mt-4"
         />
 
+        <AutoDismissAlert
+          tone="success"
+          message={actionData?.success}
+          className="mt-4"
+        />
+
         <Form method="post" className="mt-6 space-y-6 rounded-2xl border border-midnight/10 bg-white p-6 shadow-sm">
           <div>
             <label htmlFor="story-title" className="block text-sm font-medium text-night">
@@ -356,9 +436,20 @@ export default function StoryEditRoute() {
           </div>
 
           <div>
-            <label htmlFor="story-content" className="block text-sm font-medium text-night">
-              Content
-            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="story-content" className="block text-sm font-medium text-night">
+                Content
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowAIPanel((current) => !current)}
+                className="text-sm text-[#2E6F40] hover:text-[#0D2B45] flex items-center gap-1 rounded-lg px-2 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942]"
+                aria-expanded={showAIPanel}
+                aria-controls="ai-assistant-panel-edit"
+              >
+                AI Assistance
+              </button>
+            </div>
             <textarea
               id="story-content"
               name="content"
@@ -367,6 +458,76 @@ export default function StoryEditRoute() {
               defaultValue={actionData?.values?.content ?? story.content}
               className="mt-1 block w-full rounded-xl border border-mist px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-golden"
             />
+
+            {(showAIPanel || actionData?.aiSuggestion) && (
+              <div
+                id="ai-assistant-panel-edit"
+                className="mt-4 rounded-xl border border-[#B8E3F3] bg-[#EDF6FB] px-4 py-4 sm:px-5"
+              >
+                <h3 className="text-sm font-semibold text-[#0D2B45]">AI Writing Assistant</h3>
+                <p className="mt-2 text-sm text-[#334155]">
+                  Get optional guidance while preserving your authentic voice.
+                </p>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="submit"
+                    name="suggestionType"
+                    value="grammar"
+                    formNoValidate
+                    className="rounded-full border border-[#E2E8F0] bg-white px-3 py-1.5 text-xs hover:bg-[#F8FAFC]"
+                  >
+                    Improve grammar
+                  </button>
+                  <button
+                    type="submit"
+                    name="suggestionType"
+                    value="structure"
+                    formNoValidate
+                    className="rounded-full border border-[#E2E8F0] bg-white px-3 py-1.5 text-xs hover:bg-[#F8FAFC]"
+                  >
+                    Suggest structure
+                  </button>
+                  <button
+                    type="submit"
+                    name="suggestionType"
+                    value="title"
+                    formNoValidate
+                    className="rounded-full border border-[#E2E8F0] bg-white px-3 py-1.5 text-xs hover:bg-[#F8FAFC]"
+                  >
+                    Generate title ideas
+                  </button>
+                  <button
+                    type="submit"
+                    name="suggestionType"
+                    value="reflection"
+                    formNoValidate
+                    className="rounded-full border border-[#E2E8F0] bg-white px-3 py-1.5 text-xs hover:bg-[#F8FAFC]"
+                  >
+                    Add reflection prompts
+                  </button>
+                </div>
+
+                {submittingAiSuggestion ? (
+                  <p className="mt-3 text-xs text-[#475569]" role="status" aria-live="polite">
+                    Generating AI suggestion...
+                  </p>
+                ) : null}
+
+                {actionData?.aiSuggestion ? (
+                  <div className="mt-4 rounded-xl border border-[#B8E3F3] bg-white px-4 py-3">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[#64748B]">
+                      Suggested guidance
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-[#334155]">{actionData.aiSuggestion}</p>
+                  </div>
+                ) : null}
+
+                <p className="mt-3 text-xs text-[#64748B]">
+                  AI suggestions are optional. Your authentic voice leads the story.
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -454,9 +615,15 @@ export default function StoryEditRoute() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <button type="submit" className="btn-primary min-h-[44px]" disabled={isSubmitting} aria-busy={isSubmitting}>
+            <SubmitButton
+              name="action"
+              value="save"
+              className="btn-primary min-h-[44px]"
+              busy={isSubmitting && !submittingAiSuggestion}
+              pendingLabel="Saving..."
+            >
               Save changes
-            </button>
+            </SubmitButton>
             <Link
               to={`/stories/${story.slug}`}
               className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"

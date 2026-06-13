@@ -127,6 +127,29 @@ export function verifyPatanWebhookSignature({
 
 Important: verify against the exact raw request body bytes before JSON parsing.
 
+### AI Service Environment Variables
+
+For server-side AI story suggestions with retries and endpoint failover, set:
+
+- `AI_SERVICE_API_KEY` (or `AZURE_OPENAI_API_KEY`)
+- `AI_PROJECT_ENDPOINT` (or `AZURE_AI_PROJECT_ENDPOINT`)
+- `AZURE_OPENAI_ENDPOINT`
+- `AI_MODEL` (default: `gpt-4.1-mini`)
+
+Optional reliability tuning:
+
+- `AI_TIMEOUT_MS`
+- `AI_MAX_RETRIES`
+- `AI_RETRY_BASE_DELAY_MS`
+- `AI_MAX_CONCURRENCY`
+- `AI_MAX_OUTPUT_TOKENS`
+- `AI_TEMPERATURE`
+- `AI_CIRCUIT_OPEN_AFTER_FAILURES`
+- `AI_CIRCUIT_RESET_MS`
+- `AI_PROJECT_API_VERSION`
+
+You can configure one or both endpoints. When both are configured, the server will automatically fail over across endpoints if one is degraded.
+
 ## Building for Production
 
 Create a production build:

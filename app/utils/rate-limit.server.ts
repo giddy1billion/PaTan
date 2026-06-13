@@ -8,7 +8,8 @@ export type AuthRateLimitScope =
   | "oauth-init"
   | "oauth-callback"
   | "password-reset"
-  | "mfa";
+  | "mfa"
+  | "ai-suggest";
 
 type BucketPolicy = {
   windowMs: number;
@@ -75,6 +76,10 @@ const DEFAULT_RATE_LIMIT_POLICIES: Record<AuthRateLimitScope, ScopePolicy> = {
     byIp: { windowMs: 15 * 60 * 1000, max: 12, blockMs: 30 * 60 * 1000 },
     byIdentifier: { windowMs: 15 * 60 * 1000, max: 8, blockMs: 30 * 60 * 1000 },
   },
+  "ai-suggest": {
+    byIp: { windowMs: 10 * 60 * 1000, max: 40, blockMs: 20 * 60 * 1000 },
+    byIdentifier: { windowMs: 10 * 60 * 1000, max: 20, blockMs: 20 * 60 * 1000 },
+  },
 };
 
 const RATE_LIMIT_RETENTION_MS = 14 * 24 * 60 * 60 * 1000;
@@ -89,6 +94,7 @@ function getScopeEnvPrefix(scope: AuthRateLimitScope) {
   if (scope === "oauth-init") return "OAUTH_INIT";
   if (scope === "oauth-callback") return "OAUTH_CALLBACK";
   if (scope === "password-reset") return "PASSWORD_RESET";
+  if (scope === "ai-suggest") return "AI_SUGGEST";
   return scope.toUpperCase();
 }
 

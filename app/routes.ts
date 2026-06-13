@@ -32,6 +32,9 @@ export default [
     route("inspirational-testimonies", "routes/inspirational-testimonies.tsx"),
     route("personal-growth-stories", "routes/personal-growth-stories.tsx"),
     route("healing-and-resilience", "routes/healing-and-resilience.tsx"),
+
+    // Catch-all 404 within public chrome (must stay last in this layout)
+    route("*", "routes/not-found.tsx"),
   ]),
 
   // Authenticated application layout
@@ -68,6 +71,7 @@ export default [
   route("oauth/callback", "routes/auth/oauth.callback.tsx"),
   route("oauth/:provider", "routes/auth/oauth.$provider.tsx"),
   route("api/health", "routes/api.health.ts"),
+  route("api/ai/story-suggestion", "routes/api.ai.story-suggestion.ts"),
   route("api/admin/email-verification-retry-health", "routes/api.admin.email-verification-retry-health.ts"),
   route("auth/verify-email", "routes/auth/verify-email.tsx"),
   route("verify-email", "routes/auth/verify-email-status.tsx"),

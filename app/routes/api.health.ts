@@ -5,6 +5,7 @@ import {
   getEmailVerificationRetryWorkerStatus,
   startEmailVerificationRetryWorker,
 } from "~/utils/email-verification.server";
+import { getAiServiceStatus } from "~/utils/ai.server";
 import { getSecurityEmailServiceStatus } from "~/utils/security-email.server";
 
 type CheckStatus = "up" | "down" | "degraded";
@@ -73,6 +74,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const dbCheck = await checkDatabase(DB_CHECK_TIMEOUT_MS);
   const emailService = getSecurityEmailServiceStatus();
+  const aiService = getAiServiceStatus();
   const worker = getEmailVerificationRetryWorkerStatus();
 
   let retryQueueStatus: CheckStatus = "up";
@@ -89,12 +91,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const emailDeliveryStatus: CheckStatus = emailService.deliveryReady
     ? "up"
     : "degraded";
+  const aiServiceStatus: CheckStatus = aiService.configured ? "up" : "degraded";
   const workerStatus: CheckStatus = worker.started ? "up" : "degraded";
 
   const overallStatus: OverallStatus =
     dbCheck.status === "down"
       ? "down"
-      : emailDeliveryStatus === "up" && workerStatus === "up" && retryQueueStatus === "up"
+      : emailDeliveryStatus === "up" &&
+          aiServiceStatus === "up" &&
+          workerStatus === "up" &&
+          retryQueueStatus === "up"
         ? "ok"
         : "degraded";
 
@@ -119,6 +125,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
         status: emailDeliveryStatus,
         resendConfigured: emailService.resendConfigured,
         webhookConfigured: emailService.webhookConfigured,
+      },
+      aiService: {
+        status: aiServiceStatus,
+        configured: aiService.configured,
+        endpointCount: aiService.endpointCount,
+        model: aiService.model,
+        timeoutMs: aiService.timeoutMs,
+        maxRetries: aiService.maxRetries,
+        maxConcurrency: aiService.maxConcurrency,
+        endpoints: aiService.endpoints,
       },
       workers: {
         emailVerificationRetry: {

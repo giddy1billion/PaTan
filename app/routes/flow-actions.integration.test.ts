@@ -42,6 +42,22 @@ vi.mock("~/utils/db.server", () => ({
   },
 }));
 
+vi.mock("~/utils/ai.server", () => ({
+  generateAiStorySuggestion: vi.fn(),
+  buildLocalStorySuggestion: vi.fn(),
+  normalizeAiSuggestionType: vi.fn((input: unknown) => {
+    const value = String(input ?? "reflection").trim().toLowerCase();
+    if (value === "grammar") return "grammar";
+    if (value === "structure") return "structure";
+    if (value === "title") return "title";
+    return "reflection";
+  }),
+}));
+
+vi.mock("~/utils/rate-limit.server", () => ({
+  enforceAuthRateLimit: vi.fn(),
+}));
+
 import { action as dashboardAction } from "~/routes/dashboard";
 import { action as publicProfileAction } from "~/routes/u.$username";
 import { action as storyAction } from "~/routes/stories.new";
@@ -49,6 +65,8 @@ import { action as aspirationAction } from "~/routes/aspirations.new";
 import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
 import { blockUserByUsername, reportUserByUsername } from "~/utils/users.server";
+import { buildLocalStorySuggestion, generateAiStorySuggestion } from "~/utils/ai.server";
+import { enforceAuthRateLimit } from "~/utils/rate-limit.server";
 
 function postRequest(url: string, params: Record<string, string>) {
   return new Request(url, {
@@ -69,6 +87,27 @@ describe("Flow action behavior checks", () => {
       email: "user1@example.com",
       provider: "local",
     });
+
+    vi.mocked(generateAiStorySuggestion).mockResolvedValue({
+      ok: true,
+      suggestion: "AI generated structure suggestion.",
+      metadata: {
+        requestId: "req-flow-1",
+        endpoint: "https://example.openai.azure.com/openai/v1",
+        endpointKind: "openai-v1",
+        model: "gpt-4.1-mini",
+        latencyMs: 240,
+        attempts: 1,
+        statusCode: 200,
+      },
+    } as any);
+
+    vi.mocked(buildLocalStorySuggestion).mockReturnValue("Fallback suggestion.");
+
+    vi.mocked(enforceAuthRateLimit).mockResolvedValue({
+      allowed: true,
+      headers: new Headers(),
+    } as any);
   });
 
   it("handles public profile block action end-to-end", async () => {
@@ -202,6 +241,10 @@ describe("Flow action behavior checks", () => {
           userId: "user-1",
           type: "AI_SUGGESTION",
           resourceType: "story_draft",
+          data: expect.objectContaining({
+            fallbackUsed: false,
+            requestId: "req-flow-1",
+          }),
         }),
       }),
     );
