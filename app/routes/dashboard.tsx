@@ -418,11 +418,11 @@ export default function DashboardRoute() {
       : "Take one minute to reflect: what moment today made you feel grateful or hopeful?";
   const completionWidth = `${summary.profileCompletion.percent}%`;
   return (
-    <main id="main-content" className="page-modern min-h-screen bg-dawn dark:bg-midnight">
+    <main id="main-content" className="min-h-screen bg-dawn dark:bg-[#0F1419]">
       {" "}
-      <section className="bg-midnight dark:bg-night text-dawn py-10 sm:py-14">
+      <section className="aurora-accent bg-midnight dark:bg-night text-dawn py-10 sm:py-14">
         {" "}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {" "}
           <p className="text-xs uppercase tracking-[0.2em] text-golden font-semibold">
             Dashboard
@@ -454,19 +454,19 @@ export default function DashboardRoute() {
       </section>{" "}
       <section className="py-8 sm:py-10">
         {" "}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-5 lg:grid-cols-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bento-grid">
           <AutoDismissAlert
             tone="error"
             message={actionData?.error}
-            className="lg:col-span-3"
+            className="bento-full"
           />
           <AutoDismissAlert
             tone="success"
             message={actionData?.success}
-            className="lg:col-span-3"
+            className="bento-full"
           />
           {" "}
-          <article className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-1">
+          <article className="bento-card bento-md">
             {" "}
             <h2 className="font-heading text-xl text-midnight dark:text-dawn">
               Profile completion
@@ -492,14 +492,14 @@ export default function DashboardRoute() {
             </p>{" "}
             <Link
               to="/profile/settings"
-              className="mt-5 btn-primary min-h-[44px] inline-flex w-full items-center justify-center text-sm"
+              className="mt-5 m3-btn-filled min-h-[44px] w-full text-sm"
             >
               {" "}
               Edit profile{" "}
             </Link>{" "}
           </article>{" "}
           <section
-            className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-2"
+            className="bento-card-featured bento-xl"
             aria-labelledby="engagement-summary-heading"
             aria-busy={isRefreshing}
           >
@@ -530,7 +530,7 @@ export default function DashboardRoute() {
                         preventScrollReset: true,
                       });
                     }}
-                    className={`min-h-[44px] rounded-full px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${range === option.value ? "bg-midnight dark:bg-golden text-white dark:text-midnight" : "bg-surface dark:bg-white/5 text-midnight dark:text-dawn hover:bg-mist dark:hover:bg-white/10"}`}
+                    className={`m3-chip ${range === option.value ? "is-selected" : ""}`}
                     aria-pressed={range === option.value}
                   >
                     {" "}
@@ -541,37 +541,37 @@ export default function DashboardRoute() {
             </div>{" "}
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
               {" "}
-              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-4">
+              <article className="bento-stat">
                 {" "}
-                <p className="text-xs uppercase tracking-wide text-night/60 dark:text-dawn/60">
+                <p className="bento-stat-label">
                   Draft stories
                 </p>{" "}
-                <p className="mt-1 text-2xl font-bold text-midnight dark:text-dawn">
+                <p className="bento-stat-value">
                   {summary.storyStats.draft}
                 </p>{" "}
               </article>{" "}
-              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-4">
+              <article className="bento-stat">
                 {" "}
-                <p className="text-xs uppercase tracking-wide text-night/60 dark:text-dawn/60">
+                <p className="bento-stat-label">
                   Published stories
                 </p>{" "}
-                <p className="mt-1 text-2xl font-bold text-midnight dark:text-dawn">
+                <p className="bento-stat-value">
                   {summary.storyStats.published}
                 </p>{" "}
               </article>{" "}
-              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-4">
+              <article className="bento-stat">
                 {" "}
-                <p className="text-xs uppercase tracking-wide text-night/60 dark:text-dawn/60">
+                <p className="bento-stat-label">
                   Reactions ({range})
                 </p>{" "}
-                <p className="mt-1 text-2xl font-bold text-midnight dark:text-dawn">
+                <p className="bento-stat-value">
                   {summary.storyStats.reactions}
                 </p>{" "}
               </article>{" "}
             </div>{" "}
           </section>{" "}
           <section
-            className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-2"
+            className="bento-card bento-xl"
             aria-labelledby="aspiration-summary-heading"
             aria-busy={isRefreshing}
           >
@@ -584,44 +584,44 @@ export default function DashboardRoute() {
             </h2>{" "}
             <div className="mt-4 grid grid-cols-2 sm:grid-cols-5 gap-3">
               {" "}
-              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-3">
+              <article className="bento-stat">
                 {" "}
-                <p className="text-xs text-night/60 dark:text-dawn/60">Pending</p>{" "}
-                <p className="text-lg font-bold text-midnight dark:text-dawn">
+                <p className="bento-stat-label">Pending</p>{" "}
+                <p className="bento-stat-value text-lg">
                   {summary.aspirations.pending}
                 </p>{" "}
               </article>{" "}
-              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-3">
+              <article className="bento-stat">
                 {" "}
-                <p className="text-xs text-night/60 dark:text-dawn/60">In progress</p>{" "}
-                <p className="text-lg font-bold text-midnight dark:text-dawn">
+                <p className="bento-stat-label">In progress</p>{" "}
+                <p className="bento-stat-value text-lg">
                   {summary.aspirations.inProgress}
                 </p>{" "}
               </article>{" "}
-              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-3">
+              <article className="bento-stat">
                 {" "}
-                <p className="text-xs text-night/60 dark:text-dawn/60">Achieved</p>{" "}
-                <p className="text-lg font-bold text-midnight dark:text-dawn">
+                <p className="bento-stat-label">Achieved</p>{" "}
+                <p className="bento-stat-value text-lg">
                   {summary.aspirations.achieved}
                 </p>{" "}
               </article>{" "}
-              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-3">
+              <article className="bento-stat">
                 {" "}
-                <p className="text-xs text-night/60 dark:text-dawn/60">Granted</p>{" "}
-                <p className="text-lg font-bold text-midnight dark:text-dawn">
+                <p className="bento-stat-label">Granted</p>{" "}
+                <p className="bento-stat-value text-lg">
                   {summary.aspirations.granted}
                 </p>{" "}
               </article>{" "}
-              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-3">
+              <article className="bento-stat">
                 {" "}
-                <p className="text-xs text-night/60 dark:text-dawn/60">Transformed</p>{" "}
-                <p className="text-lg font-bold text-midnight dark:text-dawn">
+                <p className="bento-stat-label">Transformed</p>{" "}
+                <p className="bento-stat-value text-lg">
                   {summary.aspirations.transformed}
                 </p>{" "}
               </article>{" "}
             </div>{" "}
           </section>{" "}
-          <aside className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-1">
+          <aside className="bento-card bento-md">
             {" "}
             <h2 className="font-heading text-xl text-midnight dark:text-dawn">
               Quick actions
@@ -630,42 +630,42 @@ export default function DashboardRoute() {
               {" "}
               <Link
                 to="/stories/new"
-                className="btn-primary min-h-[44px] inline-flex items-center justify-center text-sm"
+                className="m3-btn-filled min-h-[44px] text-sm"
               >
                 {" "}
                 Share story{" "}
               </Link>{" "}
               <Link
                 to="/aspirations/new"
-                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 dark:border-white/15 bg-white dark:bg-night text-sm font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                className="m3-btn-tonal min-h-[44px] text-sm"
               >
                 {" "}
                 Add aspiration{" "}
               </Link>{" "}
               <Link
                 to="/profile/settings"
-                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 dark:border-white/15 bg-white dark:bg-night text-sm font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                className="m3-btn-outlined min-h-[44px] text-sm"
               >
                 {" "}
                 Edit profile{" "}
               </Link>{" "}
               <Link
                 to="/profile/settings#preferences"
-                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 dark:border-white/15 bg-white dark:bg-night text-sm font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                className="m3-btn-outlined min-h-[44px] text-sm"
               >
                 {" "}
                 Preferences{" "}
               </Link>{" "}
               <Link
                 to="/notifications"
-                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 dark:border-white/15 bg-white dark:bg-night text-sm font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                className="m3-btn-outlined min-h-[44px] text-sm"
               >
                 Notifications inbox
               </Link>{" "}
             </div>{" "}
           </aside>{" "}
           <section
-            className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-3"
+            className="bento-card bento-full"
             aria-labelledby="activity-heading"
             aria-busy={isRefreshing}
           >
@@ -696,7 +696,7 @@ export default function DashboardRoute() {
                         preventScrollReset: true,
                       });
                     }}
-                    className={`min-h-[44px] rounded-full px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${activeActivityFilter === filter.value ? "bg-midnight dark:bg-golden text-white dark:text-midnight" : "bg-surface dark:bg-white/5 text-midnight dark:text-dawn hover:bg-mist dark:hover:bg-white/10"}`}
+                    className={`m3-chip ${activeActivityFilter === filter.value ? "is-selected" : ""}`}
                     aria-pressed={activeActivityFilter === filter.value}
                   >
                     {" "}
@@ -904,7 +904,7 @@ export default function DashboardRoute() {
             </div>{" "}
           </section>{" "}
           <section
-            className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-2"
+            className="bento-card-featured bento-xl"
             aria-labelledby="growth-hooks-heading"
           >
             {" "}
@@ -1046,7 +1046,7 @@ export default function DashboardRoute() {
             </article>{" "}
           </section>{" "}
           <section
-            className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-1"
+            className="bento-card bento-md bento-tall"
             aria-labelledby="badge-summary-heading"
           >
             {" "}
@@ -1058,7 +1058,7 @@ export default function DashboardRoute() {
             </h2>{" "}
             {summary.badges.length === 0 ? (
               <p className="mt-3 text-sm text-night/70 dark:text-dawn/70" role="status">
-                Empty state: badges will appear as you engage positively.
+                Badges will appear as you engage positively with the community.
               </p>
             ) : (
               <ul className="mt-3 space-y-2" role="list">

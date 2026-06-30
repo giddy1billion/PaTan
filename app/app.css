@@ -1775,3 +1775,852 @@ h1, h2, h3, h4, h5, h6 {
 .scroll-area::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-text-muted);
 }
+
+/* ============================================================================
+   HYBRID DESIGN SYSTEM
+   Bento UI + Glassmorphism + Material 3 + Fluent Depth + Aurora Gradients
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   BENTO GRID SYSTEM
+   Asymmetric dashboard layouts with varied card sizes.
+   Uses CSS Grid with named areas for semantic placement.
+   --------------------------------------------------------------------------- */
+
+.bento-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* Bento cell spans (desktop: 12-column grid) */
+.bento-sm { grid-column: span 1; }
+.bento-md { grid-column: span 1; }
+.bento-lg { grid-column: span 1; }
+.bento-xl { grid-column: span 1; }
+.bento-full { grid-column: 1 / -1; }
+
+@media (min-width: 640px) {
+  .bento-sm { grid-column: span 1; }
+  .bento-md { grid-column: span 1; }
+  .bento-lg { grid-column: span 2; }
+  .bento-xl { grid-column: span 2; }
+}
+
+@media (min-width: 1024px) {
+  .bento-sm { grid-column: span 3; }
+  .bento-md { grid-column: span 4; }
+  .bento-lg { grid-column: span 6; }
+  .bento-xl { grid-column: span 8; }
+}
+
+/* Bento row spans for tall cards */
+.bento-tall { grid-row: span 2; }
+
+/* Bento card base */
+.bento-card {
+  @apply rounded-2xl p-5 sm:p-6;
+  background-color: var(--color-page);
+  border: 1px solid var(--color-border);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.bento-card:hover {
+  border-color: rgba(245, 185, 66, 0.25);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.02),
+    0 4px 12px rgba(0, 0, 0, 0.04),
+    0 8px 24px rgba(13, 43, 69, 0.04);
+}
+
+.dark .bento-card {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.dark .bento-card:hover {
+  border-color: rgba(245, 185, 66, 0.2);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Bento featured card: larger visual emphasis */
+.bento-card-featured {
+  @apply rounded-3xl p-6 sm:p-8;
+  background-color: var(--color-page);
+  border: 1px solid var(--color-border);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.bento-card-featured::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-golden), var(--color-forest), var(--color-golden));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.bento-card-featured:hover::before {
+  opacity: 1;
+}
+
+.dark .bento-card-featured {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+/* Bento stat card */
+.bento-stat {
+  @apply rounded-xl p-4;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.bento-stat:hover {
+  background-color: var(--color-page);
+  border-color: rgba(245, 185, 66, 0.2);
+}
+
+.dark .bento-stat {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: var(--color-border);
+}
+
+.dark .bento-stat:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.bento-stat-value {
+  @apply text-2xl sm:text-3xl font-bold;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.bento-stat-label {
+  @apply text-xs uppercase tracking-wider mt-1;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.08em;
+}
+
+/* ---------------------------------------------------------------------------
+   GLASSMORPHISM (Enhanced)
+   Frosted glass surfaces for overlays, modals, floating cards.
+   --------------------------------------------------------------------------- */
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.dark .glass-panel {
+  background: rgba(15, 20, 25, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.glass-card {
+  @apply rounded-2xl p-5 sm:p-6;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.03),
+    0 8px 32px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.04),
+    0 12px 40px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.dark .glass-card {
+  background: rgba(26, 35, 50, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.dark .glass-card:hover {
+  background: rgba(26, 35, 50, 0.8);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 12px 40px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Glass overlay for modals */
+.glass-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(15, 20, 25, 0.4);
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  animation: fadeIn 0.2s ease;
+}
+
+.glass-modal {
+  position: fixed;
+  z-index: 101;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 2rem);
+  max-width: 32rem;
+  max-height: calc(100dvh - 4rem);
+  overflow-y: auto;
+  @apply rounded-3xl;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(32px) saturate(2);
+  -webkit-backdrop-filter: blur(32px) saturate(2);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.12),
+    0 8px 24px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  padding: 2rem;
+  animation: m3ScaleIn 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dark .glass-modal {
+  background: rgba(15, 20, 25, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.5),
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* ---------------------------------------------------------------------------
+   AURORA GRADIENTS
+   Subtle animated brand accents for hero sections and featured content.
+   --------------------------------------------------------------------------- */
+
+.aurora-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.aurora-bg::before {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    rgba(245, 185, 66, 0.12) 0deg,
+    rgba(46, 111, 64, 0.08) 120deg,
+    rgba(13, 43, 69, 0.06) 240deg,
+    rgba(245, 185, 66, 0.12) 360deg
+  );
+  animation: auroraRotate 20s linear infinite;
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+.dark .aurora-bg::before {
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    rgba(245, 185, 66, 0.06) 0deg,
+    rgba(46, 111, 64, 0.04) 120deg,
+    rgba(37, 99, 235, 0.04) 240deg,
+    rgba(245, 185, 66, 0.06) 360deg
+  );
+}
+
+@keyframes auroraRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Static aurora accent (no animation, performance-sensitive) */
+.aurora-accent {
+  position: relative;
+  overflow: hidden;
+}
+
+.aurora-accent::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -20%;
+  width: 60%;
+  height: 80%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(245, 185, 66, 0.08) 0%,
+    rgba(46, 111, 64, 0.04) 50%,
+    transparent 70%
+  );
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(60px);
+}
+
+.dark .aurora-accent::before {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(245, 185, 66, 0.04) 0%,
+    rgba(46, 111, 64, 0.02) 50%,
+    transparent 70%
+  );
+}
+
+/* Aurora gradient text */
+.aurora-text {
+  background: linear-gradient(
+    135deg,
+    var(--color-midnight) 0%,
+    var(--color-forest) 35%,
+    var(--color-golden) 65%,
+    var(--color-midnight) 100%
+  );
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: auroraShift 8s ease-in-out infinite;
+}
+
+@keyframes auroraShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ---------------------------------------------------------------------------
+   MATERIAL 3 INTERACTION PATTERNS
+   State layers, tonal buttons, FABs, chips, text fields.
+   --------------------------------------------------------------------------- */
+
+/* M3 state layer */
+.m3-state-layer {
+  position: relative;
+  overflow: hidden;
+}
+
+.m3-state-layer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: currentColor;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.m3-state-layer:hover::after {
+  opacity: 0.08;
+}
+
+.m3-state-layer:active::after {
+  opacity: 0.12;
+}
+
+.m3-state-layer:focus-visible::after {
+  opacity: 0.12;
+}
+
+/* M3 Filled button */
+.m3-btn-filled {
+  @apply font-medium rounded-full;
+  @apply px-6 py-3;
+  @apply min-h-[44px];
+  @apply inline-flex items-center justify-center gap-2;
+  background-color: var(--color-midnight);
+  color: #FFFFFF;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.m3-btn-filled:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.m3-btn-filled:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.m3-btn-filled:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 185, 66, 0.5);
+}
+
+.m3-btn-filled:disabled {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.dark .m3-btn-filled {
+  background-color: var(--color-golden);
+  color: #0F1419;
+}
+
+/* M3 Tonal button */
+.m3-btn-tonal {
+  @apply font-medium rounded-full;
+  @apply px-6 py-3;
+  @apply min-h-[44px];
+  @apply inline-flex items-center justify-center gap-2;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.m3-btn-tonal:hover {
+  background-color: var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.m3-btn-tonal:active {
+  transform: scale(0.98);
+}
+
+.m3-btn-tonal:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 185, 66, 0.5);
+}
+
+.dark .m3-btn-tonal {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary);
+}
+
+.dark .m3-btn-tonal:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* M3 Outlined button */
+.m3-btn-outlined {
+  @apply font-medium rounded-full;
+  @apply px-6 py-3;
+  @apply min-h-[44px];
+  @apply inline-flex items-center justify-center gap-2;
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 1.5px solid var(--color-border);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.m3-btn-outlined:hover {
+  background-color: var(--color-surface);
+  border-color: var(--color-text-secondary);
+}
+
+.m3-btn-outlined:active {
+  transform: scale(0.98);
+}
+
+.m3-btn-outlined:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 185, 66, 0.5);
+}
+
+.dark .m3-btn-outlined {
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--color-text-primary);
+}
+
+.dark .m3-btn-outlined:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* M3 FAB */
+.m3-fab {
+  @apply inline-flex items-center justify-center rounded-2xl;
+  width: 56px;
+  height: 56px;
+  background-color: var(--color-golden);
+  color: var(--color-midnight);
+  box-shadow:
+    0 3px 5px rgba(0, 0, 0, 0.1),
+    0 6px 10px rgba(0, 0, 0, 0.08),
+    0 1px 18px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.m3-fab:hover {
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.12),
+    0 8px 16px rgba(0, 0, 0, 0.1),
+    0 2px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.m3-fab:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.m3-fab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 185, 66, 0.5);
+}
+
+/* M3 Extended FAB */
+.m3-fab-extended {
+  @apply inline-flex items-center justify-center gap-2 rounded-2xl;
+  @apply px-5 py-4 font-medium text-sm;
+  height: 56px;
+  background-color: var(--color-golden);
+  color: var(--color-midnight);
+  box-shadow:
+    0 3px 5px rgba(0, 0, 0, 0.1),
+    0 6px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.m3-fab-extended:hover {
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.12),
+    0 8px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.m3-fab-extended:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.m3-fab-extended:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 185, 66, 0.5);
+}
+
+/* M3 Chip */
+.m3-chip {
+  @apply inline-flex items-center gap-1.5 rounded-full;
+  @apply px-3.5 py-1.5 text-sm font-medium;
+  min-height: 32px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.m3-chip:hover {
+  background-color: var(--color-border);
+}
+
+.m3-chip[aria-selected="true"],
+.m3-chip.is-selected {
+  background-color: var(--color-midnight);
+  border-color: var(--color-midnight);
+  color: #FFFFFF;
+}
+
+.dark .m3-chip {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.dark .m3-chip:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .m3-chip[aria-selected="true"],
+.dark .m3-chip.is-selected {
+  background-color: var(--color-golden);
+  border-color: var(--color-golden);
+  color: #0F1419;
+}
+
+/* M3 Text field */
+.m3-input {
+  @apply w-full rounded-xl px-4 py-3.5;
+  min-height: 56px;
+  background-color: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-body);
+  font-size: 1rem;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.m3-input:hover {
+  border-color: var(--color-text-secondary);
+}
+
+.m3-input:focus {
+  border-color: var(--color-midnight);
+  outline: none;
+  box-shadow: 0 0 0 1px var(--color-midnight);
+  background-color: var(--color-page);
+}
+
+.m3-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.m3-input:disabled {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+  border-color: transparent;
+}
+
+.dark .m3-input {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: var(--color-border);
+  color: var(--color-text-body);
+}
+
+.dark .m3-input:focus {
+  border-color: var(--color-golden);
+  box-shadow: 0 0 0 1px var(--color-golden);
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* M3 Navigation item */
+.m3-nav-item {
+  @apply inline-flex flex-col items-center justify-center gap-0.5;
+  @apply px-3 py-2 rounded-2xl;
+  min-height: 44px;
+  min-width: 44px;
+  color: var(--color-text-secondary);
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.m3-nav-item:hover {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+.m3-nav-item[aria-current="page"],
+.m3-nav-item.is-active {
+  background-color: rgba(245, 185, 66, 0.12);
+  color: var(--color-midnight);
+}
+
+.m3-nav-item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 185, 66, 0.5);
+}
+
+/* M3 scale-in animation for modals */
+@keyframes m3ScaleIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   FLUENT DEPTH AND MOTION SYSTEM
+   Layered acrylic materials, spring-based motion curves.
+   --------------------------------------------------------------------------- */
+
+/* Fluent acrylic material */
+.fluent-acrylic {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(30px) saturate(1.25);
+  -webkit-backdrop-filter: blur(30px) saturate(1.25);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .fluent-acrylic {
+  background: rgba(32, 32, 32, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Fluent depth layers (5-level system) */
+.fluent-layer-0 {
+  box-shadow: none;
+  background-color: var(--color-page);
+}
+
+.fluent-layer-1 {
+  box-shadow:
+    0 0.5px 1.75px rgba(0, 0, 0, 0.04),
+    0 1.5px 5px rgba(0, 0, 0, 0.03);
+  background-color: var(--color-page);
+}
+
+.fluent-layer-2 {
+  box-shadow:
+    0 0.8px 2.5px rgba(0, 0, 0, 0.04),
+    0 2px 7px rgba(0, 0, 0, 0.04),
+    0 5px 17px rgba(0, 0, 0, 0.03);
+  background-color: var(--color-page);
+}
+
+.fluent-layer-3 {
+  box-shadow:
+    0 1px 3.5px rgba(0, 0, 0, 0.04),
+    0 3px 10px rgba(0, 0, 0, 0.05),
+    0 8px 28px rgba(0, 0, 0, 0.04);
+  background-color: var(--color-page);
+}
+
+.fluent-layer-4 {
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.05),
+    0 6px 18px rgba(0, 0, 0, 0.06),
+    0 14px 48px rgba(0, 0, 0, 0.05);
+  background-color: var(--color-page);
+}
+
+.dark .fluent-layer-1,
+.dark .fluent-layer-2,
+.dark .fluent-layer-3,
+.dark .fluent-layer-4 {
+  background-color: var(--color-surface);
+}
+
+.dark .fluent-layer-2 {
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.3),
+    0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.dark .fluent-layer-3 {
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.35),
+    0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.dark .fluent-layer-4 {
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.4),
+    0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Fluent motion curves (spring-based) */
+.motion-quick {
+  transition-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+  transition-duration: 0.15s;
+}
+
+.motion-normal {
+  transition-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+  transition-duration: 0.25s;
+}
+
+.motion-dramatic {
+  transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  transition-duration: 0.4s;
+}
+
+/* Fluent reveal highlight (subtle radial glow on hover) */
+.fluent-reveal {
+  position: relative;
+  overflow: hidden;
+}
+
+.fluent-reveal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(245, 185, 66, 0.08),
+    transparent 40%
+  );
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.fluent-reveal:hover::before {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------------------
+   RESPONSIVE + REDUCED MOTION
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 639px) {
+  .bento-card,
+  .glass-card,
+  .bento-card-featured {
+    padding: 1.25rem;
+  }
+
+  .m3-fab {
+    width: 48px;
+    height: 48px;
+  }
+
+  .m3-fab-extended {
+    height: 48px;
+    padding-left: 1rem;
+    padding-right: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-bg::before {
+    animation: none !important;
+    filter: blur(60px);
+  }
+
+  .aurora-text {
+    animation: none !important;
+    background-position: 0% 50%;
+  }
+
+  .fluent-reveal::before {
+    display: none;
+  }
+
+  .bento-card,
+  .bento-card-featured,
+  .glass-card,
+  .m3-btn-filled,
+  .m3-btn-tonal,
+  .m3-btn-outlined,
+  .m3-fab,
+  .m3-fab-extended {
+    transition-duration: 0.01ms !important;
+  }
+}

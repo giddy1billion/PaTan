@@ -70,10 +70,14 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Run database migrations
-        run: |
-          npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::DATABASE_URL is not set. Add it to GitHub Actions secrets."
+            exit 1
+          fi
+          npx prisma migrate deploy
 
       - name: Validate Azure Web App exists
         run: |

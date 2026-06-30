@@ -590,13 +590,13 @@ export function Dialog({ open, onClose, title, description, children, className 
 
   return (
     <>
-      <div className="dialog-backdrop" onClick={onClose} aria-hidden="true" />
+      <div className="glass-overlay" onClick={onClose} aria-hidden="true" />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="dialog-title"
         aria-describedby={description ? 'dialog-description' : undefined}
-        className={`dialog-panel ${className}`}
+        className={`glass-modal ${className}`}
       >
         <div className="flex items-start justify-between gap-4 mb-4">
           <h2 id="dialog-title" className="text-lg font-semibold text-text-primary font-heading">
@@ -704,5 +704,118 @@ export function Alert({ variant, title, children, className = '', dismissible, o
         ) : null}
       </div>
     </div>
+  );
+}
+
+// ============================================================================
+// BENTO GRID
+// ============================================================================
+
+interface BentoGridProps {
+  children: ReactNode;
+  className?: string;
+}
+
+/**
+ * Responsive Bento grid container.
+ * Uses 12-column grid on desktop, 2-column on tablet, single column on mobile.
+ */
+export function BentoGrid({ children, className = '' }: BentoGridProps) {
+  return (
+    <div className={`bento-grid ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+interface BentoItemProps {
+  children: ReactNode;
+  span?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  tall?: boolean;
+  variant?: 'card' | 'featured' | 'stat' | 'glass';
+  className?: string;
+  as?: 'div' | 'article' | 'section' | 'aside';
+}
+
+/**
+ * Individual Bento grid cell with sizing and style variants.
+ */
+export function BentoItem({
+  children,
+  span = 'md',
+  tall = false,
+  variant = 'card',
+  className = '',
+  as: Component = 'div',
+}: BentoItemProps) {
+  const spanClass = {
+    sm: 'bento-sm',
+    md: 'bento-md',
+    lg: 'bento-lg',
+    xl: 'bento-xl',
+    full: 'bento-full',
+  }[span];
+
+  const variantClass = {
+    card: 'bento-card',
+    featured: 'bento-card-featured',
+    stat: 'bento-stat',
+    glass: 'glass-card',
+  }[variant];
+
+  return (
+    <Component className={`${variantClass} ${spanClass} ${tall ? 'bento-tall' : ''} ${className}`}>
+      {children}
+    </Component>
+  );
+}
+
+// ============================================================================
+// GLASS CARD
+// ============================================================================
+
+interface GlassCardProps {
+  children: ReactNode;
+  className?: string;
+  as?: 'div' | 'article' | 'section';
+}
+
+/**
+ * Glassmorphism card with frosted glass effect.
+ * Use sparingly for overlays, featured content, and premium surfaces.
+ */
+export function GlassCard({ children, className = '', as: Component = 'div' }: GlassCardProps) {
+  return (
+    <Component className={`glass-card ${className}`}>
+      {children}
+    </Component>
+  );
+}
+
+// ============================================================================
+// CHIP (M3)
+// ============================================================================
+
+interface ChipProps {
+  children: ReactNode;
+  selected?: boolean;
+  onClick?: () => void;
+  className?: string;
+}
+
+/**
+ * Material 3 chip for filter selections, tags, and categories.
+ */
+export function Chip({ children, selected = false, onClick, className = '' }: ChipProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`m3-chip ${selected ? 'is-selected' : ''} ${className}`}
+      aria-selected={selected}
+      role="option"
+    >
+      {children}
+    </button>
   );
 }
