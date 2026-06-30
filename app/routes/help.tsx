@@ -164,7 +164,7 @@ export default function Help() {
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="mailto:support@PaTan™.site"
+              href="mailto:support@patan.site"
               className="btn-primary inline-flex items-center justify-center gap-2"
             >
               <svg

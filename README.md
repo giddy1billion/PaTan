@@ -46,7 +46,7 @@ For Google and Facebook OAuth login, create a local `.env` file from `.env.examp
 - `FACEBOOK_CLIENT_SECRET`
 - `FACEBOOK_REDIRECT_URI`
 
-For production, set both redirect URIs to `https://PaTan™.site/oauth/callback`.
+For production, set both redirect URIs to `https://patan.site/oauth/callback`.
 For local development, you can use `http://localhost:5173/oauth/callback`.
 
 ### Security Email Environment Variables

@@ -221,10 +221,10 @@ export default function Guidelines() {
               For urgent concerns or questions about these guidelines, contact
               us at{" "}
               <a
-                href="mailto:safety@PaTan™.site"
+                href="mailto:safety@patan.site"
                 className="text-golden hover:text-soft-gold"
               >
-                safety@PaTan™.site
+                safety@patan.site
               </a>
             </p>
           </div>

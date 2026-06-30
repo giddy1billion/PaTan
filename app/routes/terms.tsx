@@ -171,10 +171,10 @@ export default function Terms() {
                 <p className="mt-4 text-night/70 leading-relaxed">
                   Questions about these terms? Contact us at{" "}
                   <a
-                    href="mailto:legal@PaTan™.site"
+                    href="mailto:legal@patan.site"
                     className="text-golden hover:text-soft-gold"
                   >
-                    legal@PaTan™.site
+                    legal@patan.site
                   </a>
                 </p>
               </section>

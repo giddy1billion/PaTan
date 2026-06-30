@@ -181,10 +181,10 @@ export default function Privacy() {
                   For privacy-related questions or to exercise your rights,
                   contact us at{" "}
                   <a
-                    href="mailto:privacy@PaTan™.site"
+                    href="mailto:privacy@patan.site"
                     className="text-golden hover:text-soft-gold"
                   >
-                    privacy@PaTan™.site
+                    privacy@patan.site
                   </a>
                 </p>
               </section>

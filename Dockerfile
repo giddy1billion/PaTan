@@ -16,8 +16,8 @@ RUN npm run build
 
 FROM node:24-alpine
 ENV NODE_ENV=production
-ENV PORT=4199
-EXPOSE 4199
+ENV PORT=8080
+EXPOSE 8080
 COPY ./package.json package-lock.json /app/
 COPY --from=production-dependencies-env /app/node_modules /app/node_modules
 COPY --from=build-env /app/build /app/build

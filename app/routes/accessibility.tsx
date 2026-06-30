@@ -206,10 +206,10 @@ export default function Accessibility() {
                 <p className="text-night/70">
                   <strong className="text-midnight">Email:</strong>{" "}
                   <a
-                    href="mailto:accessibility@PaTan™.site"
+                    href="mailto:accessibility@patan.site"
                     className="text-golden hover:text-soft-gold"
                   >
-                    accessibility@PaTan™.site
+                    accessibility@patan.site
                   </a>
                 </p>
                 <p className="mt-2 text-night/70">

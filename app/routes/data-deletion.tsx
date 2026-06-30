@@ -49,7 +49,7 @@ export default function DataDeletion() {
               <ol className="space-y-2 text-night/80 leading-relaxed list-decimal pl-6">
                 {" "}
                 <li>
-                  Email privacy@PaTan™.site from the email address linked to
+                  Email privacy@patan.site from the email address linked to
                   your PaTan™ account.
                 </li>{" "}
                 <li>Use the subject line: PaTan™ Data Deletion Request.</li>{" "}
@@ -101,11 +101,11 @@ export default function DataDeletion() {
                 {" "}
                 Questions about deletion requests can be sent to{" "}
                 <a
-                  href="mailto:privacy@PaTan™.site"
+                  href="mailto:privacy@patan.site"
                   className="text-golden hover:text-soft-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 rounded-sm"
                 >
                   {" "}
-                  privacy@PaTan™.site{" "}
+                  privacy@patan.site{" "}
                 </a>{" "}
                 .{" "}
               </p>{" "}

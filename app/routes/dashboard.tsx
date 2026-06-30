@@ -419,7 +419,6 @@ export default function DashboardRoute() {
   const completionWidth = `${summary.profileCompletion.percent}%`;
   return (
     <main id="main-content" className="min-h-screen bg-dawn dark:bg-[#0F1419]">
-      {" "}
       <section className="aurora-accent bg-midnight dark:bg-night text-dawn py-10 sm:py-14">
         {" "}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -449,11 +448,10 @@ export default function DashboardRoute() {
               {" "}
               Refreshing dashboard insights...{" "}
             </div>
-          ) : null}{" "}
-        </div>{" "}
-      </section>{" "}
+          ) : null}
+        </div>
+      </section>
       <section className="py-8 sm:py-10">
-        {" "}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bento-grid">
           <AutoDismissAlert
             tone="error"
@@ -465,7 +463,6 @@ export default function DashboardRoute() {
             message={actionData?.success}
             className="bento-full"
           />
-          {" "}
           <article className="bento-card bento-md">
             {" "}
             <h2 className="font-heading text-xl text-midnight dark:text-dawn">
@@ -497,7 +494,7 @@ export default function DashboardRoute() {
               {" "}
               Edit profile{" "}
             </Link>{" "}
-          </article>{" "}
+          </article>
           <section
             className="bento-card-featured bento-xl"
             aria-labelledby="engagement-summary-heading"
@@ -568,8 +565,8 @@ export default function DashboardRoute() {
                   {summary.storyStats.reactions}
                 </p>{" "}
               </article>{" "}
-            </div>{" "}
-          </section>{" "}
+            </div>
+          </section>
           <section
             className="bento-card bento-xl"
             aria-labelledby="aspiration-summary-heading"
@@ -619,8 +616,8 @@ export default function DashboardRoute() {
                   {summary.aspirations.transformed}
                 </p>{" "}
               </article>{" "}
-            </div>{" "}
-          </section>{" "}
+            </div>
+          </section>
           <aside className="bento-card bento-md">
             {" "}
             <h2 className="font-heading text-xl text-midnight dark:text-dawn">
@@ -662,8 +659,8 @@ export default function DashboardRoute() {
               >
                 Notifications inbox
               </Link>{" "}
-            </div>{" "}
-          </aside>{" "}
+            </div>
+          </aside>
           <section
             className="bento-card bento-full"
             aria-labelledby="activity-heading"
@@ -901,8 +898,8 @@ export default function DashboardRoute() {
                   )}{" "}
                 </section>
               ) : null}{" "}
-            </div>{" "}
-          </section>{" "}
+            </div>
+          </section>
           <section
             className="bento-card-featured bento-xl"
             aria-labelledby="growth-hooks-heading"
@@ -1043,8 +1040,8 @@ export default function DashboardRoute() {
                   No unfinished drafts right now.
                 </p>
               )}{" "}
-            </article>{" "}
-          </section>{" "}
+            </article>
+          </section>
           <section
             className="bento-card bento-md bento-tall"
             aria-labelledby="badge-summary-heading"
@@ -1079,10 +1076,10 @@ export default function DashboardRoute() {
                   </li>
                 ))}{" "}
               </ul>
-            )}{" "}
-          </section>{" "}
-        </div>{" "}
-      </section>{" "}
+            )}
+          </section>
+        </div>
+      </section>
     </main>
   );
 }
