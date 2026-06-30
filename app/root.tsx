@@ -130,7 +130,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const isHomeRoute = location.pathname === "/";
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -138,6 +138,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="description" content="PaTan™ - Share transformative stories. Discover hope. Connect through authentic human experiences." />
         <Meta />
         <Links />
+        {/* Inline theme init to prevent FOUC */}
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('patan-theme');var d=(t==='dark')||(t!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches);if(d)document.documentElement.classList.add('dark')}catch(e){}})()` }} />
         {isHomeRoute ? (
           <link
             rel="preload"

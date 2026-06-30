@@ -1,6 +1,7 @@
 import { Form, Link, NavLink, useFetchers, useNavigation, useRouteLoaderData } from 'react-router';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { SessionUser } from '~/utils/auth.server';
+import { applyThemeClass, getStoredTheme, resolveTheme, setStoredTheme, type Theme } from '~/utils/theme';
 
 type NavItem = {
   label: string;
@@ -239,6 +240,50 @@ function UserProfileBadge({
         </p>
       </div>
     </div>
+  );
+}
+
+function ThemeToggleButton({ compact = false }: { compact?: boolean }) {
+  const [theme, setTheme] = useState<Theme>('system');
+  const [resolved, setResolved] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    const stored = getStoredTheme();
+    setTheme(stored);
+    setResolved(resolveTheme(stored));
+  }, []);
+
+  const toggle = useCallback(() => {
+    const next: Theme = resolved === 'light' ? 'dark' : 'light';
+    setTheme(next);
+    setResolved(next);
+    setStoredTheme(next);
+    applyThemeClass(next);
+  }, [resolved]);
+
+  const isDark = resolved === 'dark';
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      className={`inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-midnight shadow-sm transition-all duration-200 motion-reduce:transition-none hover:-translate-y-0.5 hover:bg-surface hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 dark:border-white/15 dark:bg-surface dark:text-white dark:hover:bg-border ${
+        compact ? 'min-h-[44px] min-w-[44px]' : 'min-h-[46px] min-w-[46px]'
+      }`}
+      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      title={isDark ? 'Light mode' : 'Dark mode'}
+    >
+      {isDark ? (
+        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="5" />
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+        </svg>
+      ) : (
+        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      )}
+    </button>
   );
 }
 
@@ -491,6 +536,8 @@ export function Navigation({
 
               <NotificationBellLink unreadCount={notificationUnreadCount} />
 
+              <ThemeToggleButton />
+
               <Link
                 to="/profile"
                 className="rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
@@ -512,6 +559,7 @@ export function Navigation({
             </>
           ) : (
             <>
+              <ThemeToggleButton />
               <Link
                 to="/login"
                 className={`inline-flex min-h-[44px] items-center rounded-xl px-5 py-2.5 text-sm font-medium transition-all duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 ${
@@ -537,6 +585,7 @@ export function Navigation({
         </div>
 
         <div className="flex items-center gap-1.5 lg:hidden">
+          <ThemeToggleButton compact />
           {user ? (
             <>
               <NotificationBellLink unreadCount={notificationUnreadCount} compact />

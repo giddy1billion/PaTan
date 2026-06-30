@@ -418,14 +418,14 @@ export default function DashboardRoute() {
       : "Take one minute to reflect: what moment today made you feel grateful or hopeful?";
   const completionWidth = `${summary.profileCompletion.percent}%`;
   return (
-    <main id="main-content" className="page-modern min-h-screen bg-dawn">
+    <main id="main-content" className="page-modern min-h-screen bg-dawn dark:bg-midnight">
       {" "}
-      <section className="bg-midnight text-dawn py-10 sm:py-14">
+      <section className="bg-midnight dark:bg-night text-dawn py-10 sm:py-14">
         {" "}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {" "}
           <p className="text-xs uppercase tracking-[0.2em] text-golden font-semibold">
-            Phase 3
+            Dashboard
           </p>{" "}
           <h1 className="mt-3 font-heading text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
             {" "}
@@ -433,8 +433,7 @@ export default function DashboardRoute() {
           </h1>{" "}
           <p className="mt-3 text-dawn/75 max-w-2xl">
             {" "}
-            This is your calm home for progress, reflection, and community
-            growth.{" "}
+            Your calm space for progress, reflection, and community growth.{" "}
           </p>{" "}
           <AutoDismissAlert
             tone="success"
@@ -467,28 +466,28 @@ export default function DashboardRoute() {
             className="lg:col-span-3"
           />
           {" "}
-          <article className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm lg:col-span-1">
+          <article className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-1">
             {" "}
-            <h2 className="font-heading text-xl text-midnight">
+            <h2 className="font-heading text-xl text-midnight dark:text-dawn">
               Profile completion
             </h2>{" "}
-            <p className="mt-2 text-sm text-night/70">
+            <p className="mt-2 text-sm text-night/70 dark:text-dawn/70">
               {" "}
               {summary.profileCompletion.completedFields} of{" "}
               {summary.profileCompletion.totalFields} profile signals
               completed.{" "}
             </p>{" "}
             <div
-              className="mt-4 h-3 rounded-full bg-mist overflow-hidden"
+              className="mt-4 h-3 rounded-full bg-mist dark:bg-white/10 overflow-hidden"
               aria-hidden="true"
             >
               {" "}
               <div
-                className="h-full bg-golden"
+                className="h-full bg-golden transition-all duration-500"
                 style={{ width: completionWidth }}
               />{" "}
             </div>{" "}
-            <p className="mt-2 text-xs text-night/60">
+            <p className="mt-2 text-xs text-night/60 dark:text-dawn/60">
               {summary.profileCompletion.percent}% complete
             </p>{" "}
             <Link
@@ -500,7 +499,7 @@ export default function DashboardRoute() {
             </Link>{" "}
           </article>{" "}
           <section
-            className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm lg:col-span-2"
+            className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-2"
             aria-labelledby="engagement-summary-heading"
             aria-busy={isRefreshing}
           >
@@ -509,7 +508,7 @@ export default function DashboardRoute() {
               {" "}
               <h2
                 id="engagement-summary-heading"
-                className="font-heading text-xl text-midnight"
+                className="font-heading text-xl text-midnight dark:text-dawn"
               >
                 Engagement summary
               </h2>{" "}
@@ -531,7 +530,7 @@ export default function DashboardRoute() {
                         preventScrollReset: true,
                       });
                     }}
-                    className={`min-h-[44px] rounded-full px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${range === option.value ? "bg-midnight text-white" : "bg-surface text-midnight hover:bg-mist"}`}
+                    className={`min-h-[44px] rounded-full px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${range === option.value ? "bg-midnight dark:bg-golden text-white dark:text-midnight" : "bg-surface dark:bg-white/5 text-midnight dark:text-dawn hover:bg-mist dark:hover:bg-white/10"}`}
                     aria-pressed={range === option.value}
                   >
                     {" "}
@@ -542,89 +541,89 @@ export default function DashboardRoute() {
             </div>{" "}
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
               {" "}
-              <article className="rounded-xl border border-midnight/10 p-4">
+              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-4">
                 {" "}
-                <p className="text-xs uppercase tracking-wide text-night/60">
+                <p className="text-xs uppercase tracking-wide text-night/60 dark:text-dawn/60">
                   Draft stories
                 </p>{" "}
-                <p className="mt-1 text-2xl font-bold text-midnight">
+                <p className="mt-1 text-2xl font-bold text-midnight dark:text-dawn">
                   {summary.storyStats.draft}
                 </p>{" "}
               </article>{" "}
-              <article className="rounded-xl border border-midnight/10 p-4">
+              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-4">
                 {" "}
-                <p className="text-xs uppercase tracking-wide text-night/60">
+                <p className="text-xs uppercase tracking-wide text-night/60 dark:text-dawn/60">
                   Published stories
                 </p>{" "}
-                <p className="mt-1 text-2xl font-bold text-midnight">
+                <p className="mt-1 text-2xl font-bold text-midnight dark:text-dawn">
                   {summary.storyStats.published}
                 </p>{" "}
               </article>{" "}
-              <article className="rounded-xl border border-midnight/10 p-4">
+              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-4">
                 {" "}
-                <p className="text-xs uppercase tracking-wide text-night/60">
+                <p className="text-xs uppercase tracking-wide text-night/60 dark:text-dawn/60">
                   Reactions ({range})
                 </p>{" "}
-                <p className="mt-1 text-2xl font-bold text-midnight">
+                <p className="mt-1 text-2xl font-bold text-midnight dark:text-dawn">
                   {summary.storyStats.reactions}
                 </p>{" "}
               </article>{" "}
             </div>{" "}
           </section>{" "}
           <section
-            className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm lg:col-span-2"
+            className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-2"
             aria-labelledby="aspiration-summary-heading"
             aria-busy={isRefreshing}
           >
             {" "}
             <h2
               id="aspiration-summary-heading"
-              className="font-heading text-xl text-midnight"
+              className="font-heading text-xl text-midnight dark:text-dawn"
             >
               Aspirations summary
             </h2>{" "}
             <div className="mt-4 grid grid-cols-2 sm:grid-cols-5 gap-3">
               {" "}
-              <article className="rounded-xl border border-midnight/10 p-3">
+              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-3">
                 {" "}
-                <p className="text-xs text-night/60">Pending</p>{" "}
-                <p className="text-lg font-bold text-midnight">
+                <p className="text-xs text-night/60 dark:text-dawn/60">Pending</p>{" "}
+                <p className="text-lg font-bold text-midnight dark:text-dawn">
                   {summary.aspirations.pending}
                 </p>{" "}
               </article>{" "}
-              <article className="rounded-xl border border-midnight/10 p-3">
+              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-3">
                 {" "}
-                <p className="text-xs text-night/60">In progress</p>{" "}
-                <p className="text-lg font-bold text-midnight">
+                <p className="text-xs text-night/60 dark:text-dawn/60">In progress</p>{" "}
+                <p className="text-lg font-bold text-midnight dark:text-dawn">
                   {summary.aspirations.inProgress}
                 </p>{" "}
               </article>{" "}
-              <article className="rounded-xl border border-midnight/10 p-3">
+              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-3">
                 {" "}
-                <p className="text-xs text-night/60">Achieved</p>{" "}
-                <p className="text-lg font-bold text-midnight">
+                <p className="text-xs text-night/60 dark:text-dawn/60">Achieved</p>{" "}
+                <p className="text-lg font-bold text-midnight dark:text-dawn">
                   {summary.aspirations.achieved}
                 </p>{" "}
               </article>{" "}
-              <article className="rounded-xl border border-midnight/10 p-3">
+              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-3">
                 {" "}
-                <p className="text-xs text-night/60">Granted</p>{" "}
-                <p className="text-lg font-bold text-midnight">
+                <p className="text-xs text-night/60 dark:text-dawn/60">Granted</p>{" "}
+                <p className="text-lg font-bold text-midnight dark:text-dawn">
                   {summary.aspirations.granted}
                 </p>{" "}
               </article>{" "}
-              <article className="rounded-xl border border-midnight/10 p-3">
+              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-3">
                 {" "}
-                <p className="text-xs text-night/60">Transformed</p>{" "}
-                <p className="text-lg font-bold text-midnight">
+                <p className="text-xs text-night/60 dark:text-dawn/60">Transformed</p>{" "}
+                <p className="text-lg font-bold text-midnight dark:text-dawn">
                   {summary.aspirations.transformed}
                 </p>{" "}
               </article>{" "}
             </div>{" "}
           </section>{" "}
-          <aside className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm lg:col-span-1">
+          <aside className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-1">
             {" "}
-            <h2 className="font-heading text-xl text-midnight">
+            <h2 className="font-heading text-xl text-midnight dark:text-dawn">
               Quick actions
             </h2>{" "}
             <div className="mt-4 grid gap-2">
@@ -638,35 +637,35 @@ export default function DashboardRoute() {
               </Link>{" "}
               <Link
                 to="/aspirations/new"
-                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 dark:border-white/15 bg-white dark:bg-night text-sm font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
               >
                 {" "}
                 Add aspiration{" "}
               </Link>{" "}
               <Link
                 to="/profile/settings"
-                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 dark:border-white/15 bg-white dark:bg-night text-sm font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
               >
                 {" "}
                 Edit profile{" "}
               </Link>{" "}
               <Link
                 to="/profile/settings#preferences"
-                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 dark:border-white/15 bg-white dark:bg-night text-sm font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
               >
                 {" "}
                 Preferences{" "}
               </Link>{" "}
               <Link
                 to="/notifications"
-                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 dark:border-white/15 bg-white dark:bg-night text-sm font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
               >
                 Notifications inbox
               </Link>{" "}
             </div>{" "}
           </aside>{" "}
           <section
-            className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm lg:col-span-3"
+            className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-3"
             aria-labelledby="activity-heading"
             aria-busy={isRefreshing}
           >
@@ -675,7 +674,7 @@ export default function DashboardRoute() {
               {" "}
               <h2
                 id="activity-heading"
-                className="font-heading text-xl text-midnight"
+                className="font-heading text-xl text-midnight dark:text-dawn"
               >
                 Recent activity
               </h2>{" "}
@@ -697,7 +696,7 @@ export default function DashboardRoute() {
                         preventScrollReset: true,
                       });
                     }}
-                    className={`min-h-[44px] rounded-full px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${activeActivityFilter === filter.value ? "bg-midnight text-white" : "bg-surface text-midnight hover:bg-mist"}`}
+                    className={`min-h-[44px] rounded-full px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${activeActivityFilter === filter.value ? "bg-midnight dark:bg-golden text-white dark:text-midnight" : "bg-surface dark:bg-white/5 text-midnight dark:text-dawn hover:bg-mist dark:hover:bg-white/10"}`}
                     aria-pressed={activeActivityFilter === filter.value}
                   >
                     {" "}
@@ -710,19 +709,19 @@ export default function DashboardRoute() {
               {" "}
               {filteredStories ? (
                 <section
-                  className="rounded-xl border border-midnight/10 p-4"
+                  className="rounded-xl border border-midnight/10 dark:border-white/10 p-4"
                   aria-labelledby="recent-story-list-heading"
                 >
                   {" "}
                   <h3
                     id="recent-story-list-heading"
-                    className="text-sm font-semibold text-midnight"
+                    className="text-sm font-semibold text-midnight dark:text-dawn"
                   >
                     Stories
                   </h3>{" "}
                   {summary.recentStories.length === 0 ? (
-                    <p className="mt-2 text-xs text-night/60" role="status">
-                      Empty state: no stories yet.
+                    <p className="mt-2 text-xs text-night/60 dark:text-dawn/60" role="status">
+                      No stories yet. Share your first story to see it here.
                     </p>
                   ) : (
                     <ul className="mt-2 space-y-2" role="list">
@@ -730,13 +729,13 @@ export default function DashboardRoute() {
                       {summary.recentStories.map((story) => (
                         <li
                           key={story.id}
-                          className="rounded-lg border border-midnight/10 px-3 py-2"
+                          className="rounded-lg border border-midnight/10 dark:border-white/10 px-3 py-2"
                         >
                           {" "}
-                          <p className="text-sm font-medium text-midnight">
+                          <p className="text-sm font-medium text-midnight dark:text-dawn">
                             {story.title}
                           </p>{" "}
-                          <p className="mt-1 text-xs text-night/60">
+                          <p className="mt-1 text-xs text-night/60 dark:text-dawn/60">
                             {story.status} | updated{" "}
                             {formatDate(story.updatedAt)}
                           </p>{" "}
@@ -748,19 +747,19 @@ export default function DashboardRoute() {
               ) : null}{" "}
               {filteredAspirations ? (
                 <section
-                  className="rounded-xl border border-midnight/10 p-4"
+                  className="rounded-xl border border-midnight/10 dark:border-white/10 p-4"
                   aria-labelledby="recent-aspiration-list-heading"
                 >
                   {" "}
                   <h3
                     id="recent-aspiration-list-heading"
-                    className="text-sm font-semibold text-midnight"
+                    className="text-sm font-semibold text-midnight dark:text-dawn"
                   >
                     Aspirations
                   </h3>{" "}
                   {summary.recentAspirations.length === 0 ? (
-                    <p className="mt-2 text-xs text-night/60" role="status">
-                      Empty state: no aspirations yet.
+                    <p className="mt-2 text-xs text-night/60 dark:text-dawn/60" role="status">
+                      No aspirations yet. Add your first aspiration to track progress.
                     </p>
                   ) : (
                     <ul className="mt-2 space-y-2" role="list">
@@ -768,13 +767,13 @@ export default function DashboardRoute() {
                       {summary.recentAspirations.map((aspiration) => (
                         <li
                           key={aspiration.id}
-                          className="rounded-lg border border-midnight/10 px-3 py-2"
+                          className="rounded-lg border border-midnight/10 dark:border-white/10 px-3 py-2"
                         >
                           {" "}
-                          <p className="text-sm font-medium text-midnight">
+                          <p className="text-sm font-medium text-midnight dark:text-dawn">
                             {aspiration.title}
                           </p>{" "}
-                          <p className="mt-1 text-xs text-night/60">
+                          <p className="mt-1 text-xs text-night/60 dark:text-dawn/60">
                             {aspiration.status} | updated{" "}
                             {formatDate(aspiration.updatedAt)}
                           </p>{" "}
@@ -786,29 +785,29 @@ export default function DashboardRoute() {
               ) : null}{" "}
               {filteredNotifications ? (
                 <section
-                  className="rounded-xl border border-midnight/10 p-4"
+                  className="rounded-xl border border-midnight/10 dark:border-white/10 p-4"
                   aria-labelledby="notification-preview-heading"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <h3
                       id="notification-preview-heading"
-                      className="text-sm font-semibold text-midnight"
+                      className="text-sm font-semibold text-midnight dark:text-dawn"
                     >
                       Notifications
                     </h3>
                     <div className="flex items-center gap-2">
                       <Link
                         to="/notifications"
-                        className="min-h-[44px] inline-flex items-center rounded-lg border border-midnight/15 px-3 py-2 text-xs font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                        className="min-h-[44px] inline-flex items-center rounded-lg border border-midnight/15 dark:border-white/15 px-3 py-2 text-xs font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                       >
                         Open inbox
                       </Link>
 
                       {summary.notifications.some((notification) => !notification.isRead) ? (
-                        <div className="rounded-lg border border-midnight/15 bg-white p-1.5">
+                        <div className="rounded-lg border border-midnight/15 dark:border-white/15 bg-white dark:bg-night p-1.5">
                           <button
                             type="button"
-                            className="min-h-[44px] inline-flex items-center gap-1.5 rounded-md px-2 py-2 text-xs font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            className="min-h-[44px] inline-flex items-center gap-1.5 rounded-md px-2 py-2 text-xs font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                             onClick={() => setPendingDashboardReadAll((current) => !current)}
                             aria-expanded={pendingDashboardReadAll}
                             aria-controls="dashboard-confirm-mark-all-read"
@@ -823,14 +822,14 @@ export default function DashboardRoute() {
                               pendingDashboardReadAll ? "max-h-40 opacity-100 mt-1" : "max-h-0 opacity-0"
                             }`}
                           >
-                            <div className="rounded-md border border-[#F59E0B]/35 bg-[#FEF3C7]/55 px-2 py-2">
-                              <p className="text-[11px] text-[#7C2D12]">
+                            <div className="rounded-md border border-golden/35 bg-golden/10 dark:bg-golden/5 px-2 py-2">
+                              <p className="text-[11px] text-midnight dark:text-dawn/90">
                                 Mark all unread dashboard notifications as read?
                               </p>
                               <div className="mt-1.5 flex items-center justify-end gap-1.5">
                                 <button
                                   type="button"
-                                  className="min-h-[32px] rounded-md border border-[#F59E0B]/45 bg-white px-2 text-[11px] font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                  className="min-h-[32px] rounded-md border border-golden/45 bg-white dark:bg-night px-2 text-[11px] font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                   onClick={() => setPendingDashboardReadAll(false)}
                                 >
                                   Cancel
@@ -839,7 +838,7 @@ export default function DashboardRoute() {
                                   <input type="hidden" name="intent" value="mark-all-notifications-read" />
                                   <button
                                     type="submit"
-                                    className="min-h-[32px] rounded-md bg-[#7C2D12] px-2 text-[11px] font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                    className="min-h-[32px] rounded-md bg-midnight dark:bg-golden px-2 text-[11px] font-semibold text-white dark:text-midnight hover:bg-midnight-hover dark:hover:bg-golden/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                     disabled={isSubmittingNotificationAction}
                                     aria-busy={isSubmittingNotificationAction}
                                     onClick={() => setPendingDashboardReadAll(false)}
@@ -856,8 +855,8 @@ export default function DashboardRoute() {
                   </div>
 
                   {summary.notifications.length === 0 ? (
-                    <p className="mt-2 text-xs text-night/60" role="status">
-                      Empty state: no notifications yet.
+                    <p className="mt-2 text-xs text-night/60 dark:text-dawn/60" role="status">
+                      No notifications yet. Activity will appear here as it happens.
                     </p>
                   ) : (
                     <ul className="mt-2 space-y-2" role="list">
@@ -865,17 +864,17 @@ export default function DashboardRoute() {
                       {summary.notifications.map((notification) => (
                         <li
                           key={notification.id}
-                          className="rounded-lg border border-midnight/10 px-3 py-2"
+                          className="rounded-lg border border-midnight/10 dark:border-white/10 px-3 py-2"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <p className="text-sm font-medium text-midnight">
+                              <p className="text-sm font-medium text-midnight dark:text-dawn">
                                 {notification.title}
                               </p>
-                              <p className="mt-1 text-xs text-night/60">
+                              <p className="mt-1 text-xs text-night/60 dark:text-dawn/60">
                                 {formatDate(notification.createdAt)}
                               </p>
-                              <p className="mt-1 text-[11px] text-night/60">
+                              <p className="mt-1 text-[11px] text-night/60 dark:text-dawn/60">
                                 {notification.isRead ? "Read" : "Unread"}
                               </p>
                             </div>
@@ -886,7 +885,7 @@ export default function DashboardRoute() {
                                 <input type="hidden" name="notificationId" value={notification.id} />
                                 <button
                                   type="submit"
-                                  className="min-h-[44px] rounded-lg border border-midnight/15 px-3 py-2 text-xs font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                  className="min-h-[44px] rounded-lg border border-midnight/15 dark:border-white/15 px-3 py-2 text-xs font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                   disabled={isSubmittingNotificationAction}
                                   aria-label={`Mark notification ${notification.title} as read`}
                                   aria-busy={isSubmittingNotificationAction}
@@ -905,29 +904,29 @@ export default function DashboardRoute() {
             </div>{" "}
           </section>{" "}
           <section
-            className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm lg:col-span-2"
+            className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-2"
             aria-labelledby="growth-hooks-heading"
           >
             {" "}
             <h2
               id="growth-hooks-heading"
-              className="font-heading text-xl text-midnight"
+              className="font-heading text-xl text-midnight dark:text-dawn"
             >
               Community and growth hooks
             </h2>{" "}
-            <p className="mt-2 text-sm text-night/70">
+            <p className="mt-2 text-sm text-night/70 dark:text-dawn/70">
               Gentle, non-addictive nudges to keep your journey meaningful.
             </p>{" "}
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {" "}
-              <article className="rounded-xl border border-midnight/10 p-4">
+              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-4">
                 {" "}
-                <h3 className="text-sm font-semibold text-midnight">
+                <h3 className="text-sm font-semibold text-midnight dark:text-dawn">
                   Suggested people
                 </h3>{" "}
                 {suggestions.people.length === 0 ? (
-                  <p className="mt-2 text-xs text-night/60" role="status">
-                    Empty state: add interests to unlock suggestions.
+                  <p className="mt-2 text-xs text-night/60 dark:text-dawn/60" role="status">
+                    Add interests to unlock suggestions.
                   </p>
                 ) : (
                   <ul className="mt-2 space-y-2" role="list">
@@ -935,15 +934,15 @@ export default function DashboardRoute() {
                     {suggestions.people.map((person) => (
                       <li
                         key={person.id}
-                        className="flex items-center justify-between gap-2 rounded-lg border border-midnight/10 px-3 py-2"
+                        className="flex items-center justify-between gap-2 rounded-lg border border-midnight/10 dark:border-white/10 px-3 py-2"
                       >
                         {" "}
                         <div>
                           {" "}
-                          <p className="text-sm font-medium text-midnight">
+                          <p className="text-sm font-medium text-midnight dark:text-dawn">
                             {person.displayName}
                           </p>{" "}
-                          <p className="text-xs text-night/60">
+                          <p className="text-xs text-night/60 dark:text-dawn/60">
                             @{person.username}
                           </p>{" "}
                         </div>{" "}
@@ -977,14 +976,14 @@ export default function DashboardRoute() {
                   </ul>
                 )}{" "}
               </article>{" "}
-              <article className="rounded-xl border border-midnight/10 p-4">
+              <article className="rounded-xl border border-midnight/10 dark:border-white/10 p-4">
                 {" "}
-                <h3 className="text-sm font-semibold text-midnight">
+                <h3 className="text-sm font-semibold text-midnight dark:text-dawn">
                   Suggested circles
                 </h3>{" "}
                 {suggestions.circles.length === 0 ? (
-                  <p className="mt-2 text-xs text-night/60" role="status">
-                    Empty state: no circle suggestions yet.
+                  <p className="mt-2 text-xs text-night/60 dark:text-dawn/60" role="status">
+                    No circle suggestions yet.
                   </p>
                 ) : (
                   <ul className="mt-2 space-y-2" role="list">
@@ -992,14 +991,14 @@ export default function DashboardRoute() {
                     {suggestions.circles.map((circle) => (
                       <li
                         key={circle.id}
-                        className="rounded-lg border border-midnight/10 px-3 py-2"
+                        className="rounded-lg border border-midnight/10 dark:border-white/10 px-3 py-2"
                       >
                         <div className="flex items-center justify-between gap-2">
                           <div>
-                            <p className="text-sm font-medium text-midnight">
+                            <p className="text-sm font-medium text-midnight dark:text-dawn">
                               {circle.name}
                             </p>
-                            <p className="mt-1 text-xs text-night/60">
+                            <p className="mt-1 text-xs text-night/60 dark:text-dawn/60">
                               {circle.memberCount} members
                             </p>
                           </div>
@@ -1027,38 +1026,38 @@ export default function DashboardRoute() {
                 )}{" "}
               </article>{" "}
             </div>{" "}
-            <article className="mt-4 rounded-xl border border-midnight/10 bg-surface p-4">
+            <article className="mt-4 rounded-xl border border-midnight/10 dark:border-white/10 bg-surface dark:bg-white/5 p-4">
               {" "}
-              <h3 className="text-sm font-semibold text-midnight">
+              <h3 className="text-sm font-semibold text-midnight dark:text-dawn">
                 Reflection prompt
               </h3>{" "}
-              <p className="mt-2 text-sm text-night/75">{reflectionPrompt}</p>{" "}
+              <p className="mt-2 text-sm text-night/75 dark:text-dawn/75">{reflectionPrompt}</p>{" "}
               {summary.unfinishedDrafts.length > 0 ? (
-                <p className="mt-2 text-xs text-night/60">
+                <p className="mt-2 text-xs text-night/60 dark:text-dawn/60">
                   {" "}
                   Gentle nudge: {summary.unfinishedDrafts.length} unfinished
                   draft(s) waiting.{" "}
                 </p>
               ) : (
-                <p className="mt-2 text-xs text-night/60">
+                <p className="mt-2 text-xs text-night/60 dark:text-dawn/60">
                   No unfinished drafts right now.
                 </p>
               )}{" "}
             </article>{" "}
           </section>{" "}
           <section
-            className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm lg:col-span-1"
+            className="rounded-2xl border border-midnight/10 dark:border-white/10 bg-white dark:bg-night p-5 shadow-sm lg:col-span-1"
             aria-labelledby="badge-summary-heading"
           >
             {" "}
             <h2
               id="badge-summary-heading"
-              className="font-heading text-xl text-midnight"
+              className="font-heading text-xl text-midnight dark:text-dawn"
             >
               Badges and milestones
             </h2>{" "}
             {summary.badges.length === 0 ? (
-              <p className="mt-3 text-sm text-night/70" role="status">
+              <p className="mt-3 text-sm text-night/70 dark:text-dawn/70" role="status">
                 Empty state: badges will appear as you engage positively.
               </p>
             ) : (
@@ -1067,13 +1066,13 @@ export default function DashboardRoute() {
                 {summary.badges.map((badgeEntry) => (
                   <li
                     key={`${badgeEntry.badge.slug}-${badgeEntry.earnedAt.toString()}`}
-                    className="rounded-lg border border-midnight/10 px-3 py-2"
+                    className="rounded-lg border border-midnight/10 dark:border-white/10 px-3 py-2"
                   >
                     {" "}
-                    <p className="text-sm font-semibold text-midnight">
+                    <p className="text-sm font-semibold text-midnight dark:text-dawn">
                       {badgeEntry.badge.name}
                     </p>{" "}
-                    <p className="mt-1 text-xs text-night/60">
+                    <p className="mt-1 text-xs text-night/60 dark:text-dawn/60">
                       {badgeEntry.badge.points} pts | earned{" "}
                       {formatDate(badgeEntry.earnedAt)}
                     </p>{" "}

@@ -402,3 +402,307 @@ export function Textarea({
     </div>
   );
 }
+
+// ============================================================================
+// SKELETON LOADING COMPONENTS
+// ============================================================================
+
+interface SkeletonProps {
+  className?: string;
+  variant?: 'text' | 'heading' | 'avatar' | 'card' | 'custom';
+  lines?: number;
+}
+
+/**
+ * Progressive content loading placeholder.
+ * Replaces spinners with layout-preserving shimmer shapes.
+ */
+export function Skeleton({ className = '', variant = 'custom', lines = 1 }: SkeletonProps) {
+  if (variant === 'text' && lines > 1) {
+    return (
+      <div className={`space-y-2 ${className}`} role="status" aria-label="Loading content">
+        {Array.from({ length: lines }).map((_, i) => (
+          <div
+            key={i}
+            className={`skeleton skeleton-text ${i === lines - 1 ? 'w-3/4' : 'w-full'}`}
+          />
+        ))}
+        <span className="sr-only">Loading</span>
+      </div>
+    );
+  }
+
+  const variantClass = {
+    text: 'skeleton skeleton-text w-full',
+    heading: 'skeleton skeleton-heading',
+    avatar: 'skeleton skeleton-avatar',
+    card: 'skeleton skeleton-card w-full',
+    custom: 'skeleton',
+  }[variant];
+
+  return (
+    <div className={`${variantClass} ${className}`} role="status" aria-label="Loading">
+      <span className="sr-only">Loading</span>
+    </div>
+  );
+}
+
+/**
+ * Full card skeleton with header, body, and footer placeholders.
+ */
+export function CardSkeleton({ className = '' }: { className?: string }) {
+  return (
+    <div className={`card space-y-4 ${className}`} role="status" aria-label="Loading card">
+      <div className="flex items-center gap-3">
+        <div className="skeleton skeleton-avatar" />
+        <div className="flex-1 space-y-2">
+          <div className="skeleton skeleton-text w-1/3" />
+          <div className="skeleton skeleton-text w-1/4" />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <div className="skeleton skeleton-heading" />
+        <div className="skeleton skeleton-text w-full" />
+        <div className="skeleton skeleton-text w-5/6" />
+      </div>
+      <div className="flex gap-3 pt-2">
+        <div className="skeleton h-8 w-20 rounded-full" />
+        <div className="skeleton h-8 w-16 rounded-full" />
+      </div>
+      <span className="sr-only">Loading</span>
+    </div>
+  );
+}
+
+// ============================================================================
+// EMPTY STATE
+// ============================================================================
+
+interface EmptyStateProps {
+  icon?: ReactNode;
+  title: string;
+  description?: string;
+  action?: ReactNode;
+  className?: string;
+}
+
+/**
+ * Standardized empty state for when no content exists.
+ * Always provides guidance and a next action.
+ */
+export function EmptyState({ icon, title, description, action, className = '' }: EmptyStateProps) {
+  return (
+    <div className={`empty-state ${className}`}>
+      {icon ? <div className="empty-state-icon">{icon}</div> : null}
+      <h3 className="empty-state-title">{title}</h3>
+      {description ? <p className="empty-state-description">{description}</p> : null}
+      {action ? <div className="empty-state-action">{action}</div> : null}
+    </div>
+  );
+}
+
+// ============================================================================
+// PROGRESS BAR
+// ============================================================================
+
+interface ProgressBarProps {
+  value: number;
+  max?: number;
+  size?: 'sm' | 'md' | 'lg';
+  label?: string;
+  className?: string;
+}
+
+/**
+ * Accessible progress indicator with smooth transitions.
+ */
+export function ProgressBar({ value, max = 100, size = 'md', label, className = '' }: ProgressBarProps) {
+  const percentage = Math.min(100, Math.max(0, (value / max) * 100));
+  const sizeClass = size === 'sm' ? 'progress-sm' : size === 'lg' ? 'progress-lg' : '';
+
+  return (
+    <div className={className}>
+      {label ? (
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-sm font-medium text-text-primary">{label}</span>
+          <span className="text-sm text-text-secondary">{Math.round(percentage)}%</span>
+        </div>
+      ) : null}
+      <div
+        className={`progress ${sizeClass}`}
+        role="progressbar"
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={max}
+        aria-label={label || `Progress: ${Math.round(percentage)}%`}
+      >
+        <div className="progress-bar" style={{ width: `${percentage}%` }} />
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// AVATAR
+// ============================================================================
+
+interface AvatarProps {
+  src?: string | null;
+  alt?: string;
+  fallback?: string;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  className?: string;
+}
+
+/**
+ * User avatar with image or initials fallback.
+ */
+export function Avatar({ src, alt = '', fallback = '?', size = 'md', className = '' }: AvatarProps) {
+  return (
+    <span className={`avatar avatar-${size} ${className}`} role="img" aria-label={alt || 'User avatar'}>
+      {src ? (
+        <img src={src} alt={alt} loading="lazy" />
+      ) : (
+        <span aria-hidden="true">{fallback.slice(0, 2).toUpperCase()}</span>
+      )}
+    </span>
+  );
+}
+
+// ============================================================================
+// DIALOG / MODAL
+// ============================================================================
+
+interface DialogProps {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  description?: string;
+  children: ReactNode;
+  className?: string;
+}
+
+/**
+ * Accessible modal dialog with backdrop and proper ARIA roles.
+ */
+export function Dialog({ open, onClose, title, description, children, className = '' }: DialogProps) {
+  if (!open) return null;
+
+  return (
+    <>
+      <div className="dialog-backdrop" onClick={onClose} aria-hidden="true" />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="dialog-title"
+        aria-describedby={description ? 'dialog-description' : undefined}
+        className={`dialog-panel ${className}`}
+      >
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <h2 id="dialog-title" className="text-lg font-semibold text-text-primary font-heading">
+            {title}
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn-icon -mr-2 -mt-1"
+            aria-label="Close dialog"
+          >
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+        </div>
+        {description ? (
+          <p id="dialog-description" className="text-sm text-text-secondary mb-4">{description}</p>
+        ) : null}
+        {children}
+      </div>
+    </>
+  );
+}
+
+// ============================================================================
+// DIVIDER
+// ============================================================================
+
+interface DividerProps {
+  className?: string;
+  label?: string;
+}
+
+/**
+ * Visual content separator with optional inline label.
+ */
+export function Divider({ className = '', label }: DividerProps) {
+  if (label) {
+    return (
+      <div className={`flex items-center gap-4 ${className}`} role="separator">
+        <div className="flex-1 h-px bg-border" />
+        <span className="text-xs font-medium uppercase tracking-wide text-text-muted">{label}</span>
+        <div className="flex-1 h-px bg-border" />
+      </div>
+    );
+  }
+
+  return <hr className={`divider ${className}`} />;
+}
+
+// ============================================================================
+// ALERT / NOTICE
+// ============================================================================
+
+interface AlertProps {
+  variant: 'success' | 'warning' | 'error' | 'info';
+  title?: string;
+  children: ReactNode;
+  className?: string;
+  dismissible?: boolean;
+  onDismiss?: () => void;
+}
+
+const alertVariantConfig = {
+  success: { bg: 'bg-success-bg', border: 'border-success/30', text: 'text-success-accessible', icon: '\u2713' },
+  warning: { bg: 'bg-warning-bg', border: 'border-warning/30', text: 'text-[#7C2D12]', icon: '!' },
+  error: { bg: 'bg-error-bg', border: 'border-error/30', text: 'text-error-accessible', icon: '\u2715' },
+  info: { bg: 'bg-info-bg', border: 'border-info/30', text: 'text-info-accessible', icon: 'i' },
+};
+
+/**
+ * Contextual alert banner for feedback messages.
+ */
+export function Alert({ variant, title, children, className = '', dismissible, onDismiss }: AlertProps) {
+  const config = alertVariantConfig[variant];
+
+  return (
+    <div
+      className={`rounded-xl border px-4 py-3 ${config.bg} ${config.border} ${className}`}
+      role="alert"
+      aria-live="polite"
+    >
+      <div className="flex items-start gap-3">
+        <span className={`flex-shrink-0 text-sm font-bold ${config.text}`} aria-hidden="true">
+          {config.icon}
+        </span>
+        <div className="flex-1 min-w-0">
+          {title ? <p className={`text-sm font-semibold ${config.text}`}>{title}</p> : null}
+          <div className={`text-sm ${config.text} ${title ? 'mt-0.5' : ''}`}>{children}</div>
+        </div>
+        {dismissible && onDismiss ? (
+          <button
+            type="button"
+            onClick={onDismiss}
+            className={`flex-shrink-0 btn-icon !min-h-[32px] !min-w-[32px] ${config.text}`}
+            aria-label="Dismiss"
+          >
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
+}
