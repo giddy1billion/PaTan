@@ -135,7 +135,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#0D2B45" />
+        <meta name="color-scheme" content="light dark" />
         <meta name="description" content="PaTan™ - Share transformative stories. Discover hope. Connect through authentic human experiences." />
+        {/* No-flash theme init: applies the `dark` class before first paint. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('patan-theme');var d=t? t==='dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;if(d){document.documentElement.classList.add('dark');}}catch(e){}})();`,
+          }}
+        />
         <Meta />
         <Links />
         {isHomeRoute ? (

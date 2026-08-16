@@ -2,6 +2,7 @@ import { Form, Link, NavLink, useFetchers, useNavigation, useRouteLoaderData } f
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { SessionUser } from '~/utils/auth.server';
 import { Icon } from '~/components/icon';
+import { ThemeToggle } from '~/components/theme-toggle';
 
 type NavItem = {
   label: string;
@@ -364,10 +365,10 @@ export function Navigation({
   }, [isMenuOpen]);
 
   const headerClasses = isDashboardShell
-    ? 'sticky top-0 z-50 border-b border-midnight/10 bg-white/95 shadow-[0_8px_30px_rgba(13,43,69,0.08)] backdrop-blur-xl'
+    ? 'glass-nav sticky top-0 z-50'
     : `sticky top-0 z-50 transition-all duration-300 motion-reduce:transition-none ${
         isScrolled
-          ? 'border-b border-midnight/5 bg-white/98 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.03)] backdrop-blur-xl'
+          ? 'glass-nav'
           : 'bg-gradient-to-b from-midnight/20 to-transparent'
       }`;
 
@@ -486,6 +487,8 @@ export function Navigation({
 
               <NotificationBellLink unreadCount={notificationUnreadCount} />
 
+              <ThemeToggle />
+
               <Link
                 to="/profile"
                 className="rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
@@ -532,6 +535,7 @@ export function Navigation({
         </div>
 
         <div className="flex items-center gap-1.5 lg:hidden">
+          <ThemeToggle />
           {user ? (
             <>
               <NotificationBellLink unreadCount={notificationUnreadCount} compact />
