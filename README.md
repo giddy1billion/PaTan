@@ -87,17 +87,25 @@ Your application will be available at `http://localhost:5173`.
 
 ## Environment Variables
 
+The complete, code-grounded reference for every variable the platform reads — with exact
+defaults, bounds, and source locations — lives in **[`ENVIRONMENT.md`](./ENVIRONMENT.md)**.
+That file is the source of truth; `.env.example` mirrors it. The tables below are a quick
+reference for the most common settings.
+
 ### Required Variables
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `SESSION_SECRET` | HMAC secret for session cookies and JWT signing (generate with `openssl rand -base64 32`) | `<32-char-random-string>` |
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@localhost:5432/patan` |
-| `APP_ORIGIN` | Application base URL | `https://patan.site` |
+| `SESSION_SECRET` | HMAC secret for session cookies + JWT signing (generate with `openssl rand -base64 32`). App throws on boot in production if unset. | `<32-char-random-string>` |
+| `DATABASE_URL` | PostgreSQL connection string (read by app + Prisma CLI/migrations) | `postgresql://user:pass@localhost:5432/patan?sslmode=require` |
+| `APP_ORIGIN` | Application base URL (builds verification/reset email links) | `https://patan.site` |
+| `NODE_ENV` | `production` enables secure cookies, HSTS, and the SESSION_SECRET fail-fast guard | `production` |
+| `PORT` | Port `react-router-serve` binds to (Dockerfile pins `8080`) | `8080` |
 
 ### OAuth Configuration
 
-For Google and Facebook OAuth login:
+For Google and Facebook OAuth login. Only `google` and `facebook` providers are recognized;
+each needs all three variables, and callbacks route to `/oauth/callback`.
 
 | Variable | Description | Production Value |
 |----------|-------------|-----------------|
@@ -127,54 +135,114 @@ Optional webhook fallback if Resend is unavailable:
 | `AUTH_EMAIL_WEBHOOK_SECRET` | HMAC secret for webhook signatures | `<secret>` |
 | `AUTH_EMAIL_WEBHOOK_KEY_ID` | Key identifier for rotation | `key-001` |
 
+Optional notification-delivery webhook (in-app fan-out):
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `NOTIFICATION_DELIVERY_WEBHOOK_URL` | Notification delivery webhook | `https://hooks.patan.site/notify` |
+| `NOTIFICATION_DELIVERY_WEBHOOK_SECRET` | Webhook HMAC secret | `<secret>` |
+| `NOTIFICATION_DELIVERY_WEBHOOK_KEY_ID` | Key identifier for rotation | `key-001` |
+
 ### Bot Defense & Rate Limiting
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `BOT_DEFENSE_PROVIDER` | CAPTCHA provider (`turnstile`, `recaptcha`, `hcaptcha`) | `turnstile` |
-| `BOT_DEFENSE_SITE_KEY` | Site key for CAPTCHA provider | `<site-key>` |
-| `BOT_DEFENSE_SECRET_KEY` | Secret key for CAPTCHA provider | `<secret>` |
-| `AUTH_RATE_LIMIT_LOGIN_MAX_ATTEMPTS` | Max login attempts per window | `5` |
-| `AUTH_RATE_LIMIT_WINDOW_MS` | Rate limit window in milliseconds | `900000` (15 min) |
+| `BOT_DEFENSE_ENABLED` | Enable CAPTCHA (any value other than `false` = enabled) | `true` |
+| `BOT_DEFENSE_PROVIDER` | CAPTCHA provider (`turnstile` or `recaptcha`) | `turnstile` |
+| `BOT_DEFENSE_MIN_SCORE` | Numeric threshold for scored challenges | `0.5` |
+| `TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key (required when provider=turnstile) | `<site-key>` |
+| `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile secret (required when provider=turnstile) | `<secret>` |
+| `RECAPTCHA_SITE_KEY` | Google reCAPTCHA site key (required when provider=recaptcha) | `<site-key>` |
+| `RECAPTCHA_SECRET_KEY` | Google reCAPTCHA secret (required when provider=recaptcha) | `<secret>` |
+| `BOT_CHALLENGE_LOGIN_FAILURE_THRESHOLD` | Failed logins before challenge (rolling window) | `3` |
+| `BOT_CHALLENGE_SIGNUP_FAILURE_THRESHOLD` | Failed signups before challenge | `2` |
+| `BOT_CHALLENGE_PASSWORD_RESET_THRESHOLD` | Failed resets before challenge | `2` |
 
-### Password Policy
+Rate limits are overridable per scope using the pattern
+`AUTH_RATE_LIMIT_<SCOPE>_<DIMENSION>_<FIELD>` (e.g. `AUTH_RATE_LIMIT_LOGIN_IP_MAX`).
+See `ENVIRONMENT.md` §11 for the full default policy table and all 7 scopes.
+
+### Password Policy & Auth Risk
 
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `AUTH_PASSWORD_MIN_LENGTH` | Minimum password length | `12` |
-| `AUTH_PASSWORD_REQUIRE_MIXED_CASE` | Require upper and lowercase | `true` |
-| `AUTH_PASSWORD_REQUIRE_DIGIT` | Require at least one digit | `true` |
-| `AUTH_PASSWORD_REQUIRE_SYMBOL` | Require at least one symbol | `true` |
-| `AUTH_PASSWORD_CHECK_BREACH_DATABASE` | Check against known breaches | `true` |
+| `AUTH_BREACHED_PASSWORD_CHECK` | Check against known breaches (set `false` to disable) | `true` |
+| `AUTH_HIGH_RISK_SCORE_THRESHOLD` | Session risk score ≥ threshold is flagged high-risk | `60` |
+
+> Mixed-case/digit/symbol password rules are enforced in code and are **not**
+> env-configurable.
+
+### Multi-factor Auth
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MFA_CODE_SECRET` | Secret for TOTP/code signing (falls back to `SESSION_SECRET`) | — |
+| `AUTH_MFA_CODE_TTL_MS` | MFA code lifetime | `600000` (10 min) |
+| `AUTH_MFA_MAX_ATTEMPTS` | Max verification attempts before lockout | `5` |
+
+### Token Lifetimes
+
+| Variable | Description | Default | Bounds |
+|----------|-------------|---------|--------|
+| `AUTH_EMAIL_VERIFICATION_TTL_MS` | Email verification token lifetime | `86400000` (24h) | 5 min – 30 days |
+| `AUTH_PASSWORD_RESET_TTL_MS` | Password reset token lifetime | `3600000` (1h) | — |
 
 ### AI Service Configuration
 
-For server-side AI story suggestions:
+For server-side AI story suggestions. The service is "configured" only when an API key
+**and** at least one endpoint are present.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `AI_SERVICE_API_KEY` | AI service API key | - |
-| `AI_PROJECT_ENDPOINT` | Azure AI project endpoint | - |
-| `AZURE_OPENAI_ENDPOINT` | Azure OpenAI endpoint | - |
+| `AI_SERVICE_API_KEY` | AI service API key (alias: `AZURE_OPENAI_API_KEY`) | — |
+| `AI_PROJECT_ENDPOINT` | Azure AI project endpoint (alias: `AZURE_AI_PROJECT_ENDPOINT`) | — |
+| `AZURE_OPENAI_ENDPOINT` | Additional Azure OpenAI endpoint | — |
+| `AI_PROJECT_API_VERSION` | Azure API version | `2024-05-01-preview` |
 | `AI_MODEL` | Model name | `gpt-4.1-mini` |
 
-Optional tuning:
+Optional tuning (bounded — see `ENVIRONMENT.md` §13 for exact bounds):
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `AI_TIMEOUT_MS` | Request timeout | `30000` |
-| `AI_MAX_RETRIES` | Maximum retry attempts | `3` |
-| `AI_RETRY_BASE_DELAY_MS` | Base delay for exponential backoff | `1000` |
-| `AI_MAX_CONCURRENCY` | Concurrent request limit | `10` |
-| `AI_CIRCUIT_OPEN_AFTER_FAILURES` | Failures before circuit opens | `5` |
+| `AI_TIMEOUT_MS` | Request timeout | `15000` |
+| `AI_MAX_RETRIES` | Maximum retry attempts (0–5) | `2` |
+| `AI_RETRY_BASE_DELAY_MS` | Base delay for exponential backoff | `300` |
+| `AI_MAX_OUTPUT_TOKENS` | Max output tokens (64–2000) | `450` |
+| `AI_MAX_CONCURRENCY` | Concurrent request limit (1–64) | `8` |
+| `AI_CIRCUIT_OPEN_AFTER_FAILURES` | Failures before circuit opens (1–20) | `5` |
+| `AI_CIRCUIT_RESET_MS` | Circuit reset interval | `45000` |
+| `AI_TEMPERATURE` | Sampling temperature (0–1.5) | `0.4` |
+
+### Email-Verification Retry Worker
+
+All positive integers, clamped to bounds (see `ENVIRONMENT.md` §10):
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `AUTH_EMAIL_VERIFICATION_RETRY_BASE_DELAY_MS` | Retry backoff base | `120000` |
+| `AUTH_EMAIL_VERIFICATION_RETRY_MAX_ATTEMPTS` | Max delivery attempts | `6` |
+| `AUTH_EMAIL_VERIFICATION_RETRY_BATCH_SIZE` | Rows per batch | `20` |
+| `AUTH_EMAIL_VERIFICATION_RETRY_LOOP_MS` | Poll interval | `60000` |
+| `AUTH_EMAIL_VERIFICATION_RETRY_CONCURRENCY` | Parallel deliveries | `5` |
+| `AUTH_EMAIL_VERIFICATION_DELIVERY_TIMEOUT_MS` | Per-delivery timeout | `15000` |
+| `AUTH_EMAIL_VERIFICATION_WORKER_RUN_TIMEOUT_MS` | Worker run cap | `90000` |
+| `AUTH_EMAIL_VERIFICATION_RETRY_DELIVERED_RETENTION_DAYS` | Delivered-row retention | `30` |
 
 ### Admin & Monitoring
 
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `ADMIN_EMAIL_VERIFICATION_HEALTH_TOKEN` | Bearer token for the retry-worker health endpoint | — |
+| `HEALTH_DB_CHECK_TIMEOUT_MS` | DB liveness probe timeout for `/api/health` | `2500` |
+
+Optional security-alert webhook (high/critical auth events):
+
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `ADMIN_EMAIL_VERIFICATION_HEALTH_TOKEN` | Bearer token for health endpoint | `<secure-token>` |
-| `NOTIFICATION_DELIVERY_WEBHOOK_URL` | Notification delivery webhook | `https://hooks.patan.site/notify` |
-| `NOTIFICATION_DELIVERY_WEBHOOK_SECRET` | Webhook HMAC secret | `<secret>` |
+| `SECURITY_ALERT_WEBHOOK_URL` | Security alert webhook | `https://hooks.patan.site/alerts` |
+| `SECURITY_ALERT_WEBHOOK_SECRET` | Webhook HMAC secret | `<secret>` |
+| `SECURITY_ALERT_WEBHOOK_KEY_ID` | Key identifier for rotation | `key-001` |
 
 ## Security Architecture
 
