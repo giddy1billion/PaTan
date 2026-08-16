@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Icon } from '~/components/icon';
 
 const testimonials = [
   {
@@ -122,12 +123,10 @@ export function Testimonials() {
             <button
               type="button"
               onClick={goToPrevious}
-              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white shadow-md flex items-center justify-center text-subtle hover:text-golden hover:shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-surface shadow-md flex items-center justify-center text-subtle hover:text-golden hover:shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
               aria-label="Previous testimonial"
             >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
+              <Icon name="chevron-left" size={24} />
             </button>
 
             {/* Dots */}
@@ -156,12 +155,10 @@ export function Testimonials() {
             <button
               type="button"
               onClick={goToNext}
-              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white shadow-md flex items-center justify-center text-subtle hover:text-golden hover:shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-surface shadow-md flex items-center justify-center text-subtle hover:text-golden hover:shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
               aria-label="Next testimonial"
             >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
+              <Icon name="chevron-right" size={24} />
             </button>
           </div>
         </div>

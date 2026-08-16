@@ -16,6 +16,7 @@ import { requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
 import { createNotification } from "~/utils/notifications.server";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
+import { Icon } from "~/components/icon";
 
 type ActionData = {
   error?: string;
@@ -80,37 +81,18 @@ function formatStatus(value: TriageStatus) {
 
 function TriageStatusIcon({ status }: { status: TriageStatus }) {
   if (status === "RESOLVED") {
-    return (
-      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="m5 13 4 4L19 7" />
-      </svg>
-    );
+    return <Icon name="check" size={16} />;
   }
 
   if (status === "DISMISSED") {
-    return (
-      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="8" />
-        <path d="m9 15 6-6" />
-      </svg>
-    );
+    return <Icon name="x" size={16} />;
   }
 
   if (status === "UNDER_REVIEW") {
-    return (
-      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M12 4v8l5 3" />
-        <circle cx="12" cy="12" r="8" />
-      </svg>
-    );
+    return <Icon name="clock" size={16} motion="pulse" />;
   }
 
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="8" />
-      <circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none" />
-    </svg>
-  );
+  return <Icon name="bell" size={16} />;
 }
 
 async function requireModerationRole(request: Request) {

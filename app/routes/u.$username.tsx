@@ -6,6 +6,7 @@ import type {
 import { Form, Link, useActionData, useLoaderData, useNavigation } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
+import { Icon } from "~/components/icon";
 import { getUser, requireUser } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
 import { createNotification } from "~/utils/notifications.server";
@@ -76,21 +77,11 @@ function MoreVerticalIcon({ className = "" }: { className?: string }) {
 }
 
 function BlockIcon() {
-  return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="8" />
-      <path d="m8.5 15.5 7-7" />
-    </svg>
-  );
+  return <Icon name="x" size={20} />;
 }
 
 function ReportIcon() {
-  return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M6 4v16" />
-      <path d="M6 5h8.2l-1.2 3.6L16 12H6" />
-    </svg>
-  );
+  return <Icon name="shield" size={20} />;
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data, params }) => {

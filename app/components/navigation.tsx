@@ -1,6 +1,7 @@
 import { Form, Link, NavLink, useFetchers, useNavigation, useRouteLoaderData } from 'react-router';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { SessionUser } from '~/utils/auth.server';
+import { Icon } from '~/components/icon';
 
 type NavItem = {
   label: string;
@@ -151,19 +152,11 @@ function NotificationBellLink({
       }
       title={hasUnread ? `${badgeText} unread notifications` : 'No unread notifications'}
     >
-      <svg
-        className="h-5 w-5"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M14.5 18a2.5 2.5 0 0 1-5 0" />
-        <path d="M5.8 15.2h12.4c-.9-1.1-1.7-2.7-1.7-5V9a4.5 4.5 0 1 0-9 0v1.2c0 2.3-.8 3.9-1.7 5Z" />
-      </svg>
+      <Icon
+        name="bell"
+        size={20}
+        motion={hasUnread ? 'wiggle' : 'none'}
+      />
       {hasUnread ? (
         <span
           className="absolute -right-1 -top-1 inline-flex min-h-[20px] min-w-[20px] items-center justify-center bg-golden px-1 text-[10px] font-bold text-midnight ring-2 ring-white [clip-path:polygon(16%_0,100%_0,100%_100%,0_100%,0_22%)]"

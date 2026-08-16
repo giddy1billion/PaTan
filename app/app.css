@@ -822,6 +822,70 @@ h1, h2, h3, h4, h5, h6 {
    ANIMATIONS
    ============================================================================ */
 
+/* ---------------------------------------------------------------------------
+   ICON MOTION (patan-icon)
+   Tasteful micro-animations for the Icon component. All gated behind the
+   global prefers-reduced-motion guard (bottom of file) so they become instant.
+   --------------------------------------------------------------------------- */
+.patan-icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
+}
+.icon-motion-pulse {
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.icon-motion-bounce {
+  animation: iconBounce 1.4s ease-in-out infinite;
+}
+
+@keyframes iconSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.icon-motion-spin {
+  animation: iconSpin 1.6s linear infinite;
+}
+
+@keyframes iconWiggle {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-12deg); }
+  40% { transform: rotate(10deg); }
+  60% { transform: rotate(-6deg); }
+  80% { transform: rotate(4deg); }
+}
+.icon-motion-wiggle {
+  animation: iconWiggle 0.8s ease-in-out;
+}
+
+/* Draw-on-mount: stroke reveals via dashoffset */
+@keyframes iconDraw {
+  from { stroke-dashoffset: 60; }
+  to { stroke-dashoffset: 0; }
+}
+.icon-motion-draw {
+  stroke-dasharray: 60;
+  animation: iconDraw 0.6s var(--ease-emphasized) both;
+}
+
+/* fill-on-press: parent toggles .is-pressed to swap outline->fill smoothly */
+.icon-motion-fill {
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+.icon-motion-fill.is-pressed {
+  transform: scale(1.15);
+}
+
 /* Floating animation for decorative elements */
 @keyframes float {
   0%, 100% {
@@ -2734,5 +2798,18 @@ h1, h2, h3, h4, h5, h6 {
   .m3-fab,
   .m3-fab-extended {
     transition-duration: 0.01ms !important;
+  }
+
+  /* Icon motion: disable all animation, keep instant transitions only */
+  .icon-motion-pulse,
+  .icon-motion-bounce,
+  .icon-motion-spin,
+  .icon-motion-wiggle,
+  .icon-motion-draw,
+  .icon-motion-fill {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
   }
 }
