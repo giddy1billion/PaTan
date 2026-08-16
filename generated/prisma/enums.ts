@@ -19,6 +19,16 @@ export const UserRole = {
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
+export const UserAccountStatus = {
+  ACTIVE: 'ACTIVE',
+  BLOCKED: 'BLOCKED',
+  SUSPENDED: 'SUSPENDED',
+  PENDING_VERIFICATION: 'PENDING_VERIFICATION'
+} as const
+
+export type UserAccountStatus = (typeof UserAccountStatus)[keyof typeof UserAccountStatus]
+
+
 export const AuthProvider = {
   EMAIL: 'EMAIL',
   GOOGLE: 'GOOGLE',

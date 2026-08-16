@@ -60,6 +60,7 @@ export type UserMinAggregateOutputType = {
   isVerified: boolean | null
   verifiedAt: Date | null
   role: $Enums.UserRole | null
+  accountStatus: $Enums.UserAccountStatus | null
   reputationScore: number | null
   trustLevel: number | null
   mfaEnabled: boolean | null
@@ -95,6 +96,7 @@ export type UserMaxAggregateOutputType = {
   isVerified: boolean | null
   verifiedAt: Date | null
   role: $Enums.UserRole | null
+  accountStatus: $Enums.UserAccountStatus | null
   reputationScore: number | null
   trustLevel: number | null
   mfaEnabled: boolean | null
@@ -131,6 +133,7 @@ export type UserCountAggregateOutputType = {
   isVerified: number
   verifiedAt: number
   role: number
+  accountStatus: number
   reputationScore: number
   trustLevel: number
   mfaEnabled: number
@@ -178,6 +181,7 @@ export type UserMinAggregateInputType = {
   isVerified?: true
   verifiedAt?: true
   role?: true
+  accountStatus?: true
   reputationScore?: true
   trustLevel?: true
   mfaEnabled?: true
@@ -213,6 +217,7 @@ export type UserMaxAggregateInputType = {
   isVerified?: true
   verifiedAt?: true
   role?: true
+  accountStatus?: true
   reputationScore?: true
   trustLevel?: true
   mfaEnabled?: true
@@ -249,6 +254,7 @@ export type UserCountAggregateInputType = {
   isVerified?: true
   verifiedAt?: true
   role?: true
+  accountStatus?: true
   reputationScore?: true
   trustLevel?: true
   mfaEnabled?: true
@@ -372,6 +378,7 @@ export type UserGroupByOutputType = {
   isVerified: boolean
   verifiedAt: Date | null
   role: $Enums.UserRole
+  accountStatus: $Enums.UserAccountStatus
   reputationScore: number
   trustLevel: number
   mfaEnabled: boolean
@@ -431,6 +438,7 @@ export type UserWhereInput = {
   isVerified?: Prisma.BoolFilter<"User"> | boolean
   verifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFilter<"User"> | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFilter<"User"> | number
   trustLevel?: Prisma.IntFilter<"User"> | number
   mfaEnabled?: Prisma.BoolFilter<"User"> | boolean
@@ -495,6 +503,7 @@ export type UserOrderByWithRelationInput = {
   isVerified?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
+  accountStatus?: Prisma.SortOrder
   reputationScore?: Prisma.SortOrder
   trustLevel?: Prisma.SortOrder
   mfaEnabled?: Prisma.SortOrder
@@ -562,6 +571,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   isVerified?: Prisma.BoolFilter<"User"> | boolean
   verifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFilter<"User"> | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFilter<"User"> | number
   trustLevel?: Prisma.IntFilter<"User"> | number
   mfaEnabled?: Prisma.BoolFilter<"User"> | boolean
@@ -626,6 +636,7 @@ export type UserOrderByWithAggregationInput = {
   isVerified?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
+  accountStatus?: Prisma.SortOrder
   reputationScore?: Prisma.SortOrder
   trustLevel?: Prisma.SortOrder
   mfaEnabled?: Prisma.SortOrder
@@ -670,6 +681,7 @@ export type UserScalarWhereWithAggregatesInput = {
   isVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   verifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusWithAggregatesFilter<"User"> | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntWithAggregatesFilter<"User"> | number
   trustLevel?: Prisma.IntWithAggregatesFilter<"User"> | number
   mfaEnabled?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
@@ -706,6 +718,7 @@ export type UserCreateInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -770,6 +783,7 @@ export type UserUncheckedCreateInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -834,6 +848,7 @@ export type UserUpdateInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -898,6 +913,7 @@ export type UserUncheckedUpdateInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -962,6 +978,7 @@ export type UserCreateManyInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -998,6 +1015,7 @@ export type UserUpdateManyMutationInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1034,6 +1052,7 @@ export type UserUncheckedUpdateManyInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1078,6 +1097,7 @@ export type UserCountOrderByAggregateInput = {
   isVerified?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  accountStatus?: Prisma.SortOrder
   reputationScore?: Prisma.SortOrder
   trustLevel?: Prisma.SortOrder
   mfaEnabled?: Prisma.SortOrder
@@ -1118,6 +1138,7 @@ export type UserMaxOrderByAggregateInput = {
   isVerified?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  accountStatus?: Prisma.SortOrder
   reputationScore?: Prisma.SortOrder
   trustLevel?: Prisma.SortOrder
   mfaEnabled?: Prisma.SortOrder
@@ -1153,6 +1174,7 @@ export type UserMinOrderByAggregateInput = {
   isVerified?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  accountStatus?: Prisma.SortOrder
   reputationScore?: Prisma.SortOrder
   trustLevel?: Prisma.SortOrder
   mfaEnabled?: Prisma.SortOrder
@@ -1206,6 +1228,10 @@ export type BoolFieldUpdateOperationsInput = {
 
 export type EnumUserRoleFieldUpdateOperationsInput = {
   set?: $Enums.UserRole
+}
+
+export type EnumUserAccountStatusFieldUpdateOperationsInput = {
+  set?: $Enums.UserAccountStatus
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -1643,6 +1669,7 @@ export type UserCreateWithoutAccountsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -1706,6 +1733,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -1785,6 +1813,7 @@ export type UserUpdateWithoutAccountsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1848,6 +1877,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1911,6 +1941,7 @@ export type UserCreateWithoutSessionsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -1974,6 +2005,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -2053,6 +2085,7 @@ export type UserUpdateWithoutSessionsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2116,6 +2149,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2179,6 +2213,7 @@ export type UserCreateWithoutPreferencesInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -2242,6 +2277,7 @@ export type UserUncheckedCreateWithoutPreferencesInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -2321,6 +2357,7 @@ export type UserUpdateWithoutPreferencesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2384,6 +2421,7 @@ export type UserUncheckedUpdateWithoutPreferencesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2447,6 +2485,7 @@ export type UserCreateWithoutBlocksInitiatedInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -2510,6 +2549,7 @@ export type UserUncheckedCreateWithoutBlocksInitiatedInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -2578,6 +2618,7 @@ export type UserCreateWithoutBlocksReceivedInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -2641,6 +2682,7 @@ export type UserUncheckedCreateWithoutBlocksReceivedInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -2720,6 +2762,7 @@ export type UserUpdateWithoutBlocksInitiatedInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2783,6 +2826,7 @@ export type UserUncheckedUpdateWithoutBlocksInitiatedInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2857,6 +2901,7 @@ export type UserUpdateWithoutBlocksReceivedInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2920,6 +2965,7 @@ export type UserUncheckedUpdateWithoutBlocksReceivedInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2983,6 +3029,7 @@ export type UserCreateWithoutStoriesInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -3046,6 +3093,7 @@ export type UserUncheckedCreateWithoutStoriesInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -3125,6 +3173,7 @@ export type UserUpdateWithoutStoriesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3188,6 +3237,7 @@ export type UserUncheckedUpdateWithoutStoriesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3251,6 +3301,7 @@ export type UserCreateWithoutAspirationsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -3314,6 +3365,7 @@ export type UserUncheckedCreateWithoutAspirationsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -3393,6 +3445,7 @@ export type UserUpdateWithoutAspirationsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3456,6 +3509,7 @@ export type UserUncheckedUpdateWithoutAspirationsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3519,6 +3573,7 @@ export type UserCreateWithoutAspirationSupportsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -3582,6 +3637,7 @@ export type UserUncheckedCreateWithoutAspirationSupportsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -3661,6 +3717,7 @@ export type UserUpdateWithoutAspirationSupportsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3724,6 +3781,7 @@ export type UserUncheckedUpdateWithoutAspirationSupportsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3787,6 +3845,7 @@ export type UserCreateWithoutAspirationUpdatesInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -3850,6 +3909,7 @@ export type UserUncheckedCreateWithoutAspirationUpdatesInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -3929,6 +3989,7 @@ export type UserUpdateWithoutAspirationUpdatesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3992,6 +4053,7 @@ export type UserUncheckedUpdateWithoutAspirationUpdatesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4055,6 +4117,7 @@ export type UserCreateWithoutReflectionEntriesInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -4118,6 +4181,7 @@ export type UserUncheckedCreateWithoutReflectionEntriesInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -4197,6 +4261,7 @@ export type UserUpdateWithoutReflectionEntriesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4260,6 +4325,7 @@ export type UserUncheckedUpdateWithoutReflectionEntriesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4323,6 +4389,7 @@ export type UserCreateWithoutCommentsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -4386,6 +4453,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -4465,6 +4533,7 @@ export type UserUpdateWithoutCommentsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4528,6 +4597,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4591,6 +4661,7 @@ export type UserCreateWithoutReactionsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -4654,6 +4725,7 @@ export type UserUncheckedCreateWithoutReactionsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -4733,6 +4805,7 @@ export type UserUpdateWithoutReactionsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4796,6 +4869,7 @@ export type UserUncheckedUpdateWithoutReactionsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4859,6 +4933,7 @@ export type UserCreateWithoutSavedStoriesInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -4922,6 +4997,7 @@ export type UserUncheckedCreateWithoutSavedStoriesInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -5001,6 +5077,7 @@ export type UserUpdateWithoutSavedStoriesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5064,6 +5141,7 @@ export type UserUncheckedUpdateWithoutSavedStoriesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5127,6 +5205,7 @@ export type UserCreateWithoutFollowingInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -5190,6 +5269,7 @@ export type UserUncheckedCreateWithoutFollowingInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -5258,6 +5338,7 @@ export type UserCreateWithoutFollowersInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -5321,6 +5402,7 @@ export type UserUncheckedCreateWithoutFollowersInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -5400,6 +5482,7 @@ export type UserUpdateWithoutFollowingInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5463,6 +5546,7 @@ export type UserUncheckedUpdateWithoutFollowingInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5537,6 +5621,7 @@ export type UserUpdateWithoutFollowersInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5600,6 +5685,7 @@ export type UserUncheckedUpdateWithoutFollowersInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5663,6 +5749,7 @@ export type UserCreateWithoutCollectionsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -5726,6 +5813,7 @@ export type UserUncheckedCreateWithoutCollectionsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -5805,6 +5893,7 @@ export type UserUpdateWithoutCollectionsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5868,6 +5957,7 @@ export type UserUncheckedUpdateWithoutCollectionsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5931,6 +6021,7 @@ export type UserCreateWithoutMessagesSentInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -5994,6 +6085,7 @@ export type UserUncheckedCreateWithoutMessagesSentInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -6062,6 +6154,7 @@ export type UserCreateWithoutMessagesReceivedInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -6125,6 +6218,7 @@ export type UserUncheckedCreateWithoutMessagesReceivedInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -6204,6 +6298,7 @@ export type UserUpdateWithoutMessagesSentInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6267,6 +6362,7 @@ export type UserUncheckedUpdateWithoutMessagesSentInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6341,6 +6437,7 @@ export type UserUpdateWithoutMessagesReceivedInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6404,6 +6501,7 @@ export type UserUncheckedUpdateWithoutMessagesReceivedInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6467,6 +6565,7 @@ export type UserCreateWithoutNotificationsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -6530,6 +6629,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -6598,6 +6698,7 @@ export type UserCreateWithoutNotificationsSentInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -6661,6 +6762,7 @@ export type UserUncheckedCreateWithoutNotificationsSentInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -6740,6 +6842,7 @@ export type UserUpdateWithoutNotificationsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6803,6 +6906,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6877,6 +6981,7 @@ export type UserUpdateWithoutNotificationsSentInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6940,6 +7045,7 @@ export type UserUncheckedUpdateWithoutNotificationsSentInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7003,6 +7109,7 @@ export type UserCreateWithoutCirclesCreatedInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -7066,6 +7173,7 @@ export type UserUncheckedCreateWithoutCirclesCreatedInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -7145,6 +7253,7 @@ export type UserUpdateWithoutCirclesCreatedInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7208,6 +7317,7 @@ export type UserUncheckedUpdateWithoutCirclesCreatedInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7271,6 +7381,7 @@ export type UserCreateWithoutCircleMembersInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -7334,6 +7445,7 @@ export type UserUncheckedCreateWithoutCircleMembersInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -7413,6 +7525,7 @@ export type UserUpdateWithoutCircleMembersInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7476,6 +7589,7 @@ export type UserUncheckedUpdateWithoutCircleMembersInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7539,6 +7653,7 @@ export type UserCreateWithoutBadgesInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -7602,6 +7717,7 @@ export type UserUncheckedCreateWithoutBadgesInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -7681,6 +7797,7 @@ export type UserUpdateWithoutBadgesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7744,6 +7861,7 @@ export type UserUncheckedUpdateWithoutBadgesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -7807,6 +7925,7 @@ export type UserCreateWithoutReportsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -7870,6 +7989,7 @@ export type UserUncheckedCreateWithoutReportsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -7938,6 +8058,7 @@ export type UserCreateWithoutReportsAgainstInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -8001,6 +8122,7 @@ export type UserUncheckedCreateWithoutReportsAgainstInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -8080,6 +8202,7 @@ export type UserUpdateWithoutReportsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -8143,6 +8266,7 @@ export type UserUncheckedUpdateWithoutReportsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -8217,6 +8341,7 @@ export type UserUpdateWithoutReportsAgainstInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -8280,6 +8405,7 @@ export type UserUncheckedUpdateWithoutReportsAgainstInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -8343,6 +8469,7 @@ export type UserCreateWithoutModerationActionsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -8406,6 +8533,7 @@ export type UserUncheckedCreateWithoutModerationActionsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -8485,6 +8613,7 @@ export type UserUpdateWithoutModerationActionsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -8548,6 +8677,7 @@ export type UserUncheckedUpdateWithoutModerationActionsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -8611,6 +8741,7 @@ export type UserCreateWithoutAiRecommendationsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -8674,6 +8805,7 @@ export type UserUncheckedCreateWithoutAiRecommendationsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -8753,6 +8885,7 @@ export type UserUpdateWithoutAiRecommendationsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -8816,6 +8949,7 @@ export type UserUncheckedUpdateWithoutAiRecommendationsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -8879,6 +9013,7 @@ export type UserCreateWithoutEmotionalSignalsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -8942,6 +9077,7 @@ export type UserUncheckedCreateWithoutEmotionalSignalsInput = {
   isVerified?: boolean
   verifiedAt?: Date | string | null
   role?: $Enums.UserRole
+  accountStatus?: $Enums.UserAccountStatus
   reputationScore?: number
   trustLevel?: number
   mfaEnabled?: boolean
@@ -9021,6 +9157,7 @@ export type UserUpdateWithoutEmotionalSignalsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -9084,6 +9221,7 @@ export type UserUncheckedUpdateWithoutEmotionalSignalsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  accountStatus?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   reputationScore?: Prisma.IntFieldUpdateOperationsInput | number
   trustLevel?: Prisma.IntFieldUpdateOperationsInput | number
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -9412,6 +9550,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   isVerified?: boolean
   verifiedAt?: boolean
   role?: boolean
+  accountStatus?: boolean
   reputationScore?: boolean
   trustLevel?: boolean
   mfaEnabled?: boolean
@@ -9477,6 +9616,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isVerified?: boolean
   verifiedAt?: boolean
   role?: boolean
+  accountStatus?: boolean
   reputationScore?: boolean
   trustLevel?: boolean
   mfaEnabled?: boolean
@@ -9513,6 +9653,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isVerified?: boolean
   verifiedAt?: boolean
   role?: boolean
+  accountStatus?: boolean
   reputationScore?: boolean
   trustLevel?: boolean
   mfaEnabled?: boolean
@@ -9549,6 +9690,7 @@ export type UserSelectScalar = {
   isVerified?: boolean
   verifiedAt?: boolean
   role?: boolean
+  accountStatus?: boolean
   reputationScore?: boolean
   trustLevel?: boolean
   mfaEnabled?: boolean
@@ -9560,7 +9702,7 @@ export type UserSelectScalar = {
   deletedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "emailVerified" | "phone" | "phoneVerified" | "passwordHash" | "username" | "displayName" | "bio" | "profilePhotoUrl" | "coverPhotoUrl" | "pronouns" | "nameAudioUrl" | "voiceIntroUrl" | "country" | "city" | "timezone" | "language" | "spiritualAffiliation" | "placeOfWorship" | "personalInterests" | "isVerified" | "verifiedAt" | "role" | "reputationScore" | "trustLevel" | "mfaEnabled" | "mfaSecret" | "lastActiveAt" | "onboardingCompleted" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "emailVerified" | "phone" | "phoneVerified" | "passwordHash" | "username" | "displayName" | "bio" | "profilePhotoUrl" | "coverPhotoUrl" | "pronouns" | "nameAudioUrl" | "voiceIntroUrl" | "country" | "city" | "timezone" | "language" | "spiritualAffiliation" | "placeOfWorship" | "personalInterests" | "isVerified" | "verifiedAt" | "role" | "accountStatus" | "reputationScore" | "trustLevel" | "mfaEnabled" | "mfaSecret" | "lastActiveAt" | "onboardingCompleted" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
@@ -9652,6 +9794,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     isVerified: boolean
     verifiedAt: Date | null
     role: $Enums.UserRole
+    accountStatus: $Enums.UserAccountStatus
     reputationScore: number
     trustLevel: number
     mfaEnabled: boolean
@@ -10136,6 +10279,7 @@ export interface UserFieldRefs {
   readonly isVerified: Prisma.FieldRef<"User", 'Boolean'>
   readonly verifiedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly role: Prisma.FieldRef<"User", 'UserRole'>
+  readonly accountStatus: Prisma.FieldRef<"User", 'UserAccountStatus'>
   readonly reputationScore: Prisma.FieldRef<"User", 'Int'>
   readonly trustLevel: Prisma.FieldRef<"User", 'Int'>
   readonly mfaEnabled: Prisma.FieldRef<"User", 'Boolean'>

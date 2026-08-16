@@ -3092,6 +3092,7 @@ export const UserScalarFieldEnum = {
   isVerified: 'isVerified',
   verifiedAt: 'verifiedAt',
   role: 'role',
+  accountStatus: 'accountStatus',
   reputationScore: 'reputationScore',
   trustLevel: 'trustLevel',
   mfaEnabled: 'mfaEnabled',
@@ -3129,9 +3130,12 @@ export const SessionScalarFieldEnum = {
   token: 'token',
   userAgent: 'userAgent',
   ipAddress: 'ipAddress',
+  deviceFingerprint: 'deviceFingerprint',
   expiresAt: 'expiresAt',
   lastActiveAt: 'lastActiveAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  revokedAt: 'revokedAt',
+  revokedReason: 'revokedReason'
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
@@ -3733,6 +3737,20 @@ export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'UserRole[]'
  */
 export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
+    
+
+
+/**
+ * Reference to a field of type 'UserAccountStatus'
+ */
+export type EnumUserAccountStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserAccountStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'UserAccountStatus[]'
+ */
+export type ListEnumUserAccountStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserAccountStatus[]'>
     
 
 

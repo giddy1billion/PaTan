@@ -487,8 +487,6 @@ export function Navigation({
 
               <NotificationBellLink unreadCount={notificationUnreadCount} />
 
-              <ThemeToggle />
-
               <Link
                 to="/profile"
                 className="rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
@@ -535,7 +533,6 @@ export function Navigation({
         </div>
 
         <div className="flex items-center gap-1.5 lg:hidden">
-          <ThemeToggle />
           {user ? (
             <>
               <NotificationBellLink unreadCount={notificationUnreadCount} compact />
