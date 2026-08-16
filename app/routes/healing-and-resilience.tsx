@@ -155,7 +155,7 @@ export default function HealingAndResilience() {
               <Link
                 key={path.title}
                 to={`/discover?category=health-wellness&tag=${path.title.toLowerCase().replace(" ", "-")}`}
-                className="p-6 bg-white rounded-xl border border-mist hover:border-forest hover:shadow-md transition-all text-center"
+                className="p-6 bg-surface rounded-xl border border-mist hover:border-forest hover:shadow-md transition-all text-center"
               >
                 <span className="text-4xl" aria-hidden="true">
                   {path.icon}

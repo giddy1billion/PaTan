@@ -111,7 +111,7 @@ function MarketingFooter() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white/70 transition-all duration-200 hover:bg-white/12 hover:text-white hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                    className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/15 bg-surface/5 text-white/70 transition-all duration-200 hover:bg-surface/12 hover:text-white hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                     aria-label={`Follow PaTan on ${link.label}`}
                   >
                     {link.icon}
@@ -188,7 +188,7 @@ function MarketingFooter() {
 function DashboardFooter() {
   return (
     <footer
-      className="border-t border-midnight/10 bg-white/85 backdrop-blur-sm"
+      className="border-t border-midnight/10 bg-surface/85 backdrop-blur-sm"
       role="contentinfo"
       aria-label="Dashboard footer"
     >
@@ -212,7 +212,7 @@ function DashboardFooter() {
               <Link
                 key={link.href}
                 to={link.href}
-                className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-midnight/15 bg-white px-3 text-[13px] font-semibold text-midnight transition-all duration-200 hover:-translate-y-0.5 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden sm:justify-start sm:px-3.5 sm:text-sm"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-midnight/15 bg-surface px-3 text-[13px] font-semibold text-midnight transition-all duration-200 hover:-translate-y-0.5 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden sm:justify-start sm:px-3.5 sm:text-sm"
               >
                 {link.label}
               </Link>

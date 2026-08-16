@@ -319,7 +319,7 @@ export default function Signup() {
                   <div className="w-full border-t border-mist" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-subtle">
+                  <span className="px-2 bg-surface text-subtle">
                     Or sign up with
                   </span>
                 </div>
@@ -375,7 +375,7 @@ export default function Signup() {
               Already have an account?{" "}
               <Link
                 to={`/login?redirectTo=${encodeURIComponent(redirectTo)}`}
-                className="font-medium text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded"
+                className="font-medium text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
               >
                 Log in
               </Link>

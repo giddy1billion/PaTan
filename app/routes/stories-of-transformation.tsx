@@ -154,7 +154,7 @@ export default function StoriesOfTransformation() {
             {transformationTypes.map((type) => (
               <div
                 key={type.title}
-                className="p-6 bg-white rounded-xl border border-mist hover:shadow-md transition-shadow"
+                className="p-6 bg-surface rounded-xl border border-mist hover:shadow-md transition-shadow"
               >
                 <span className="text-4xl" aria-hidden="true">
                   {type.icon}

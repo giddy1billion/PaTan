@@ -82,7 +82,7 @@ export default function ForgotPassword() {
               Remember your password?{" "}
               <Link
                 to="/login"
-                className="font-medium text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded"
+                className="font-medium text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
               >
                 Log in
               </Link>

@@ -128,7 +128,7 @@ export default function Guidelines() {
       {/* Introduction */}
       <section className="py-12 bg-dawn">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-xl p-8 shadow-sm border border-mist">
+          <div className="bg-surface rounded-xl p-8 shadow-sm border border-mist">
             <h2 className="font-heading text-xl font-bold text-midnight">
               Our Commitment to You
             </h2>
@@ -154,7 +154,7 @@ export default function Guidelines() {
             {guidelines.map((guideline, index) => (
               <article
                 key={guideline.title}
-                className="bg-white rounded-xl p-8 shadow-sm border border-mist"
+                className="bg-surface rounded-xl p-8 shadow-sm border border-mist"
               >
                 <h2 className="font-heading text-xl font-bold text-midnight flex items-center gap-3">
                   <span className="w-8 h-8 rounded-full bg-golden/20 text-golden flex items-center justify-center text-sm font-bold">
@@ -207,7 +207,7 @@ export default function Guidelines() {
       {/* Reporting */}
       <section className="py-12 bg-dawn">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-xl p-8 shadow-sm border border-mist">
+          <div className="bg-surface rounded-xl p-8 shadow-sm border border-mist">
             <h2 className="font-heading text-xl font-bold text-midnight">
               Reporting Violations
             </h2>

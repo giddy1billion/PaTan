@@ -78,7 +78,7 @@ export function Testimonials() {
         <div className="relative">
           {/* Main testimonial card */}
           <div
-            className="relative bg-white rounded-3xl shadow-layered-lg p-6 sm:p-10 lg:p-12"
+            className="relative bg-surface rounded-3xl shadow-layered-lg p-6 sm:p-10 lg:p-12"
             role="group"
             aria-roledescription="testimonial"
             aria-label={`Testimonial ${currentIndex + 1} of ${testimonials.length}`}

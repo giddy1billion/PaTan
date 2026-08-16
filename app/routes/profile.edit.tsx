@@ -294,7 +294,7 @@ export default function ProfileEditRoute() {
         {" "}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-5 lg:grid-cols-3">
           {" "}
-          <aside className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm h-fit">
+          <aside className="rounded-2xl border border-midnight/10 bg-surface p-5 shadow-sm h-fit">
             {" "}
             <h2 className="font-heading text-xl text-midnight">
               Profile preview
@@ -362,7 +362,7 @@ export default function ProfileEditRoute() {
               </Link>{" "}
               <Link
                 to="/dashboard"
-                className="min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-white text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                className="min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-surface text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
               >
                 {" "}
                 Back to dashboard{" "}
@@ -382,7 +382,7 @@ export default function ProfileEditRoute() {
             <Form method="post" className="space-y-5">
               {" "}
               <section
-                className="rounded-2xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm"
+                className="rounded-2xl border border-midnight/10 bg-surface p-5 sm:p-6 shadow-sm"
                 aria-labelledby="profile-details-heading"
                 aria-busy={isSubmitting}
               >
@@ -516,7 +516,7 @@ export default function ProfileEditRoute() {
                 </div>{" "}
               </section>{" "}
               <section
-                className="rounded-2xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm"
+                className="rounded-2xl border border-midnight/10 bg-surface p-5 sm:p-6 shadow-sm"
                 aria-labelledby="safety-heading"
                 aria-busy={isSubmitting}
               >
@@ -616,7 +616,7 @@ export default function ProfileEditRoute() {
                 </p>{" "}
               </section>{" "}
               <section
-                className="rounded-2xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm"
+                className="rounded-2xl border border-midnight/10 bg-surface p-5 sm:p-6 shadow-sm"
                 aria-labelledby="public-visibility-heading"
                 aria-busy={isSubmitting}
               >
@@ -727,7 +727,7 @@ export default function ProfileEditRoute() {
               </section>{" "}
               <section
                 id="preferences"
-                className="rounded-2xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm scroll-mt-24"
+                className="rounded-2xl border border-midnight/10 bg-surface p-5 sm:p-6 shadow-sm scroll-mt-24"
                 aria-labelledby="notification-preferences-heading"
                 aria-busy={isSubmitting}
               >
@@ -799,7 +799,7 @@ export default function ProfileEditRoute() {
                 {" "}
                 <Link
                   to={`/u/${profile.username}`}
-                  className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white px-4 py-2 text-sm font-medium text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                  className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-surface px-4 py-2 text-sm font-medium text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                 >
                   {" "}
                   Go to public profile{" "}
@@ -833,7 +833,7 @@ export function ErrorBoundary() {
           message="We could not load your profile settings right now."
           timeoutMs={10000}
         />
-        <div className="mt-4 rounded-2xl border border-midnight/10 bg-white px-5 py-4 text-midnight">
+        <div className="mt-4 rounded-2xl border border-midnight/10 bg-surface px-5 py-4 text-midnight">
           <h1 className="font-heading text-2xl">Profile error state</h1>
           <Link
             to="/dashboard"

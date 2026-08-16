@@ -126,7 +126,7 @@ export function Aspirations() {
                     {" "}
                     {/* Status indicator */}{" "}
                     <div
-                      className={` relative z-10 flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shadow-lg ${item.status === "achieved" ? "bg-gradient-to-br from-forest to-forest/80 text-white" : item.status === "in-progress" ? "bg-gradient-to-br from-golden to-golden/80 text-white" : "bg-white border-2 border-mist text-night/40"} `}
+                      className={` relative z-10 flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shadow-lg ${item.status === "achieved" ? "bg-gradient-to-br from-forest to-forest/80 text-white" : item.status === "in-progress" ? "bg-gradient-to-br from-golden to-golden/80 text-white" : "bg-surface border-2 border-mist text-night/40"} `}
                     >
                       {" "}
                       {item.status === "achieved" ? (
@@ -143,14 +143,14 @@ export function Aspirations() {
                           />{" "}
                         </svg>
                       ) : item.status === "in-progress" ? (
-                        <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
+                        <div className="w-3 h-3 bg-surface rounded-full animate-pulse" />
                       ) : (
                         <div className="w-3 h-3 bg-mist rounded-full" />
                       )}{" "}
                     </div>{" "}
                     {/* Content card */}{" "}
                     <div
-                      className={` flex-1 p-4 sm:p-5 rounded-xl ${item.status === "in-progress" ? "bg-white shadow-layered border border-golden/30" : "bg-white/80 border border-mist/50"} `}
+                      className={` flex-1 p-4 sm:p-5 rounded-xl ${item.status === "in-progress" ? "bg-surface shadow-layered border border-golden/30" : "bg-surface/80 border border-mist/50"} `}
                     >
                       {" "}
                       <p className="font-medium text-midnight text-sm sm:text-base">
@@ -195,7 +195,7 @@ export function Aspirations() {
               {highlights.map((item, index) => (
                 <div
                   key={item.label}
-                  className="flex items-center gap-3 p-3 sm:p-4 bg-white rounded-xl border border-mist/50 hover:border-forest/30 hover:shadow-sm transition-all duration-300"
+                  className="flex items-center gap-3 p-3 sm:p-4 bg-surface rounded-xl border border-mist/50 hover:border-forest/30 hover:shadow-sm transition-all duration-300"
                 >
                   {" "}
                   <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-forest/10 text-forest flex items-center justify-center">

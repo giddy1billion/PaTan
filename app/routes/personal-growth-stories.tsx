@@ -150,7 +150,7 @@ export default function PersonalGrowthStories() {
               <Link
                 key={area.title}
                 to={`/discover?category=personal-growth&tag=${area.title.toLowerCase()}`}
-                className="p-6 bg-white rounded-xl border border-mist hover:border-forest hover:shadow-md transition-all"
+                className="p-6 bg-surface rounded-xl border border-mist hover:border-forest hover:shadow-md transition-all"
               >
                 <span className="text-3xl" aria-hidden="true">
                   {area.icon}

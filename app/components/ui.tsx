@@ -48,7 +48,7 @@ export function Button({
     primary: 'bg-midnight text-white hover:bg-midnight-hover focus-visible:ring-golden',
     accent: 'bg-golden text-midnight hover:bg-golden-hover focus-visible:ring-midnight',
     secondary: 'bg-transparent text-midnight border-2 border-midnight hover:bg-midnight hover:text-dawn focus-visible:ring-midnight dark:text-dawn dark:border-dawn dark:hover:bg-dawn dark:hover:text-midnight',
-    glass: 'bg-white/65 text-midnight border border-white/45 backdrop-blur-xl hover:bg-white/80 focus-visible:ring-golden dark:bg-white/10 dark:text-dawn dark:border-white/15 dark:hover:bg-white/15',
+    glass: 'bg-surface/65 text-midnight border border-white/45 backdrop-blur-xl hover:bg-surface/80 focus-visible:ring-golden dark:bg-surface/10 dark:text-dawn dark:border-white/15 dark:hover:bg-surface/15',
     ghost: 'bg-transparent text-midnight hover:bg-mist/50 focus-visible:ring-golden dark:text-dawn dark:hover:bg-midnight/50',
     danger: 'bg-error text-white hover:bg-error-accessible focus-visible:ring-error',
   };
@@ -278,7 +278,7 @@ interface CardProps {
 export function Card({ children, className = '', as: Component = 'div' }: CardProps) {
   return (
     <Component
-      className={`bg-white rounded-xl shadow-sm border border-mist p-6 dark:bg-night dark:border-midnight/30 ${className}`}
+      className={`bg-surface rounded-xl shadow-sm border border-mist p-6 dark:bg-night dark:border-midnight/30 ${className}`}
     >
       {children}
     </Component>
@@ -322,7 +322,7 @@ export function Input({
         aria-invalid={!!error}
         className={`
           w-full px-4 py-3 rounded-lg border
-          bg-white dark:bg-night
+          bg-surface dark:bg-night
           text-midnight dark:text-dawn
           placeholder:text-mist
           focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent
@@ -380,7 +380,7 @@ export function Textarea({
         aria-invalid={!!error}
         className={`
           w-full px-4 py-3 rounded-lg border min-h-[120px] resize-y
-          bg-white dark:bg-night
+          bg-surface dark:bg-night
           text-midnight dark:text-dawn
           placeholder:text-mist
           focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent

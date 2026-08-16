@@ -419,7 +419,7 @@ export default function ModerationReportsRoute() {
             className="mb-4"
           />
 
-          <section className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm" aria-label="Report filters">
+          <section className="rounded-2xl border border-midnight/10 bg-surface p-5 shadow-sm" aria-label="Report filters">
             <div className="flex flex-wrap items-center gap-2">
               {(["all", "PENDING", "UNDER_REVIEW", "RESOLVED", "DISMISSED"] as StatusFilter[]).map((option) => (
                 <Link
@@ -445,7 +445,7 @@ export default function ModerationReportsRoute() {
             </div>
           </section>
 
-          <section className="mt-5 rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm" aria-labelledby="reports-heading">
+          <section className="mt-5 rounded-2xl border border-midnight/10 bg-surface p-5 shadow-sm" aria-labelledby="reports-heading">
             <h2 id="reports-heading" className="font-heading text-xl text-midnight">
               Reports
             </h2>
@@ -459,7 +459,7 @@ export default function ModerationReportsRoute() {
                 {reports.map((report) => (
                   <li
                     key={report.id}
-                    className={`rounded-xl border p-4 ${activeReportId === report.id ? "border-golden bg-warning-bg" : "border-midnight/10 bg-white"}`}
+                    className={`rounded-xl border p-4 ${activeReportId === report.id ? "border-golden bg-warning-bg" : "border-midnight/10 bg-surface"}`}
                     tabIndex={0}
                     onFocus={() => setActiveReportId(report.id)}
                     aria-label={`Report ${report.id} currently ${formatStatus(report.status as TriageStatus)}`}
@@ -488,14 +488,14 @@ export default function ModerationReportsRoute() {
 
                     <div className="mt-3 grid gap-3 lg:grid-cols-[minmax(0,1fr),19rem]">
                       <div className="space-y-3">
-                        <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                        <article className="rounded-lg border border-midnight/10 bg-surface px-3 py-2">
                           <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Reporter</p>
                           <p className="mt-1 text-sm text-midnight">
                             {report.reporter.displayName} (@{report.reporter.username})
                           </p>
                         </article>
 
-                        <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                        <article className="rounded-lg border border-midnight/10 bg-surface px-3 py-2">
                           <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Reported target</p>
                           <p className="mt-1 text-sm text-midnight">
                             {report.reportedUser
@@ -505,7 +505,7 @@ export default function ModerationReportsRoute() {
                         </article>
 
                         {report.story ? (
-                          <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                          <article className="rounded-lg border border-midnight/10 bg-surface px-3 py-2">
                             <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Story context</p>
                             <Link
                               to={`/stories/${report.story.id}`}
@@ -523,7 +523,7 @@ export default function ModerationReportsRoute() {
                         ) : null}
 
                         {report.comment ? (
-                          <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                          <article className="rounded-lg border border-midnight/10 bg-surface px-3 py-2">
                             <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Comment context</p>
                             <p className="mt-1 text-sm text-night/80">{report.comment.content.slice(0, 260)}</p>
                             <p className="mt-1 text-xs text-night/60">
@@ -533,7 +533,7 @@ export default function ModerationReportsRoute() {
                         ) : null}
 
                         {report.description ? (
-                          <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                          <article className="rounded-lg border border-midnight/10 bg-surface px-3 py-2">
                             <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Reporter description</p>
                             <p className="mt-1 text-sm text-night/80">{report.description}</p>
                           </article>
@@ -548,7 +548,7 @@ export default function ModerationReportsRoute() {
                       </div>
 
                       <div className="space-y-2">
-                        <div className="rounded-lg border border-midnight/10 bg-white p-3">
+                        <div className="rounded-lg border border-midnight/10 bg-surface p-3">
                           <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Quick triage</p>
                           <div className="mt-2 grid grid-cols-2 gap-2">
                             {([
@@ -598,7 +598,7 @@ export default function ModerationReportsRoute() {
                                 <div className="mt-2 flex items-center justify-end gap-2">
                                   <button
                                     type="button"
-                                    className="min-h-[36px] rounded-lg border border-warning/45 bg-white px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                    className="min-h-[36px] rounded-lg border border-warning/45 bg-surface px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                     onClick={() => setPendingQuickAction(null)}
                                   >
                                     Cancel
@@ -624,7 +624,7 @@ export default function ModerationReportsRoute() {
                           </div>
                         </div>
 
-                        <Form method="post" className="rounded-lg border border-midnight/10 bg-white p-3 space-y-2">
+                        <Form method="post" className="rounded-lg border border-midnight/10 bg-surface p-3 space-y-2">
                           <input type="hidden" name="intent" value="set-report-status" />
                           <input type="hidden" name="reportId" value={report.id} />
                           <label htmlFor={`next-status-${report.id}`} className="block text-xs font-medium text-night">
@@ -634,7 +634,7 @@ export default function ModerationReportsRoute() {
                             id={`next-status-${report.id}`}
                             name="nextStatus"
                             defaultValue={report.status}
-                            className="min-h-[44px] w-full rounded-xl border border-mist px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-golden"
+                            className="min-h-[44px] w-full rounded-xl border border-mist px-3 py-2 text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-golden"
                           >
                             <option value="PENDING">Pending</option>
                             <option value="UNDER_REVIEW">Under review</option>
@@ -682,7 +682,7 @@ export default function ModerationReportsRoute() {
                 to={`/moderation/reports?status=${status}&page=${Math.max(1, page - 1)}`}
                 preventScrollReset
                 aria-disabled={page <= 1}
-                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page <= 1 ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
+                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page <= 1 ? "pointer-events-none bg-mist/40 text-night/40" : "bg-surface border border-midnight/15 text-midnight hover:bg-surface"}`}
               >
                 Previous
               </Link>
@@ -693,7 +693,7 @@ export default function ModerationReportsRoute() {
                 to={`/moderation/reports?status=${status}&page=${Math.min(totalPages, page + 1)}`}
                 preventScrollReset
                 aria-disabled={page >= totalPages}
-                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page >= totalPages ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
+                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page >= totalPages ? "pointer-events-none bg-mist/40 text-night/40" : "bg-surface border border-midnight/15 text-midnight hover:bg-surface"}`}
               >
                 Next
               </Link>

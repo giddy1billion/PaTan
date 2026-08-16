@@ -125,7 +125,7 @@ export default function Community() {
             What's Coming
           </h2>
           <div className="mt-12 grid sm:grid-cols-2 gap-8">
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-mist">
+            <div className="bg-surface rounded-xl p-6 shadow-sm border border-mist">
               <span className="text-3xl">💬</span>
               <h3 className="mt-4 font-heading text-lg font-bold text-midnight">
                 Private Messaging
@@ -135,7 +135,7 @@ export default function Community() {
                 with yours.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-mist">
+            <div className="bg-surface rounded-xl p-6 shadow-sm border border-mist">
               <span className="text-3xl">🔔</span>
               <h3 className="mt-4 font-heading text-lg font-bold text-midnight">
                 Story Discussions
@@ -144,7 +144,7 @@ export default function Community() {
                 Engage in meaningful conversations around stories that move you.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-mist">
+            <div className="bg-surface rounded-xl p-6 shadow-sm border border-mist">
               <span className="text-3xl">🤝</span>
               <h3 className="mt-4 font-heading text-lg font-bold text-midnight">
                 Accountability Partners
@@ -153,7 +153,7 @@ export default function Community() {
                 Find support partners to help you achieve your aspirations.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-mist">
+            <div className="bg-surface rounded-xl p-6 shadow-sm border border-mist">
               <span className="text-3xl">🎯</span>
               <h3 className="mt-4 font-heading text-lg font-bold text-midnight">
                 Group Reflections

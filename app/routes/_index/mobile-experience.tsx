@@ -124,7 +124,7 @@ export function MobileExperience() {
               {highlights.map((item) => (
                 <div
                   key={item.label}
-                  className="flex items-start gap-3 sm:gap-4 p-4 bg-white rounded-xl border border-mist/50 hover:border-info/30 hover:shadow-sm transition-all duration-300"
+                  className="flex items-start gap-3 sm:gap-4 p-4 bg-surface rounded-xl border border-mist/50 hover:border-info/30 hover:shadow-sm transition-all duration-300"
                 >
                   {" "}
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-info/15 text-info-accessible flex items-center justify-center">
@@ -215,7 +215,7 @@ export function MobileExperience() {
                       </div>{" "}
                     </div>{" "}
                     {/* Story Card Preview */}{" "}
-                    <div className="bg-white rounded-2xl p-4 shadow-layered mb-4">
+                    <div className="bg-surface rounded-2xl p-4 shadow-layered mb-4">
                       {" "}
                       <span className="inline-block text-xs bg-golden/15 text-golden-accessible px-2.5 py-1 rounded-full font-medium">
                         {" "}
@@ -250,13 +250,13 @@ export function MobileExperience() {
                     {/* Skeleton cards */}{" "}
                     <div className="space-y-3">
                       {" "}
-                      <div className="bg-white rounded-xl p-3.5 shadow-sm">
+                      <div className="bg-surface rounded-xl p-3.5 shadow-sm">
                         {" "}
                         <div className="h-2 w-16 bg-mist rounded-full" />{" "}
                         <div className="h-3 w-full bg-mist/60 rounded-full mt-3" />{" "}
                         <div className="h-3 w-2/3 bg-mist/40 rounded-full mt-2" />{" "}
                       </div>{" "}
-                      <div className="bg-white rounded-xl p-3.5 shadow-sm">
+                      <div className="bg-surface rounded-xl p-3.5 shadow-sm">
                         {" "}
                         <div className="h-2 w-20 bg-mist rounded-full" />{" "}
                         <div className="h-3 w-5/6 bg-mist/60 rounded-full mt-3" />{" "}
@@ -264,7 +264,7 @@ export function MobileExperience() {
                       </div>{" "}
                     </div>{" "}
                     {/* Bottom nav mockup */}{" "}
-                    <div className="absolute bottom-6 left-4 right-4 bg-white rounded-2xl py-3 px-4 shadow-lg flex justify-around">
+                    <div className="absolute bottom-6 left-4 right-4 bg-surface rounded-2xl py-3 px-4 shadow-lg flex justify-around">
                       {" "}
                       <div className="w-6 h-6 rounded-lg bg-golden/20" />{" "}
                       <div className="w-6 h-6 rounded-lg bg-mist" />{" "}

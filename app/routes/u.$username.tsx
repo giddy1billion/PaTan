@@ -427,7 +427,7 @@ export default function PublicUserProfileRoute() {
           {" "}
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
             {" "}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-white/20 border border-white/30 text-white flex items-center justify-center text-xl font-semibold">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-surface/20 border border-white/30 text-white flex items-center justify-center text-xl font-semibold">
               {" "}
               {profile.profilePhotoUrl ? (
                 <img
@@ -481,7 +481,7 @@ export default function PublicUserProfileRoute() {
             <div className="mt-4">
               <Link
                 to="/profile/settings"
-                className="min-h-[44px] inline-flex items-center rounded-xl border border-white/40 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                className="min-h-[44px] inline-flex items-center rounded-xl border border-white/40 px-4 py-2 text-sm font-semibold text-white hover:bg-surface/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
               >
                 Manage profile settings
               </Link>
@@ -499,7 +499,7 @@ export default function PublicUserProfileRoute() {
                   type="submit"
                   className={
                     isFollowing
-                      ? "min-h-[44px] inline-flex items-center justify-center rounded-xl border border-white/40 px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 focus-visible:ring-offset-midnight"
+                      ? "min-h-[44px] inline-flex items-center justify-center rounded-xl border border-white/40 px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-surface/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 focus-visible:ring-offset-midnight"
                       : "min-h-[44px] inline-flex items-center justify-center rounded-xl bg-golden px-5 py-2 text-sm font-semibold text-midnight transition-colors duration-200 hover:bg-golden-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-midnight"
                   }
                   disabled={
@@ -520,7 +520,7 @@ export default function PublicUserProfileRoute() {
                 <button
                   ref={safetyMenuButtonRef}
                   type="button"
-                  className="group min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-xl border border-white/35 bg-white/5 text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/15 hover:shadow-lg hover:shadow-black/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 focus-visible:ring-offset-midnight"
+                  className="group min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-xl border border-white/35 bg-surface/5 text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-surface/15 hover:shadow-lg hover:shadow-black/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 focus-visible:ring-offset-midnight"
                   aria-haspopup="dialog"
                   aria-controls="profile-safety-menu"
                   aria-expanded={isSafetyMenuOpen}
@@ -537,14 +537,14 @@ export default function PublicUserProfileRoute() {
                   role="dialog"
                   aria-modal="false"
                   aria-label="Profile safety actions"
-                  className={`absolute right-0 top-full z-20 mt-2 w-[min(21rem,calc(100vw-2rem))] origin-top-right rounded-2xl border border-midnight/15 bg-white/95 p-2.5 shadow-[0_20px_40px_rgba(13,43,69,0.22)] backdrop-blur-sm transition-all duration-200 motion-reduce:transition-none sm:w-80 ${
+                  className={`absolute right-0 top-full z-20 mt-2 w-[min(21rem,calc(100vw-2rem))] origin-top-right rounded-2xl border border-midnight/15 bg-surface/95 p-2.5 shadow-3 backdrop-blur-sm transition-all duration-200 motion-reduce:transition-none sm:w-80 ${
                     isSafetyMenuOpen
                       ? "opacity-100 translate-y-0 scale-100"
                       : "pointer-events-none opacity-0 -translate-y-2 scale-95"
                   }`}
                 >
                   <div className="flex flex-col gap-2.5">
-                    <div className="rounded-xl border border-midnight/10 bg-white p-2">
+                    <div className="rounded-xl border border-midnight/10 bg-surface p-2">
                       <button
                         type="button"
                         className="min-h-[44px] w-full inline-flex items-center gap-3 rounded-lg px-2 py-2 text-left text-midnight transition-colors duration-200 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
@@ -556,7 +556,7 @@ export default function PublicUserProfileRoute() {
                         aria-expanded={pendingSafetyIntent === "block-user"}
                         aria-controls="confirm-block-user"
                       >
-                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-midnight/15 bg-white text-midnight">
+                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-midnight/15 bg-surface text-midnight">
                           <BlockIcon />
                         </span>
                         <span className="flex flex-col">
@@ -582,7 +582,7 @@ export default function PublicUserProfileRoute() {
                           <div className="mt-2 flex items-center justify-end gap-2">
                             <button
                               type="button"
-                              className="min-h-[36px] rounded-lg border border-midnight/20 bg-white px-3 text-xs font-semibold text-midnight hover:bg-mist/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                              className="min-h-[36px] rounded-lg border border-midnight/20 bg-surface px-3 text-xs font-semibold text-midnight hover:bg-mist/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                               onClick={() => setPendingSafetyIntent(null)}
                             >
                               Cancel
@@ -605,7 +605,7 @@ export default function PublicUserProfileRoute() {
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-warning/30 bg-white p-2">
+                    <div className="rounded-xl border border-warning/30 bg-surface p-2">
                       <button
                         type="button"
                         className="min-h-[44px] w-full inline-flex items-center gap-3 rounded-lg px-2 py-2 text-left text-warning-ink transition-colors duration-200 hover:bg-warning-bg/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
@@ -643,7 +643,7 @@ export default function PublicUserProfileRoute() {
                           <div className="mt-2 flex items-center justify-end gap-2">
                             <button
                               type="button"
-                              className="min-h-[36px] rounded-lg border border-warning/45 bg-white px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                              className="min-h-[36px] rounded-lg border border-warning/45 bg-surface px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                               onClick={() => setPendingSafetyIntent(null)}
                             >
                               Cancel
@@ -673,7 +673,7 @@ export default function PublicUserProfileRoute() {
             <div className="mt-4">
               <Link
                 to={`/login?redirectTo=${encodeURIComponent(`/u/${profile.username}`)}`}
-                className="min-h-[44px] inline-flex items-center rounded-xl border border-white/40 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                className="min-h-[44px] inline-flex items-center rounded-xl border border-white/40 px-4 py-2 text-sm font-semibold text-white hover:bg-surface/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
               >
                 Log in to follow, block, or report
               </Link>
@@ -681,14 +681,14 @@ export default function PublicUserProfileRoute() {
           )}
         </div>{" "}
       </section>{" "}
-      <section className="py-8 sm:py-10 border-b border-midnight/10 bg-white">
+      <section className="py-8 sm:py-10 border-b border-midnight/10 bg-surface">
         {" "}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {" "}
           <h2 className="sr-only">Profile highlights</h2>{" "}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {" "}
-            <article className="rounded-xl border border-midnight/10 bg-white p-4 shadow-sm">
+            <article className="rounded-xl border border-midnight/10 bg-surface p-4 shadow-sm">
               {" "}
               <p className="text-xs text-night/60 uppercase tracking-wide">
                 Followers
@@ -697,7 +697,7 @@ export default function PublicUserProfileRoute() {
                 {stats.followersCount}
               </p>{" "}
             </article>{" "}
-            <article className="rounded-xl border border-midnight/10 bg-white p-4 shadow-sm">
+            <article className="rounded-xl border border-midnight/10 bg-surface p-4 shadow-sm">
               {" "}
               <p className="text-xs text-night/60 uppercase tracking-wide">
                 Following
@@ -706,7 +706,7 @@ export default function PublicUserProfileRoute() {
                 {stats.followingCount}
               </p>{" "}
             </article>{" "}
-            <article className="rounded-xl border border-midnight/10 bg-white p-4 shadow-sm">
+            <article className="rounded-xl border border-midnight/10 bg-surface p-4 shadow-sm">
               {" "}
               <p className="text-xs text-night/60 uppercase tracking-wide">
                 Published stories
@@ -715,7 +715,7 @@ export default function PublicUserProfileRoute() {
                 {visibility.stories ? stats.storyCount : "Private"}
               </p>{" "}
             </article>{" "}
-            <article className="rounded-xl border border-midnight/10 bg-white p-4 shadow-sm">
+            <article className="rounded-xl border border-midnight/10 bg-surface p-4 shadow-sm">
               {" "}
               <p className="text-xs text-night/60 uppercase tracking-wide">
                 Public aspirations
@@ -801,12 +801,12 @@ export default function PublicUserProfileRoute() {
             </Link>{" "}
           </div>{" "}
           {!visibility.stories ? (
-            <p className="mt-4 rounded-xl border border-midnight/10 bg-white p-4 text-sm text-night/70">
+            <p className="mt-4 rounded-xl border border-midnight/10 bg-surface p-4 text-sm text-night/70">
               {" "}
               This storyteller keeps story highlights private.{" "}
             </p>
           ) : stories.length === 0 ? (
-            <p className="mt-4 rounded-xl border border-midnight/10 bg-white p-4 text-sm text-night/70">
+            <p className="mt-4 rounded-xl border border-midnight/10 bg-surface p-4 text-sm text-night/70">
               {" "}
               No published stories yet.{" "}
             </p>
@@ -816,7 +816,7 @@ export default function PublicUserProfileRoute() {
               {stories.map((story) => (
                 <article
                   key={story.id}
-                  className="group relative rounded-2xl border border-midnight/10 bg-white p-4 shadow-sm"
+                  className="group relative rounded-2xl border border-midnight/10 bg-surface p-4 shadow-sm"
                 >
                   <Link
                     to={`/stories/${story.id}`}
@@ -859,12 +859,12 @@ export default function PublicUserProfileRoute() {
             Recent aspirations
           </h2>{" "}
           {!visibility.aspirations ? (
-            <p className="mt-4 rounded-xl border border-midnight/10 bg-white p-4 text-sm text-night/70">
+            <p className="mt-4 rounded-xl border border-midnight/10 bg-surface p-4 text-sm text-night/70">
               {" "}
               This storyteller keeps aspiration highlights private.{" "}
             </p>
           ) : aspirations.length === 0 ? (
-            <p className="mt-4 rounded-xl border border-midnight/10 bg-white p-4 text-sm text-night/70">
+            <p className="mt-4 rounded-xl border border-midnight/10 bg-surface p-4 text-sm text-night/70">
               {" "}
               No public aspirations shared yet.{" "}
             </p>
@@ -874,7 +874,7 @@ export default function PublicUserProfileRoute() {
               {aspirations.map((aspiration) => (
                 <li
                   key={aspiration.id}
-                  className="rounded-xl border border-midnight/10 bg-white p-4 shadow-sm"
+                  className="rounded-xl border border-midnight/10 bg-surface p-4 shadow-sm"
                 >
                   {" "}
                   <p className="text-sm font-semibold text-midnight">

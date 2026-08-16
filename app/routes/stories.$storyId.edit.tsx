@@ -420,7 +420,7 @@ export default function StoryEditRoute() {
           className="mt-4"
         />
 
-        <Form method="post" className="mt-6 space-y-6 rounded-2xl border border-midnight/10 bg-white p-6 shadow-sm">
+        <Form method="post" className="mt-6 space-y-6 rounded-2xl border border-midnight/10 bg-surface p-6 shadow-sm">
           <div>
             <label htmlFor="story-title" className="block text-sm font-medium text-night">
               Title
@@ -443,7 +443,7 @@ export default function StoryEditRoute() {
               <button
                 type="button"
                 onClick={() => setShowAIPanel((current) => !current)}
-                className="text-sm text-forest hover:text-midnight flex items-center gap-1 rounded-lg px-2 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942]"
+                className="text-sm text-forest hover:text-midnight flex items-center gap-1 rounded-lg px-2 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                 aria-expanded={showAIPanel}
                 aria-controls="ai-assistant-panel-edit"
               >
@@ -475,7 +475,7 @@ export default function StoryEditRoute() {
                     name="suggestionType"
                     value="grammar"
                     formNoValidate
-                    className="rounded-full border border-mist bg-white px-3 py-1.5 text-xs hover:bg-surface"
+                    className="rounded-full border border-mist bg-surface px-3 py-1.5 text-xs hover:bg-surface"
                   >
                     Improve grammar
                   </button>
@@ -484,7 +484,7 @@ export default function StoryEditRoute() {
                     name="suggestionType"
                     value="structure"
                     formNoValidate
-                    className="rounded-full border border-mist bg-white px-3 py-1.5 text-xs hover:bg-surface"
+                    className="rounded-full border border-mist bg-surface px-3 py-1.5 text-xs hover:bg-surface"
                   >
                     Suggest structure
                   </button>
@@ -493,7 +493,7 @@ export default function StoryEditRoute() {
                     name="suggestionType"
                     value="title"
                     formNoValidate
-                    className="rounded-full border border-mist bg-white px-3 py-1.5 text-xs hover:bg-surface"
+                    className="rounded-full border border-mist bg-surface px-3 py-1.5 text-xs hover:bg-surface"
                   >
                     Generate title ideas
                   </button>
@@ -502,7 +502,7 @@ export default function StoryEditRoute() {
                     name="suggestionType"
                     value="reflection"
                     formNoValidate
-                    className="rounded-full border border-mist bg-white px-3 py-1.5 text-xs hover:bg-surface"
+                    className="rounded-full border border-mist bg-surface px-3 py-1.5 text-xs hover:bg-surface"
                   >
                     Add reflection prompts
                   </button>
@@ -515,7 +515,7 @@ export default function StoryEditRoute() {
                 ) : null}
 
                 {actionData?.aiSuggestion ? (
-                  <div className="mt-4 rounded-xl border border-ai-border bg-white px-4 py-3">
+                  <div className="mt-4 rounded-xl border border-ai-border bg-surface px-4 py-3">
                     <p className="text-xs font-semibold uppercase tracking-wide text-subtle">
                       Suggested guidance
                     </p>
@@ -539,7 +539,7 @@ export default function StoryEditRoute() {
                 id="story-category"
                 name="category"
                 defaultValue={selectedCategory}
-                className="mt-1 block w-full min-h-[44px] rounded-xl border border-mist px-4 py-2.5 text-base bg-white focus:outline-none focus:ring-2 focus:ring-golden"
+                className="mt-1 block w-full min-h-[44px] rounded-xl border border-mist px-4 py-2.5 text-base bg-surface focus:outline-none focus:ring-2 focus:ring-golden"
               >
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
@@ -557,7 +557,7 @@ export default function StoryEditRoute() {
                 id="story-status"
                 name="status"
                 defaultValue={actionData?.values?.status ?? story.status}
-                className="mt-1 block w-full min-h-[44px] rounded-xl border border-mist px-4 py-2.5 text-base bg-white focus:outline-none focus:ring-2 focus:ring-golden"
+                className="mt-1 block w-full min-h-[44px] rounded-xl border border-mist px-4 py-2.5 text-base bg-surface focus:outline-none focus:ring-2 focus:ring-golden"
               >
                 <option value="PUBLISHED">Published</option>
                 <option value="DRAFT">Draft</option>

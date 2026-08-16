@@ -338,7 +338,7 @@ export default function Login() {
                   </label>
                   <Link
                     to="/forgot-password"
-                    className="text-sm text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded"
+                    className="text-sm text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
                   >
                     Forgot password?
                   </Link>
@@ -404,7 +404,7 @@ export default function Login() {
                   <div className="w-full border-t border-mist" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-subtle">
+                  <span className="px-2 bg-surface text-subtle">
                     Or continue with
                   </span>
                 </div>
@@ -460,7 +460,7 @@ export default function Login() {
               Don't have an account?{" "}
               <Link
                 to={`/signup?redirectTo=${encodeURIComponent(redirectTo)}`}
-                className="font-medium text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded"
+                className="font-medium text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
               >
                 Sign up for free
               </Link>

@@ -213,7 +213,7 @@ export default function NewAspiration() {
                 id="category"
                 name="category"
                 required
-                className="mt-1 block w-full px-4 py-3 bg-white"
+                className="mt-1 block w-full px-4 py-3 bg-surface"
               >
                 <option value="">Select a category</option>
                 {categories.map((cat) => (

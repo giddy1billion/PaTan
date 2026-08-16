@@ -159,7 +159,7 @@ export function HowItWorks() {
                       {step.icon}{" "}
                     </div>{" "}
                     {/* Step number badge - positioned at top-right corner of icon */}{" "}
-                    <div className="absolute -top-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white shadow-md flex items-center justify-center text-xs sm:text-sm font-bold text-midnight ring-2 ring-midnight/10">
+                    <div className="absolute -top-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-surface shadow-md flex items-center justify-center text-xs sm:text-sm font-bold text-midnight ring-2 ring-midnight/10">
                       {" "}
                       {index + 1}{" "}
                     </div>{" "}

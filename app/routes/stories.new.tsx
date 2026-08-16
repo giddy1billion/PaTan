@@ -306,7 +306,7 @@ export default function NewStory() {
     >
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 lg:py-16">
         {/* Header */}
-        <div className="relative overflow-hidden rounded-3xl border border-mist bg-white shadow-sm">
+        <div className="relative overflow-hidden rounded-3xl border border-mist bg-surface shadow-sm">
           <div
             className="absolute -top-24 -right-16 w-64 h-64 rounded-full bg-golden/12 blur-3xl pointer-events-none"
             aria-hidden="true"
@@ -362,7 +362,7 @@ export default function NewStory() {
           />
 
           <section
-            className="rounded-2xl border border-mist bg-white p-5 sm:p-7 shadow-sm space-y-6"
+            className="rounded-2xl border border-mist bg-surface p-5 sm:p-7 shadow-sm space-y-6"
             aria-labelledby="story-basics-heading"
           >
             <h2
@@ -384,7 +384,7 @@ export default function NewStory() {
                 id="category"
                 name="category"
                 required
-                className="mt-1 block w-full px-4 py-3 border border-mist rounded-xl bg-white text-ink-body focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent transition-shadow"
+                className="mt-1 block w-full px-4 py-3 border border-mist rounded-xl bg-surface text-ink-body focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent transition-shadow"
               >
                 <option value="">Select a category</option>
                 {categories.map((cat) => (
@@ -421,7 +421,7 @@ export default function NewStory() {
 
           {/* Content */}
           <section
-            className="rounded-2xl border border-mist bg-white p-5 sm:p-7 shadow-sm"
+            className="rounded-2xl border border-mist bg-surface p-5 sm:p-7 shadow-sm"
             aria-labelledby="story-content-heading"
           >
             <div className="flex items-center justify-between">
@@ -435,7 +435,7 @@ export default function NewStory() {
               <button
                 type="button"
                 onClick={() => setShowAIPanel(!showAIPanel)}
-                className="text-sm text-forest hover:text-midnight flex items-center gap-1 rounded-lg px-2 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942]"
+                className="text-sm text-forest hover:text-midnight flex items-center gap-1 rounded-lg px-2 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                 aria-expanded={showAIPanel}
                 aria-controls="ai-assistant-panel"
               >
@@ -493,7 +493,7 @@ export default function NewStory() {
                     value="grammar"
                     formNoValidate
                     aria-label="Get grammar suggestion"
-                    className="px-3 py-1.5 text-xs bg-white border border-mist rounded-full hover:bg-surface transition-colors"
+                    className="px-3 py-1.5 text-xs bg-surface border border-mist rounded-full hover:bg-surface transition-colors"
                   >
                     Improve grammar
                   </button>
@@ -503,7 +503,7 @@ export default function NewStory() {
                     value="structure"
                     formNoValidate
                     aria-label="Get structure suggestion"
-                    className="px-3 py-1.5 text-xs bg-white border border-mist rounded-full hover:bg-surface transition-colors"
+                    className="px-3 py-1.5 text-xs bg-surface border border-mist rounded-full hover:bg-surface transition-colors"
                   >
                     Suggest structure
                   </button>
@@ -513,7 +513,7 @@ export default function NewStory() {
                     value="title"
                     formNoValidate
                     aria-label="Get title ideas"
-                    className="px-3 py-1.5 text-xs bg-white border border-mist rounded-full hover:bg-surface transition-colors"
+                    className="px-3 py-1.5 text-xs bg-surface border border-mist rounded-full hover:bg-surface transition-colors"
                   >
                     Generate title ideas
                   </button>
@@ -523,14 +523,14 @@ export default function NewStory() {
                     value="reflection"
                     formNoValidate
                     aria-label="Get reflection prompts"
-                    className="px-3 py-1.5 text-xs bg-white border border-mist rounded-full hover:bg-surface transition-colors"
+                    className="px-3 py-1.5 text-xs bg-surface border border-mist rounded-full hover:bg-surface transition-colors"
                   >
                     Add reflection prompts
                   </button>
                 </div>
 
                 {actionData?.aiSuggestion ? (
-                  <div className="mt-4 rounded-xl border border-ai-border bg-white px-4 py-3">
+                  <div className="mt-4 rounded-xl border border-ai-border bg-surface px-4 py-3">
                     <p className="text-xs uppercase tracking-wide text-subtle font-semibold">Suggested guidance</p>
                     <p className="mt-1 text-sm text-ink-body leading-relaxed">{actionData.aiSuggestion}</p>
                   </div>
@@ -546,7 +546,7 @@ export default function NewStory() {
 
           {/* Tags */}
           <section
-            className="rounded-2xl border border-mist bg-white p-5 sm:p-7 shadow-sm"
+            className="rounded-2xl border border-mist bg-surface p-5 sm:p-7 shadow-sm"
             aria-labelledby="story-meta-heading"
           >
             <h2
@@ -598,7 +598,7 @@ export default function NewStory() {
           </section>
 
           {/* Privacy Options */}
-          <fieldset className="p-6 bg-white rounded-2xl border border-mist shadow-sm">
+          <fieldset className="p-6 bg-surface rounded-2xl border border-mist shadow-sm">
             <legend className="text-sm font-medium text-night px-2">
               Privacy Settings
             </legend>

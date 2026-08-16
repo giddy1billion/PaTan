@@ -387,7 +387,7 @@ export default function AspirationsIndex() {
         </div>
       </section>
 
-      <section className="border-b border-mist bg-white sticky top-16 z-40" aria-label="Aspirations controls">
+      <section className="border-b border-mist bg-surface sticky top-16 z-40" aria-label="Aspirations controls">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Form method="get" className="grid gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-center">
             <label htmlFor="aspiration-search" className="sr-only">
@@ -408,7 +408,7 @@ export default function AspirationsIndex() {
               id="aspiration-status"
               name="status"
               defaultValue={status}
-              className="min-h-[44px] rounded-xl border border-mist px-4 py-2.5 text-base bg-white focus:outline-none focus:ring-2 focus:ring-golden"
+              className="min-h-[44px] rounded-xl border border-mist px-4 py-2.5 text-base bg-surface focus:outline-none focus:ring-2 focus:ring-golden"
             >
               {statusOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -490,7 +490,7 @@ export default function AspirationsIndex() {
           </p>
 
           {aspirations.length === 0 ? (
-            <article className="rounded-2xl border border-midnight/10 bg-white p-8 text-center shadow-sm">
+            <article className="rounded-2xl border border-midnight/10 bg-surface p-8 text-center shadow-sm">
               <h2 className="font-heading text-2xl text-midnight">No aspirations yet</h2>
               <p className="mt-3 text-night/70">
                 Try a different search or be the first to share a new aspiration.
@@ -502,7 +502,7 @@ export default function AspirationsIndex() {
           ) : (
             <div className="space-y-5">
               {aspirations.map((aspiration) => (
-                <article key={aspiration.id} className="rounded-2xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm">
+                <article key={aspiration.id} className="rounded-2xl border border-midnight/10 bg-surface p-5 sm:p-6 shadow-sm">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
@@ -533,7 +533,7 @@ export default function AspirationsIndex() {
                       <input type="hidden" name="intent" value="support-aspiration" />
                       <input type="hidden" name="aspirationId" value={aspiration.id} />
                       <SubmitButton
-                        className="min-h-[44px] w-full rounded-xl border border-golden/40 bg-white px-4 py-2 text-sm font-semibold text-midnight hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="min-h-[44px] w-full rounded-xl border border-golden/40 bg-surface px-4 py-2 text-sm font-semibold text-midnight hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden disabled:opacity-60 disabled:cursor-not-allowed"
                         disabled={aspiration.isSupported || aspiration.isOwner || aspiration.authorId === sessionUserId}
                         busy={supportingAspirationId === aspiration.id}
                         pendingLabel="Supporting…"
@@ -572,7 +572,7 @@ export default function AspirationsIndex() {
                 }).toString()}`}
                 preventScrollReset
                 aria-disabled={page <= 1}
-                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page <= 1 ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
+                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page <= 1 ? "pointer-events-none bg-mist/40 text-night/40" : "bg-surface border border-midnight/15 text-midnight hover:bg-surface"}`}
               >
                 Previous
               </Link>
@@ -589,7 +589,7 @@ export default function AspirationsIndex() {
                 }).toString()}`}
                 preventScrollReset
                 aria-disabled={page >= totalPages}
-                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page >= totalPages ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
+                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page >= totalPages ? "pointer-events-none bg-mist/40 text-night/40" : "bg-surface border border-midnight/15 text-midnight hover:bg-surface"}`}
               >
                 Next
               </Link>

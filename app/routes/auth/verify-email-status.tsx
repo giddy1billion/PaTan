@@ -277,7 +277,7 @@ export default function VerifyEmailStatusRoute() {
               className="mt-4"
             />
 
-            <section className="mt-6 rounded-2xl border border-midnight/10 bg-white p-5 sm:p-6" aria-labelledby="verification-status-heading">
+            <section className="mt-6 rounded-2xl border border-midnight/10 bg-surface p-5 sm:p-6" aria-labelledby="verification-status-heading">
               <h2
                 id="verification-status-heading"
                 className="font-heading text-xl text-midnight"
@@ -310,7 +310,7 @@ export default function VerifyEmailStatusRoute() {
                   <input type="hidden" name="redirectTo" value={destination} />
                   <input type="hidden" name={csrfFieldName} value={csrfToken} />
                   <SubmitButton
-                    className="min-h-[44px] w-full sm:w-auto rounded-xl border border-midnight/15 bg-white px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
+                    className="min-h-[44px] w-full sm:w-auto rounded-xl border border-midnight/15 bg-surface px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
                     aria-label="Resend verification link"
                     busy={isResending}
                     pendingLabel="Sending…"
@@ -327,7 +327,7 @@ export default function VerifyEmailStatusRoute() {
                 <input type="hidden" name="redirectTo" value={destination} />
                 <button
                   type="submit"
-                  className="min-h-[44px] w-full sm:w-auto rounded-xl border border-midnight/15 bg-white px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="min-h-[44px] w-full sm:w-auto rounded-xl border border-midnight/15 bg-surface px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
                   aria-label="Check verification status again"
                   disabled={isRefreshing}
                 >
@@ -336,7 +336,7 @@ export default function VerifyEmailStatusRoute() {
               </Form>
             </section>
 
-            <section className="mt-6 rounded-2xl border border-midnight/10 bg-white p-5 sm:p-6" aria-labelledby="troubleshooting-heading">
+            <section className="mt-6 rounded-2xl border border-midnight/10 bg-surface p-5 sm:p-6" aria-labelledby="troubleshooting-heading">
               <h2 id="troubleshooting-heading" className="font-heading text-xl text-midnight">
                 Troubleshooting
               </h2>
@@ -352,14 +352,14 @@ export default function VerifyEmailStatusRoute() {
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
               <Link
                 to="/help"
-                className="min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-white px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
+                className="min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-surface px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
               >
                 Open help center
               </Link>
               <Form method="post" action="/logout" className="w-full">
                 <input type="hidden" name={csrfFieldName} value={csrfToken} />
                 <SubmitButton
-                  className="min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-white px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
+                  className="min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-surface px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
                   busy={isSigningOut}
                   pendingLabel="Signing out…"
                 >

@@ -143,7 +143,7 @@ function NotificationBellLink({
     <Link
       to="/notifications"
       onClick={onClick}
-      className={`relative inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-midnight shadow-sm transition-all duration-200 motion-reduce:transition-none hover:-translate-y-0.5 hover:bg-surface hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 ${
+      className={`relative inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-surface text-midnight shadow-sm transition-all duration-200 motion-reduce:transition-none hover:-translate-y-0.5 hover:bg-surface hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 ${
         compact ? 'min-h-[44px] min-w-[44px]' : 'min-h-[46px] min-w-[46px]'
       }`}
       aria-label={
@@ -207,7 +207,7 @@ function UserProfileBadge({
 
   return (
     <div
-      className="inline-flex min-h-[46px] items-center gap-2 rounded-2xl border border-midnight/10 bg-white px-2.5 py-1.5 shadow-sm"
+      className="inline-flex min-h-[46px] items-center gap-2 rounded-2xl border border-midnight/10 bg-surface px-2.5 py-1.5 shadow-sm"
       aria-label={accessibleLabel}
       title={accessibleLabel}
     >
@@ -434,8 +434,8 @@ export function Navigation({
                           ? 'bg-surface text-midnight'
                           : 'text-text-secondary hover:bg-surface/80 hover:text-midnight'
                         : isActive
-                          ? 'bg-white/15 text-golden'
-                          : 'text-white drop-shadow-sm hover:bg-white/10 hover:text-golden'
+                          ? 'bg-surface/15 text-golden'
+                          : 'text-white drop-shadow-sm hover:bg-surface/10 hover:text-golden'
                     }`
                   }
                 >
@@ -458,8 +458,8 @@ export function Navigation({
                               ? 'bg-surface text-midnight'
                               : 'text-subtle hover:bg-surface/85 hover:text-midnight'
                             : isActive
-                              ? 'bg-white/15 text-golden'
-                              : 'text-white drop-shadow-sm hover:bg-white/10 hover:text-golden'
+                              ? 'bg-surface/15 text-golden'
+                              : 'text-white drop-shadow-sm hover:bg-surface/10 hover:text-golden'
                         }`
                       }
                     >
@@ -501,7 +501,7 @@ export function Navigation({
                 <input type="hidden" name={csrfFieldName} value={csrfToken} />
                 <button
                   type="submit"
-                  className="inline-flex min-h-[44px] items-center rounded-xl border border-midnight/15 bg-white px-4 py-2.5 text-sm font-medium text-midnight transition-colors duration-200 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
+                  className="inline-flex min-h-[44px] items-center rounded-xl border border-midnight/15 bg-surface px-4 py-2.5 text-sm font-medium text-midnight transition-colors duration-200 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
                   aria-label="Sign out and switch account"
                 >
                   Sign Out
@@ -515,7 +515,7 @@ export function Navigation({
                 className={`inline-flex min-h-[44px] items-center rounded-xl px-5 py-2.5 text-sm font-medium transition-all duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 ${
                   isScrolled
                     ? 'text-secondary hover:bg-surface hover:text-midnight'
-                    : 'text-midnight drop-shadow-sm hover:bg-white/10 hover:text-golden'
+                    : 'text-midnight drop-shadow-sm hover:bg-surface/10 hover:text-golden'
                 }`}
               >
                 Log In
@@ -525,7 +525,7 @@ export function Navigation({
                 className={`inline-flex min-h-[44px] items-center rounded-xl px-6 py-2.5 text-sm font-semibold transition-all duration-300 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 ${
                   isScrolled
                     ? 'bg-midnight text-white shadow-sm hover:-translate-y-0.5 hover:bg-midnight-hover hover:shadow-md'
-                    : 'bg-white text-midnight shadow-lg hover:-translate-y-0.5 hover:bg-golden hover:text-midnight hover:shadow-xl'
+                    : 'bg-surface text-midnight shadow-lg hover:-translate-y-0.5 hover:bg-golden hover:text-midnight hover:shadow-xl'
                 }`}
               >
                 Get Started
@@ -555,7 +555,7 @@ export function Navigation({
             className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl transition-all duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${
               isScrolled || isDashboardShell
                 ? 'text-secondary hover:bg-surface hover:text-midnight active:bg-border'
-                : 'text-midnight drop-shadow-sm hover:bg-midnight hover:text-golden active:bg-white/20'
+                : 'text-midnight drop-shadow-sm hover:bg-midnight hover:text-golden active:bg-surface/20'
             } ${isMenuOpen ? 'bg-surface' : ''}`}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-expanded={isMenuOpen}
@@ -598,7 +598,7 @@ export function Navigation({
         role="dialog"
         aria-modal="true"
         aria-label={user ? 'Account and navigation menu' : 'Navigation menu'}
-        className={`fixed inset-x-4 ${isDashboardShell ? 'top-[4.75rem] sm:top-20' : 'top-[4.5rem]'} z-50 max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-midnight/5 transition-all duration-300 ease-out motion-reduce:transition-none lg:hidden ${
+        className={`fixed inset-x-4 ${isDashboardShell ? 'top-[4.75rem] sm:top-20' : 'top-[4.5rem]'} z-50 max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl bg-surface shadow-2xl ring-1 ring-midnight/5 transition-all duration-300 ease-out motion-reduce:transition-none lg:hidden ${
           isMenuOpen
             ? 'translate-y-0 scale-100 opacity-100'
             : 'pointer-events-none -translate-y-2 scale-[0.98] opacity-0'
@@ -681,7 +681,7 @@ export function Navigation({
                 <Link
                   ref={!shouldRenderTopNavMenu ? firstMenuItemRef : undefined}
                   to="/notifications"
-                  className="mt-3 inline-flex w-full min-h-[44px] items-center justify-between rounded-xl border border-midnight/15 bg-white px-3 py-2.5 text-sm font-semibold text-midnight transition-colors duration-200 hover:bg-border/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                  className="mt-3 inline-flex w-full min-h-[44px] items-center justify-between rounded-xl border border-midnight/15 bg-surface px-3 py-2.5 text-sm font-semibold text-midnight transition-colors duration-200 hover:bg-border/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                   onClick={closeMenu}
                 >
                   Notifications
@@ -709,7 +709,7 @@ export function Navigation({
                   <input type="hidden" name={csrfFieldName} value={csrfToken} />
                   <button
                     type="submit"
-                    className="w-full min-h-[44px] rounded-xl border border-midnight/15 bg-white px-4 py-2.5 text-sm font-medium text-midnight transition-colors duration-200 hover:bg-border/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                    className="w-full min-h-[44px] rounded-xl border border-midnight/15 bg-surface px-4 py-2.5 text-sm font-medium text-midnight transition-colors duration-200 hover:bg-border/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                     aria-label="Sign out and switch account"
                     onClick={closeMenu}
                   >
