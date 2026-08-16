@@ -477,23 +477,20 @@ h1, h2, h3, h4, h5, h6 {
    ============================================================================ */
 
 /* Card component - Surface background with subtle depth
-   USE: Story cards, Aspiration cards, Comment containers, Sidebar widgets, Modal surfaces */
+   USE: Story cards, Aspiration cards, Comment containers, Sidebar widgets, Modal surfaces
+   Canonical card: unified radius (--radius-xl) + elevation token (--shadow-2). */
 .card {
   @apply rounded-2xl p-4 sm:p-6;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  box-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.02),
-    0 2px 4px rgba(0, 0, 0, 0.02),
-    0 4px 8px rgba(0, 0, 0, 0.02);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-2);
+  transition: box-shadow var(--duration-slow) var(--ease-emphasized),
+    border-color var(--duration-slow) var(--ease-emphasized),
+    transform var(--duration-slow) var(--ease-emphasized);
 }
 
 .card:hover {
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.04),
-    0 8px 16px rgba(0, 0, 0, 0.04),
-    0 16px 32px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-3);
   border-color: rgba(245, 185, 66, 0.3);
 }
 
@@ -502,25 +499,21 @@ h1, h2, h3, h4, h5, h6 {
   @apply rounded-2xl p-4 sm:p-6 cursor-pointer;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  box-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.02),
-    0 2px 4px rgba(0, 0, 0, 0.02),
-    0 4px 8px rgba(0, 0, 0, 0.02);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-2);
+  transition: box-shadow var(--duration-slow) var(--ease-emphasized),
+    border-color var(--duration-slow) var(--ease-emphasized),
+    transform var(--duration-slow) var(--ease-emphasized);
 }
 
 .card-interactive:hover {
   transform: translateY(-4px);
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.04),
-    0 8px 16px rgba(0, 0, 0, 0.04),
-    0 16px 32px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-3);
   border-color: rgba(245, 185, 66, 0.3);
 }
 
 .card-interactive:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-golden);
+  box-shadow: var(--shadow-focus);
 }
 
 /* ============================================================================
@@ -745,28 +738,31 @@ h1, h2, h3, h4, h5, h6 {
 .form-modern input:not([type="radio"]):not([type="checkbox"]),
 .form-modern select,
 .form-modern textarea {
-  border: 1px solid var(--color-border) !important;
-  border-radius: 0.75rem !important;
-  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-page);
   color: var(--color-text-body);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  transition: box-shadow var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
 }
 
 .form-modern input:not([type="radio"]):not([type="checkbox"]):hover,
 .form-modern select:hover,
 .form-modern textarea:hover {
-  border-color: rgba(13, 43, 69, 0.28) !important;
+  border-color: var(--color-text-secondary);
 }
 
 .form-modern input:not([type="radio"]):not([type="checkbox"]):focus,
 .form-modern select:focus,
 .form-modern textarea:focus {
-  border-color: transparent !important;
-  box-shadow: 0 0 0 2px var(--color-golden);
+  border-color: transparent;
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 .form-modern fieldset {
-  background: #ffffff;
+  background: var(--color-page);
   border: 1px solid var(--color-border);
 }
 
@@ -800,9 +796,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .input:focus {
-  border-color: var(--color-midnight);
+  border-color: transparent;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(13, 43, 69, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .input::placeholder {
@@ -1069,34 +1065,22 @@ h1, h2, h3, h4, h5, h6 {
   color: transparent;
 }
 
-/* Layered shadows for depth */
+/* Layered shadows for depth — aliased onto the unified elevation token scale. */
 .shadow-layered {
-  box-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.02),
-    0 2px 4px rgba(0, 0, 0, 0.02),
-    0 4px 8px rgba(0, 0, 0, 0.02),
-    0 8px 16px rgba(0, 0, 0, 0.02),
-    0 16px 32px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-3);
 }
 
 .shadow-layered-lg {
-  box-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.03),
-    0 4px 8px rgba(0, 0, 0, 0.03),
-    0 8px 16px rgba(0, 0, 0, 0.03),
-    0 16px 32px rgba(0, 0, 0, 0.03),
-    0 32px 64px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-4);
 }
 
-/* Golden glow shadow */
+/* Golden glow shadow — aliased onto the golden elevation token. */
 .shadow-golden {
-  box-shadow: 
-    0 4px 14px rgba(245, 185, 66, 0.15),
-    0 8px 32px rgba(245, 185, 66, 0.1);
+  box-shadow: var(--shadow-golden);
 }
 
 .shadow-golden-lg {
-  box-shadow: 
+  box-shadow:
     0 8px 24px rgba(245, 185, 66, 0.2),
     0 16px 48px rgba(245, 185, 66, 0.15);
 }
@@ -1647,34 +1631,25 @@ h1, h2, h3, h4, h5, h6 {
    Consistent, semantically-meaningful depth levels.
    ============================================================================ */
 
+/* Aliased onto the unified --shadow-0..4 token scale. */
 .elevation-0 {
-  box-shadow: none;
+  box-shadow: var(--shadow-0);
 }
 
 .elevation-1 {
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-1);
 }
 
 .elevation-2 {
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.04),
-    0 4px 8px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-2);
 }
 
 .elevation-3 {
-  box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.04),
-    0 8px 16px rgba(0, 0, 0, 0.04),
-    0 16px 32px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-3);
 }
 
 .elevation-4 {
-  box-shadow:
-    0 8px 16px rgba(0, 0, 0, 0.06),
-    0 16px 32px rgba(0, 0, 0, 0.05),
-    0 32px 64px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-4);
 }
 
 /* ============================================================================
@@ -2619,40 +2594,30 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* Fluent depth layers (5-level system) */
+/* Fluent depth layers (5-level system) — aliased onto the unified --shadow-0..4
+   scale. Dark overrides below strengthen shadows for dark surfaces. */
 .fluent-layer-0 {
-  box-shadow: none;
+  box-shadow: var(--shadow-0);
   background-color: var(--color-page);
 }
 
 .fluent-layer-1 {
-  box-shadow:
-    0 0.5px 1.75px rgba(0, 0, 0, 0.04),
-    0 1.5px 5px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-1);
   background-color: var(--color-page);
 }
 
 .fluent-layer-2 {
-  box-shadow:
-    0 0.8px 2.5px rgba(0, 0, 0, 0.04),
-    0 2px 7px rgba(0, 0, 0, 0.04),
-    0 5px 17px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-2);
   background-color: var(--color-page);
 }
 
 .fluent-layer-3 {
-  box-shadow:
-    0 1px 3.5px rgba(0, 0, 0, 0.04),
-    0 3px 10px rgba(0, 0, 0, 0.05),
-    0 8px 28px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-3);
   background-color: var(--color-page);
 }
 
 .fluent-layer-4 {
-  box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.05),
-    0 6px 18px rgba(0, 0, 0, 0.06),
-    0 14px 48px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-4);
   background-color: var(--color-page);
 }
 
@@ -2681,20 +2646,20 @@ h1, h2, h3, h4, h5, h6 {
     0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* Fluent motion curves (spring-based) */
+/* Fluent motion curves — aliased onto the --ease-spring / --duration-* tokens. */
 .motion-quick {
-  transition-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
-  transition-duration: 0.15s;
+  transition-timing-function: var(--ease-spring);
+  transition-duration: var(--duration-fast);
 }
 
 .motion-normal {
-  transition-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
-  transition-duration: 0.25s;
+  transition-timing-function: var(--ease-spring);
+  transition-duration: var(--duration-normal);
 }
 
 .motion-dramatic {
-  transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
-  transition-duration: 0.4s;
+  transition-timing-function: var(--ease-emphasized);
+  transition-duration: var(--duration-slow);
 }
 
 /* Fluent reveal highlight (subtle radial glow on hover) */

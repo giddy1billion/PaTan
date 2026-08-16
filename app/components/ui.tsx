@@ -12,15 +12,25 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 // ============================================================================
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost';
+  /**
+   * Button visual hierarchy. Aligned with the CSS .btn-* classes:
+   * - primary: midnight/white — the single most important CTA (authority)
+   * - accent: golden/midnight — celebration/secondary emphasis (was "primary")
+   * - secondary: outlined midnight — secondary actions
+   * - glass: translucent + blur — for use on imagery/hero surfaces
+   * - ghost: transparent — tertiary inline actions
+   * - danger: red — destructive actions
+   */
+  variant?: 'primary' | 'accent' | 'secondary' | 'glass' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   children: ReactNode;
 }
 
 /**
- * Primary button for main CTAs
- * Uses Golden Light for hope and celebration
+ * Primary button for main CTAs.
+ * `primary` = midnight/white (authority) — matches CSS .btn-primary.
+ * `accent` = golden/midnight (hope/celebration) — matches CSS .btn-secondary.
  */
 export function Button({
   variant = 'primary',
@@ -31,12 +41,15 @@ export function Button({
   className = '',
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
-  
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
+
   const variants = {
-    primary: 'bg-golden text-midnight hover:bg-soft-gold focus-visible:ring-golden',
+    primary: 'bg-midnight text-white hover:bg-midnight-hover focus-visible:ring-golden',
+    accent: 'bg-golden text-midnight hover:bg-golden-hover focus-visible:ring-midnight',
     secondary: 'bg-transparent text-midnight border-2 border-midnight hover:bg-midnight hover:text-dawn focus-visible:ring-midnight dark:text-dawn dark:border-dawn dark:hover:bg-dawn dark:hover:text-midnight',
+    glass: 'bg-white/65 text-midnight border border-white/45 backdrop-blur-xl hover:bg-white/80 focus-visible:ring-golden dark:bg-white/10 dark:text-dawn dark:border-white/15 dark:hover:bg-white/15',
     ghost: 'bg-transparent text-midnight hover:bg-mist/50 focus-visible:ring-golden dark:text-dawn dark:hover:bg-midnight/50',
+    danger: 'bg-error text-white hover:bg-error-accessible focus-visible:ring-error',
   };
 
   const sizes = {
