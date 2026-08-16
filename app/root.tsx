@@ -140,7 +140,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* No-flash theme init: applies the `dark` class before first paint. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('patan-theme');var d=t? t==='dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;if(d){document.documentElement.classList.add('dark');}}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('patan-theme');var d=t? t==='dark' : window.matchMedia('(prefers-color-scheme: light)').matches;if(d){document.documentElement.classList.add('dark');}}catch(e){}})();`,
           }}
         />
         <Meta />
