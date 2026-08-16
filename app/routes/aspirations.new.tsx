@@ -8,6 +8,7 @@ import { requireUser } from "~/utils/auth.server";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 import { SubmitButton } from "~/components/ui";
 import { db } from "~/utils/db.server";
+import { verifyCsrfToken } from "~/utils/csrf.server";
 import { getProfileSafetySettings } from "~/utils/users.server";
 
 type ActionData = {
@@ -55,6 +56,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+  // Verify CSRF token for all mutating operations
+  await verifyCsrfToken(request);
+
   const sessionUser = await requireUser(request);
   const formData = await request.formData();
 

@@ -316,6 +316,28 @@ export async function action({ request }: ActionFunctionArgs) {
     return { error: "Message must be 2000 characters or fewer." } satisfies ActionData;
   }
 
+  // Check if sender has blocked recipient or vice versa
+  const blockCheck = await db.userBlock.findFirst({
+    where: {
+      OR: [
+        { blockerId: sessionUser.id, blockedId: recipientId },
+        { blockerId: recipientId, blockedId: sessionUser.id },
+      ],
+    },
+    select: {
+      id: true,
+      blockerId: true,
+      blockedId: true,
+    },
+  });
+
+  if (blockCheck) {
+    const blockingUser = blockCheck.blockerId === sessionUser.id ? "you" : "the recipient";
+    return { 
+      error: `Messaging is not available. ${blockingUser === "you" ? "You have" : "The recipient has"} blocked this conversation.` 
+    } satisfies ActionData;
+  }
+
   const recipient = await db.user.findFirst({
     where: {
       id: recipientId,

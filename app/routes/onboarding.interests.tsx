@@ -12,6 +12,7 @@ import {
   useNavigation,
 } from "react-router";
 import { requireVerifiedUser } from "~/utils/auth.server";
+import { verifyCsrfToken } from "~/utils/csrf.server";
 import {
   completeOnboardingWithInterests,
   getOnboardingProfile,
@@ -71,6 +72,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireVerifiedUser(request);
+  
+  // Verify CSRF token for all mutating operations
+  await verifyCsrfToken(request);
+  
   const formData = await request.formData();
   const redirectTo = getSafeRedirectTarget(
     String(formData.get("redirectTo") ?? "/dashboard"),

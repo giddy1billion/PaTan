@@ -15,6 +15,7 @@ import { useState } from "react";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 import { SubmitButton } from "~/components/ui";
 import { requireUser } from "~/utils/auth.server";
+import { verifyCsrfToken } from "~/utils/csrf.server";
 import {
   buildLocalStorySuggestion,
   generateAiStorySuggestion,
@@ -169,6 +170,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export async function action({ request, params }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
+  
+  // Verify CSRF token for all mutating operations
+  await verifyCsrfToken(request);
+  
   const storyParam = params.storyId?.trim();
   const formData = await request.formData();
   const rawAction = String(formData.get("action") ?? "").trim().toLowerCase();

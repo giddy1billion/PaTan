@@ -23,6 +23,15 @@ enum UserRole {
   @@map("user_role")
 }
 
+enum UserAccountStatus {
+  ACTIVE
+  BLOCKED
+  SUSPENDED
+  PENDING_VERIFICATION
+
+  @@map("user_account_status")
+}
+
 enum AuthProvider {
   EMAIL
   GOOGLE
@@ -150,39 +159,40 @@ enum BadgeType {
 // ============================================================================
 
 model User {
-  id                  String        @id @default(cuid())
-  email               String?       @unique
-  emailVerified       DateTime?     @map("email_verified")
-  phone               String?       @unique
-  phoneVerified       DateTime?     @map("phone_verified")
-  passwordHash        String?       @map("password_hash")
-  username            String        @unique
-  displayName         String        @map("display_name")
-  bio                 String?       @db.Text
-  profilePhotoUrl     String?       @map("profile_photo_url")
-  coverPhotoUrl       String?       @map("cover_photo_url")
+  id                  String             @id @default(cuid())
+  email               String?            @unique
+  emailVerified       DateTime?          @map("email_verified")
+  phone               String?            @unique
+  phoneVerified       DateTime?          @map("phone_verified")
+  passwordHash        String?            @map("password_hash")
+  username            String             @unique
+  displayName         String             @map("display_name")
+  bio                 String?            @db.Text
+  profilePhotoUrl     String?            @map("profile_photo_url")
+  coverPhotoUrl       String?            @map("cover_photo_url")
   pronouns            String?
-  nameAudioUrl        String?       @map("name_audio_url")
-  voiceIntroUrl       String?       @map("voice_intro_url")
+  nameAudioUrl        String?            @map("name_audio_url")
+  voiceIntroUrl       String?            @map("voice_intro_url")
   country             String?
   city                String?
   timezone            String?
-  language            String?       @default("en")
-  spiritualAffiliation String?      @map("spiritual_affiliation")
-  placeOfWorship      String?       @map("place_of_worship")
-  personalInterests   String[]      @map("personal_interests")
-  isVerified          Boolean       @default(false) @map("is_verified")
-  verifiedAt          DateTime?     @map("verified_at")
-  role                UserRole      @default(USER)
-  reputationScore     Int           @default(0) @map("reputation_score")
-  trustLevel          Int           @default(1) @map("trust_level")
-  mfaEnabled          Boolean       @default(false) @map("mfa_enabled")
-  mfaSecret           String?       @map("mfa_secret")
-  lastActiveAt        DateTime?     @map("last_active_at")
-  onboardingCompleted Boolean       @default(false) @map("onboarding_completed")
-  createdAt           DateTime      @default(now()) @map("created_at")
-  updatedAt           DateTime      @updatedAt @map("updated_at")
-  deletedAt           DateTime?     @map("deleted_at")
+  language            String?            @default("en")
+  spiritualAffiliation String?           @map("spiritual_affiliation")
+  placeOfWorship      String?            @map("place_of_worship")
+  personalInterests   String[]           @map("personal_interests")
+  isVerified          Boolean            @default(false) @map("is_verified")
+  verifiedAt          DateTime?          @map("verified_at")
+  role                UserRole           @default(USER)
+  accountStatus       UserAccountStatus  @default(ACTIVE) @map("account_status")
+  reputationScore     Int                @default(0) @map("reputation_score")
+  trustLevel          Int                @default(1) @map("trust_level")
+  mfaEnabled          Boolean            @default(false) @map("mfa_enabled")
+  mfaSecret           String?            @map("mfa_secret")
+  lastActiveAt        DateTime?          @map("last_active_at")
+  onboardingCompleted Boolean            @default(false) @map("onboarding_completed")
+  createdAt           DateTime           @default(now()) @map("created_at")
+  updatedAt           DateTime           @updatedAt @map("updated_at")
+  deletedAt           DateTime?          @map("deleted_at")
 
   // Relations
   accounts            Account[]
@@ -217,6 +227,7 @@ model User {
   @@index([email])
   @@index([username])
   @@index([role])
+  @@index([accountStatus])
   @@index([deletedAt])
   @@index([createdAt(sort: Desc)])
   @@map("users")
@@ -248,15 +259,20 @@ model Session {
   token        String   @unique
   userAgent    String?  @map("user_agent")
   ipAddress    String?  @map("ip_address")
+  deviceFingerprint String? @map("device_fingerprint")
   expiresAt    DateTime @map("expires_at")
   lastActiveAt DateTime @default(now()) @map("last_active_at")
   createdAt    DateTime @default(now()) @map("created_at")
+  revokedAt    DateTime? @map("revoked_at")
+  revokedReason String? @map("revoked_reason")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([token])
   @@index([expiresAt])
+  @@index([revokedAt])
+  @@index([userId, revokedAt])
   @@map("sessions")
 }
 
