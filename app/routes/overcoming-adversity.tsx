@@ -121,7 +121,7 @@ export default function OvercomingAdversity() {
               <Link
                 key={challenge.label}
                 to={`/discover?category=overcoming-adversity&tag=${challenge.label.toLowerCase().replace(" ", "-")}`}
-                className="p-4 bg-white rounded-xl border border-mist hover:border-golden hover:shadow-md transition-all text-center"
+                className="p-4 bg-surface rounded-xl border border-mist hover:border-golden hover:shadow-md transition-all text-center"
               >
                 <span className="text-3xl" aria-hidden="true">
                   {challenge.icon}

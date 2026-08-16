@@ -6,21 +6,32 @@
  */
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { Icon } from '~/components/icon';
 
 // ============================================================================
 // BUTTON COMPONENTS
 // ============================================================================
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost';
+  /**
+   * Button visual hierarchy. Aligned with the CSS .btn-* classes:
+   * - primary: midnight/white — the single most important CTA (authority)
+   * - accent: golden/midnight — celebration/secondary emphasis (was "primary")
+   * - secondary: outlined midnight — secondary actions
+   * - glass: translucent + blur — for use on imagery/hero surfaces
+   * - ghost: transparent — tertiary inline actions
+   * - danger: red — destructive actions
+   */
+  variant?: 'primary' | 'accent' | 'secondary' | 'glass' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   children: ReactNode;
 }
 
 /**
- * Primary button for main CTAs
- * Uses Golden Light for hope and celebration
+ * Primary button for main CTAs.
+ * `primary` = midnight/white (authority) — matches CSS .btn-primary.
+ * `accent` = golden/midnight (hope/celebration) — matches CSS .btn-secondary.
  */
 export function Button({
   variant = 'primary',
@@ -31,12 +42,15 @@ export function Button({
   className = '',
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
-  
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
+
   const variants = {
-    primary: 'bg-golden text-midnight hover:bg-soft-gold focus-visible:ring-golden',
+    primary: 'bg-midnight text-white hover:bg-midnight-hover focus-visible:ring-golden',
+    accent: 'bg-golden text-midnight hover:bg-golden-hover focus-visible:ring-midnight',
     secondary: 'bg-transparent text-midnight border-2 border-midnight hover:bg-midnight hover:text-dawn focus-visible:ring-midnight dark:text-dawn dark:border-dawn dark:hover:bg-dawn dark:hover:text-midnight',
+    glass: 'bg-surface/65 text-midnight border border-white/45 backdrop-blur-xl hover:bg-surface/80 focus-visible:ring-golden dark:bg-surface/10 dark:text-dawn dark:border-white/15 dark:hover:bg-surface/15',
     ghost: 'bg-transparent text-midnight hover:bg-mist/50 focus-visible:ring-golden dark:text-dawn dark:hover:bg-midnight/50',
+    danger: 'bg-error text-white hover:bg-error-accessible focus-visible:ring-error',
   };
 
   const sizes = {
@@ -161,21 +175,9 @@ interface EngagementButtonProps {
 }
 
 const engagementIcons = {
-  celebrate: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-    </svg>
-  ),
-  uplift: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-    </svg>
-  ),
-  empathy: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
-    </svg>
-  ),
+  celebrate: <Icon name="heart" size={20} motion="fill-on-press" />,
+  uplift: <Icon name="arrow-up" size={20} motion="bounce" />,
+  empathy: <Icon name="sparkles" size={20} motion="pulse" />,
 };
 
 const engagementLabels = {
@@ -228,11 +230,11 @@ interface BadgeProps {
 }
 
 const statusConfig = {
-  pending: { bg: 'bg-mist', text: 'text-night/70', icon: '○' },
-  'in-progress': { bg: 'bg-golden/10', text: 'text-golden', icon: '◐' },
-  achieved: { bg: 'bg-success/10', text: 'text-success', icon: '✓' },
-  granted: { bg: 'bg-forest/10', text: 'text-forest', icon: '★' },
-  transformed: { bg: 'bg-golden/20', text: 'text-golden', icon: '✦' },
+  pending: { bg: 'bg-mist', text: 'text-night/70', icon: 'clock' as const },
+  'in-progress': { bg: 'bg-golden/10', text: 'text-golden', icon: 'sparkles' as const },
+  achieved: { bg: 'bg-success/10', text: 'text-success', icon: 'check' as const },
+  granted: { bg: 'bg-forest/10', text: 'text-forest', icon: 'star' as const },
+  transformed: { bg: 'bg-golden/20', text: 'text-golden', icon: 'star' as const },
 };
 
 const statusLabels = {
@@ -254,7 +256,7 @@ export function StatusBadge({ status, children }: BadgeProps) {
     <span
       className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ${config.bg} ${config.text}`}
     >
-      <span aria-hidden="true">{config.icon}</span>
+      <Icon name={config.icon} size={14} aria-hidden="true" />
       {children || statusLabels[status]}
     </span>
   );
@@ -276,7 +278,7 @@ interface CardProps {
 export function Card({ children, className = '', as: Component = 'div' }: CardProps) {
   return (
     <Component
-      className={`bg-white rounded-xl shadow-sm border border-mist p-6 dark:bg-night dark:border-midnight/30 ${className}`}
+      className={`bg-surface rounded-xl shadow-sm border border-mist p-6 dark:bg-night dark:border-midnight/30 ${className}`}
     >
       {children}
     </Component>
@@ -320,7 +322,7 @@ export function Input({
         aria-invalid={!!error}
         className={`
           w-full px-4 py-3 rounded-lg border
-          bg-white dark:bg-night
+          bg-surface dark:bg-night
           text-midnight dark:text-dawn
           placeholder:text-mist
           focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent
@@ -378,7 +380,7 @@ export function Textarea({
         aria-invalid={!!error}
         className={`
           w-full px-4 py-3 rounded-lg border min-h-[120px] resize-y
-          bg-white dark:bg-night
+          bg-surface dark:bg-night
           text-midnight dark:text-dawn
           placeholder:text-mist
           focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent
@@ -608,10 +610,7 @@ export function Dialog({ open, onClose, title, description, children, className 
             className="btn-icon -mr-2 -mt-1"
             aria-label="Close dialog"
           >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
+            <Icon name="x" size={20} />
           </button>
         </div>
         {description ? (
@@ -663,10 +662,10 @@ interface AlertProps {
 }
 
 const alertVariantConfig = {
-  success: { bg: 'bg-success-bg', border: 'border-success/30', text: 'text-success-accessible', icon: '\u2713' },
-  warning: { bg: 'bg-warning-bg', border: 'border-warning/30', text: 'text-[#7C2D12]', icon: '!' },
-  error: { bg: 'bg-error-bg', border: 'border-error/30', text: 'text-error-accessible', icon: '\u2715' },
-  info: { bg: 'bg-info-bg', border: 'border-info/30', text: 'text-info-accessible', icon: 'i' },
+  success: { bg: 'bg-success-bg', border: 'border-success/30', text: 'text-success-accessible', icon: 'check' as const },
+  warning: { bg: 'bg-warning-bg', border: 'border-warning/30', text: 'text-warning-ink', icon: 'bell' as const },
+  error: { bg: 'bg-error-bg', border: 'border-error/30', text: 'text-error-accessible', icon: 'x' as const },
+  info: { bg: 'bg-info-bg', border: 'border-info/30', text: 'text-info-accessible', icon: 'sparkles' as const },
 };
 
 /**
@@ -682,8 +681,8 @@ export function Alert({ variant, title, children, className = '', dismissible, o
       aria-live="polite"
     >
       <div className="flex items-start gap-3">
-        <span className={`flex-shrink-0 text-sm font-bold ${config.text}`} aria-hidden="true">
-          {config.icon}
+        <span className={`flex-shrink-0 ${config.text}`} aria-hidden="true">
+          <Icon name={config.icon} size={18} motion="draw" />
         </span>
         <div className="flex-1 min-w-0">
           {title ? <p className={`text-sm font-semibold ${config.text}`}>{title}</p> : null}
@@ -696,10 +695,7 @@ export function Alert({ variant, title, children, className = '', dismissible, o
             className={`flex-shrink-0 btn-icon !min-h-[32px] !min-w-[32px] ${config.text}`}
             aria-label="Dismiss"
           >
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
+            <Icon name="x" size={16} />
           </button>
         ) : null}
       </div>

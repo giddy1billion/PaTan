@@ -70,7 +70,7 @@ export function FAQ() {
             <div
               key={index}
               className={`
-                bg-white rounded-2xl border overflow-hidden
+                bg-surface rounded-2xl border overflow-hidden
                 transition-all duration-300
                 ${
                   openIndex === index

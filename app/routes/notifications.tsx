@@ -312,7 +312,7 @@ export default function NotificationsRoute() {
             className="mb-4"
           />
 
-          <section className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm" aria-label="Notification filters">
+          <section className="rounded-2xl border border-midnight/10 bg-surface p-5 shadow-sm" aria-label="Notification filters">
             <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
               <div>
                 <label htmlFor="notif-view" className="block text-sm font-medium text-night">
@@ -334,7 +334,7 @@ export default function NotificationsRoute() {
                       preventScrollReset: true,
                     });
                   }}
-                  className="mt-1 min-h-[44px] w-full rounded-xl border border-mist px-4 py-2.5 text-base bg-white focus:outline-none focus:ring-2 focus:ring-golden"
+                  className="mt-1 min-h-[44px] w-full rounded-xl border border-mist px-4 py-2.5 text-base bg-surface focus:outline-none focus:ring-2 focus:ring-golden"
                 >
                   <option value="all">All notifications</option>
                   <option value="unread">Unread only</option>
@@ -361,7 +361,7 @@ export default function NotificationsRoute() {
                       preventScrollReset: true,
                     });
                   }}
-                  className="mt-1 min-h-[44px] w-full rounded-xl border border-mist px-4 py-2.5 text-base bg-white focus:outline-none focus:ring-2 focus:ring-golden"
+                  className="mt-1 min-h-[44px] w-full rounded-xl border border-mist px-4 py-2.5 text-base bg-surface focus:outline-none focus:ring-2 focus:ring-golden"
                 >
                   {(Object.keys(typeLabels) as TypeFilter[]).map((key) => (
                     <option key={key} value={key}>
@@ -372,7 +372,7 @@ export default function NotificationsRoute() {
               </div>
 
               <div className="grid gap-2 sm:grid-cols-2">
-                <div className="rounded-xl border border-midnight/15 bg-white p-2">
+                <div className="rounded-xl border border-midnight/15 bg-surface p-2">
                   <button
                     type="button"
                     className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
@@ -384,7 +384,7 @@ export default function NotificationsRoute() {
                     aria-expanded={pendingBulkIntent === "mark-filter-read"}
                     aria-controls="confirm-mark-filter-read"
                   >
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-midnight/15 bg-white">
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-midnight/15 bg-surface">
                       <BulkReadIcon />
                     </span>
                     <span>Mark filtered read</span>
@@ -396,14 +396,14 @@ export default function NotificationsRoute() {
                       pendingBulkIntent === "mark-filter-read" ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"
                     }`}
                   >
-                    <div className="rounded-lg border border-[#F59E0B]/35 bg-[#FEF3C7]/55 px-3 py-2">
-                      <p className="text-xs text-[#7C2D12]">
+                    <div className="rounded-lg border border-warning/35 bg-warning-bg/55 px-3 py-2">
+                      <p className="text-xs text-warning-ink">
                         Mark unread notifications in this filter as read?
                       </p>
                       <div className="mt-2 flex items-center justify-end gap-2">
                         <button
                           type="button"
-                          className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                          className="min-h-[36px] rounded-lg border border-warning/45 bg-surface px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                           onClick={() => setPendingBulkIntent(null)}
                         >
                           Cancel
@@ -414,7 +414,7 @@ export default function NotificationsRoute() {
                           <input type="hidden" name="type" value={type} />
                           <button
                             type="submit"
-                            className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            className="min-h-[36px] rounded-lg bg-warning-ink px-3 text-xs font-semibold text-white hover:bg-warning-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                             disabled={isSubmitting}
                             aria-busy={isSubmitting}
                           >
@@ -426,7 +426,7 @@ export default function NotificationsRoute() {
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-midnight/15 bg-white p-2">
+                <div className="rounded-xl border border-midnight/15 bg-surface p-2">
                   <button
                     type="button"
                     className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
@@ -438,7 +438,7 @@ export default function NotificationsRoute() {
                     aria-expanded={pendingBulkIntent === "mark-all-read"}
                     aria-controls="confirm-mark-all-read"
                   >
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-midnight/15 bg-white">
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-midnight/15 bg-surface">
                       <BulkReadIcon />
                     </span>
                     <span>Mark all read</span>
@@ -450,14 +450,14 @@ export default function NotificationsRoute() {
                       pendingBulkIntent === "mark-all-read" ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"
                     }`}
                   >
-                    <div className="rounded-lg border border-[#F59E0B]/35 bg-[#FEF3C7]/55 px-3 py-2">
-                      <p className="text-xs text-[#7C2D12]">
+                    <div className="rounded-lg border border-warning/35 bg-warning-bg/55 px-3 py-2">
+                      <p className="text-xs text-warning-ink">
                         Mark every unread notification as read?
                       </p>
                       <div className="mt-2 flex items-center justify-end gap-2">
                         <button
                           type="button"
-                          className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                          className="min-h-[36px] rounded-lg border border-warning/45 bg-surface px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                           onClick={() => setPendingBulkIntent(null)}
                         >
                           Cancel
@@ -466,7 +466,7 @@ export default function NotificationsRoute() {
                           <input type="hidden" name="intent" value="mark-all-read" />
                           <button
                             type="submit"
-                            className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            className="min-h-[36px] rounded-lg bg-warning-ink px-3 text-xs font-semibold text-white hover:bg-warning-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                             disabled={isSubmitting}
                             aria-busy={isSubmitting}
                           >
@@ -491,7 +491,7 @@ export default function NotificationsRoute() {
             </div>
           </section>
 
-          <section className="mt-5 rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm" aria-labelledby="notification-list-heading">
+          <section className="mt-5 rounded-2xl border border-midnight/10 bg-surface p-5 shadow-sm" aria-labelledby="notification-list-heading">
             <h2 id="notification-list-heading" className="font-heading text-xl text-midnight">
               Recent notifications
             </h2>
@@ -557,7 +557,7 @@ export default function NotificationsRoute() {
                             <input type="hidden" name="notificationId" value={notification.id} />
                             <button
                               type="submit"
-                              className="min-h-[44px] rounded-xl border border-golden/40 px-3 py-2 text-sm font-semibold text-midnight hover:bg-[#FFF7E6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                              className="min-h-[44px] rounded-xl border border-golden/40 px-3 py-2 text-sm font-semibold text-midnight hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                               disabled={isSubmitting}
                               aria-busy={isSubmitting}
                             >
@@ -565,7 +565,7 @@ export default function NotificationsRoute() {
                             </button>
                           </Form>
                         ) : (
-                          <span className="inline-flex rounded-full bg-[#ECF9F0] px-3 py-1 text-xs font-semibold text-forest">
+                          <span className="inline-flex rounded-full bg-forest-mist px-3 py-1 text-xs font-semibold text-forest">
                             Read
                           </span>
                         )}
@@ -587,7 +587,7 @@ export default function NotificationsRoute() {
                 }).toString()}`}
                 preventScrollReset
                 aria-disabled={page <= 1}
-                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page <= 1 ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
+                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page <= 1 ? "pointer-events-none bg-mist/40 text-night/40" : "bg-surface border border-midnight/15 text-midnight hover:bg-surface"}`}
               >
                 Previous
               </Link>
@@ -604,7 +604,7 @@ export default function NotificationsRoute() {
                 }).toString()}`}
                 preventScrollReset
                 aria-disabled={page >= totalPages}
-                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page >= totalPages ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
+                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page >= totalPages ? "pointer-events-none bg-mist/40 text-night/40" : "bg-surface border border-midnight/15 text-midnight hover:bg-surface"}`}
               >
                 Next
               </Link>

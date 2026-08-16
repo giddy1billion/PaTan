@@ -247,7 +247,7 @@ export function ThematicJourneys() {
               <Link
                 key={category.slug}
                 to={`/journeys/${category.slug}`}
-                className={` group relative p-4 sm:p-6 bg-white rounded-2xl border border-mist/50 ${colors.hover} transition-all duration-300 ease-out hover:-translate-y-1 shadow-sm hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 min-h-[140px] sm:min-h-[160px] opacity-0 animate-fade-in-up `}
+                className={` group relative p-4 sm:p-6 bg-surface rounded-2xl border border-mist/50 ${colors.hover} transition-all duration-300 ease-out hover:-translate-y-1 shadow-sm hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 min-h-[140px] sm:min-h-[160px] opacity-0 animate-fade-in-up `}
                 style={{
                   animationDelay: `${index * 75}ms`,
                   animationFillMode: "forwards",

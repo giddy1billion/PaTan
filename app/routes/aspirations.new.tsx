@@ -141,28 +141,28 @@ export default function NewAspiration() {
     <main id="main-content" className="page-modern min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 lg:py-16">
         <div className="page-hero-modern relative p-6 sm:p-8 lg:p-10">
-          <p className="text-xs sm:text-sm uppercase tracking-[0.18em] text-[#64748B] font-medium">
+          <p className="text-xs sm:text-sm uppercase tracking-[0.18em] text-subtle font-medium">
             Growth • Purpose • Community
           </p>
           <h1 className="mt-3 font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-midnight leading-tight">
             Share Your Aspiration
           </h1>
-          <p className="mt-4 text-base sm:text-lg text-[#334155] max-w-3xl leading-relaxed">
+          <p className="mt-4 text-base sm:text-lg text-ink-body max-w-3xl leading-relaxed">
             When we share our goals, we invite encouragement, accountability,
             and meaningful support along the journey.
           </p>
 
           <div className="mt-6 flex flex-wrap items-center gap-2 sm:gap-3">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FDF3D6] text-[#0D2B45] text-xs sm:text-sm font-medium">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-golden-glow text-midnight text-xs sm:text-sm font-medium">
               <span
-                className="w-2 h-2 rounded-full bg-[#F5B942]"
+                className="w-2 h-2 rounded-full bg-golden"
                 aria-hidden="true"
               />
               Hopeful Progress
             </span>
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EAF5EC] text-[#0D2B45] text-xs sm:text-sm font-medium">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-forest-mist text-midnight text-xs sm:text-sm font-medium">
               <span
-                className="w-2 h-2 rounded-full bg-[#2E6F40]"
+                className="w-2 h-2 rounded-full bg-forest"
                 aria-hidden="true"
               />
               Community Support
@@ -217,7 +217,7 @@ export default function NewAspiration() {
                 id="category"
                 name="category"
                 required
-                className="mt-1 block w-full px-4 py-3 bg-white"
+                className="mt-1 block w-full px-4 py-3 bg-surface"
               >
                 <option value="">Select a category</option>
                 {categories.map((cat) => (
@@ -269,7 +269,7 @@ export default function NewAspiration() {
                 type="date"
                 className="mt-1 block w-full px-4 py-3"
               />
-              <p className="mt-1 text-sm text-[#64748B]">
+              <p className="mt-1 text-sm text-subtle">
                 Optional. A date helps you track meaningful progress.
               </p>
             </div>
@@ -278,7 +278,7 @@ export default function NewAspiration() {
               <label className="block text-sm font-medium text-night mb-2">
                 Milestones
               </label>
-              <p className="text-sm text-[#64748B] mb-4">
+              <p className="text-sm text-subtle mb-4">
                 Break your aspiration into smaller steps.
               </p>
               <div className="space-y-3">
@@ -307,7 +307,7 @@ export default function NewAspiration() {
             </legend>
 
             <div className="mt-4 space-y-4">
-              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-[#E2E8F0] p-4 hover:bg-[#F8FAFC] transition-colors">
+              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-mist p-4 hover:bg-surface transition-colors">
                 <input
                   type="radio"
                   name="privacy"
@@ -323,7 +323,7 @@ export default function NewAspiration() {
                 </div>
               </label>
 
-              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-[#E2E8F0] p-4 hover:bg-[#F8FAFC] transition-colors">
+              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-mist p-4 hover:bg-surface transition-colors">
                 <input
                   type="radio"
                   name="privacy"
@@ -341,7 +341,7 @@ export default function NewAspiration() {
                 </div>
               </label>
 
-              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-[#E2E8F0] p-4 hover:bg-[#F8FAFC] transition-colors">
+              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-mist p-4 hover:bg-surface transition-colors">
                 <input
                   type="radio"
                   name="privacy"
@@ -358,8 +358,8 @@ export default function NewAspiration() {
               </label>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-[#E2E8F0]">
-              <label className="flex items-center gap-3 cursor-pointer rounded-xl border border-[#E2E8F0] p-4 hover:bg-[#F8FAFC] transition-colors">
+            <div className="mt-6 pt-4 border-t border-mist">
+              <label className="flex items-center gap-3 cursor-pointer rounded-xl border border-mist p-4 hover:bg-surface transition-colors">
                 <input
                   type="checkbox"
                   name="anonymous"

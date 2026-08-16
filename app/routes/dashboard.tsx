@@ -423,7 +423,7 @@ export default function DashboardRoute() {
       : "Take one minute to reflect: what moment today made you feel grateful or hopeful?";
   const completionWidth = `${summary.profileCompletion.percent}%`;
   return (
-    <main id="main-content" className="min-h-screen bg-dawn dark:bg-[#0F1419]">
+    <main id="main-content" className="min-h-screen bg-dawn dark:bg-page">
       <section className="aurora-accent bg-midnight dark:bg-night text-dawn py-10 sm:py-14">
         {" "}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -480,7 +480,7 @@ export default function DashboardRoute() {
               completed.{" "}
             </p>{" "}
             <div
-              className="mt-4 h-3 rounded-full bg-mist dark:bg-white/10 overflow-hidden"
+              className="mt-4 h-3 rounded-full bg-mist dark:bg-surface/10 overflow-hidden"
               aria-hidden="true"
             >
               {" "}
@@ -800,16 +800,16 @@ export default function DashboardRoute() {
                     <div className="flex items-center gap-2">
                       <Link
                         to="/notifications"
-                        className="min-h-[44px] inline-flex items-center rounded-lg border border-midnight/15 dark:border-white/15 px-3 py-2 text-xs font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                        className="min-h-[44px] inline-flex items-center rounded-lg border border-midnight/15 dark:border-white/15 px-3 py-2 text-xs font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-surface/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                       >
                         Open inbox
                       </Link>
 
                       {summary.notifications.some((notification) => !notification.isRead) ? (
-                        <div className="rounded-lg border border-midnight/15 dark:border-white/15 bg-white dark:bg-night p-1.5">
+                        <div className="rounded-lg border border-midnight/15 dark:border-white/15 bg-surface dark:bg-night p-1.5">
                           <button
                             type="button"
-                            className="min-h-[44px] inline-flex items-center gap-1.5 rounded-md px-2 py-2 text-xs font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            className="min-h-[44px] inline-flex items-center gap-1.5 rounded-md px-2 py-2 text-xs font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-surface/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                             onClick={() => setPendingDashboardReadAll((current) => !current)}
                             aria-expanded={pendingDashboardReadAll}
                             aria-controls="dashboard-confirm-mark-all-read"
@@ -831,7 +831,7 @@ export default function DashboardRoute() {
                               <div className="mt-1.5 flex items-center justify-end gap-1.5">
                                 <button
                                   type="button"
-                                  className="min-h-[32px] rounded-md border border-golden/45 bg-white dark:bg-night px-2 text-[11px] font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                  className="min-h-[32px] rounded-md border border-golden/45 bg-surface dark:bg-night px-2 text-[11px] font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-surface/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                   onClick={() => setPendingDashboardReadAll(false)}
                                 >
                                   Cancel
@@ -887,7 +887,7 @@ export default function DashboardRoute() {
                                 <input type="hidden" name="notificationId" value={notification.id} />
                                 <button
                                   type="submit"
-                                  className="min-h-[44px] rounded-lg border border-midnight/15 dark:border-white/15 px-3 py-2 text-xs font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                  className="min-h-[44px] rounded-lg border border-midnight/15 dark:border-white/15 px-3 py-2 text-xs font-semibold text-midnight dark:text-dawn hover:bg-surface dark:hover:bg-surface/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                   disabled={isSubmittingNotificationAction}
                                   aria-label={`Mark notification ${notification.title} as read`}
                                   aria-busy={isSubmittingNotificationAction}
@@ -1028,7 +1028,7 @@ export default function DashboardRoute() {
                 )}{" "}
               </article>{" "}
             </div>{" "}
-            <article className="mt-4 rounded-xl border border-midnight/10 dark:border-white/10 bg-surface dark:bg-white/5 p-4">
+            <article className="mt-4 rounded-xl border border-midnight/10 dark:border-white/10 bg-surface dark:bg-surface/5 p-4">
               {" "}
               <h3 className="text-sm font-semibold text-midnight dark:text-dawn">
                 Reflection prompt
@@ -1098,7 +1098,7 @@ export function ErrorBoundary() {
           message="We could not load your dashboard right now."
           timeoutMs={10000}
         />
-        <div className="mt-4 rounded-2xl border border-midnight/10 bg-white px-5 py-4 text-midnight">
+        <div className="mt-4 rounded-2xl border border-midnight/10 bg-surface px-5 py-4 text-midnight">
           <h1 className="font-heading text-2xl">Dashboard error state</h1>
           <Link
             to="/discover"

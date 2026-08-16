@@ -114,7 +114,7 @@ export default function GratitudeStories() {
       </section>
 
       {/* Benefits of Gratitude */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="font-heading text-3xl font-bold text-midnight text-center">
             The Science of Gratitude
@@ -194,7 +194,7 @@ export default function GratitudeStories() {
             {gratitudePractices.map((practice) => (
               <div
                 key={practice.title}
-                className="p-6 bg-white rounded-xl border border-mist"
+                className="p-6 bg-surface rounded-xl border border-mist"
               >
                 <span className="text-3xl" aria-hidden="true">
                   {practice.icon}

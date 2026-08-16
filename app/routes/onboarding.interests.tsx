@@ -124,7 +124,7 @@ export default function OnboardingInterestsRoute() {
         className="flex-1 flex items-center justify-center p-4 sm:p-6"
       >
         {" "}
-        <section className="w-full max-w-3xl rounded-3xl border border-midnight/10 bg-white/95 p-6 sm:p-8 shadow-[0_15px_45px_rgba(13,43,69,0.08)]">
+        <section className="w-full max-w-3xl rounded-3xl border border-midnight/10 bg-surface/95 p-6 sm:p-8 shadow-2">
           {" "}
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-forest">
             Step 2 of 2
@@ -158,7 +158,7 @@ export default function OnboardingInterestsRoute() {
                     <label
                       key={interest}
                       htmlFor={id}
-                      className="group flex items-center gap-3 rounded-xl border border-midnight/10 bg-surface/60 px-4 py-3 min-h-[52px] hover:border-golden/50 hover:bg-[#FFF9EC] transition-colors duration-200 motion-reduce:transition-none"
+                      className="group flex items-center gap-3 rounded-xl border border-midnight/10 bg-surface/60 px-4 py-3 min-h-[52px] hover:border-golden/50 hover:bg-warning-bg transition-colors duration-200 motion-reduce:transition-none"
                     >
                       {" "}
                       <input

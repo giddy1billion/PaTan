@@ -27,7 +27,7 @@ export default function DataDeletion() {
         {" "}
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           {" "}
-          <article className="space-y-8 rounded-2xl border border-midnight/10 bg-white p-6 sm:p-8 shadow-sm">
+          <article className="space-y-8 rounded-2xl border border-midnight/10 bg-surface p-6 sm:p-8 shadow-sm">
             {" "}
             <section className="space-y-3">
               {" "}

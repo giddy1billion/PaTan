@@ -620,7 +620,7 @@ export default function StoryDetailRoute() {
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
       <article className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr),22rem]">
-          <section aria-labelledby="story-title" className="rounded-3xl border border-midnight/10 bg-white p-6 sm:p-8 shadow-sm">
+          <section aria-labelledby="story-title" className="rounded-3xl border border-midnight/10 bg-surface p-6 sm:p-8 shadow-sm">
             <div className="text-center">
               <span className="inline-block px-4 py-1.5 bg-golden/10 text-golden text-sm font-medium rounded-full">
                 {story.category.name}
@@ -696,7 +696,7 @@ export default function StoryDetailRoute() {
                       type="submit"
                       name="reactionType"
                       value={option.type}
-                      className={`min-h-[44px] rounded-xl px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${isActive ? 'bg-golden text-midnight' : 'border border-midnight/15 bg-white text-midnight hover:bg-surface'}`}
+                      className={`min-h-[44px] rounded-xl px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${isActive ? 'bg-golden text-midnight' : 'border border-midnight/15 bg-surface text-midnight hover:bg-surface'}`}
                       aria-pressed={isActive}
                       disabled={isSubmitting}
                       aria-busy={isReacting}
@@ -709,12 +709,12 @@ export default function StoryDetailRoute() {
             </div>
 
             {isOwner ? (
-              <section className="mt-6 rounded-2xl border border-midnight/10 bg-white p-4 sm:p-5" aria-labelledby="story-controls-heading">
+              <section className="mt-6 rounded-2xl border border-midnight/10 bg-surface p-4 sm:p-5" aria-labelledby="story-controls-heading">
                 <h2 id="story-controls-heading" className="text-sm font-semibold text-midnight">Story controls</h2>
                 <p className="mt-1 text-xs text-night/65">Archive to hide this story from public feeds, or delete to remove it from your account.</p>
 
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  <div className="rounded-xl border border-midnight/15 bg-white p-2">
+                  <div className="rounded-xl border border-midnight/15 bg-surface p-2">
                     <button
                       type="button"
                       className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
@@ -726,7 +726,7 @@ export default function StoryDetailRoute() {
                       aria-expanded={pendingStoryLifecycleIntent === 'archive-story'}
                       aria-controls="confirm-archive-story"
                     >
-                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-midnight/15 bg-white">
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-midnight/15 bg-surface">
                         <ArchiveStoryIcon />
                       </span>
                       <span>Archive story</span>
@@ -738,12 +738,12 @@ export default function StoryDetailRoute() {
                         pendingStoryLifecycleIntent === 'archive-story' ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'
                       }`}
                     >
-                      <div className="rounded-lg border border-[#F59E0B]/35 bg-[#FEF3C7]/55 px-3 py-2">
-                        <p className="text-xs text-[#7C2D12]">Archive this story and remove it from public discovery?</p>
+                      <div className="rounded-lg border border-warning/35 bg-warning-bg/55 px-3 py-2">
+                        <p className="text-xs text-warning-ink">Archive this story and remove it from public discovery?</p>
                         <div className="mt-2 flex items-center justify-end gap-2">
                           <button
                             type="button"
-                            className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            className="min-h-[36px] rounded-lg border border-warning/45 bg-surface px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                             onClick={() => setPendingStoryLifecycleIntent(null)}
                           >
                             Cancel
@@ -753,7 +753,7 @@ export default function StoryDetailRoute() {
                             <input type="hidden" name={csrfFieldName} value={csrfToken} />
                             <button
                               type="submit"
-                              className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                              className="min-h-[36px] rounded-lg bg-warning-ink px-3 text-xs font-semibold text-white hover:bg-warning-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                               disabled={submittingIntent === 'archive-story'}
                               aria-busy={submittingIntent === 'archive-story'}
                             >
@@ -765,10 +765,10 @@ export default function StoryDetailRoute() {
                     </div>
                   </div>
 
-                  <div className="rounded-xl border border-midnight/15 bg-white p-2">
+                  <div className="rounded-xl border border-midnight/15 bg-surface p-2">
                     <button
                       type="button"
-                      className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-[#7C2D12] hover:bg-[#FEF3C7]/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                      className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-warning-ink hover:bg-warning-bg/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                       onClick={() =>
                         setPendingStoryLifecycleIntent((current) =>
                           current === 'delete-story' ? null : 'delete-story',
@@ -777,7 +777,7 @@ export default function StoryDetailRoute() {
                       aria-expanded={pendingStoryLifecycleIntent === 'delete-story'}
                       aria-controls="confirm-delete-story"
                     >
-                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#F59E0B]/45 bg-[#FFF7E8]">
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-warning/45 bg-warning-bg">
                         <DeleteStoryIcon />
                       </span>
                       <span>Delete story</span>
@@ -789,12 +789,12 @@ export default function StoryDetailRoute() {
                         pendingStoryLifecycleIntent === 'delete-story' ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'
                       }`}
                     >
-                      <div className="rounded-lg border border-[#F59E0B]/40 bg-[#FEF3C7]/55 px-3 py-2">
-                        <p className="text-xs text-[#7C2D12]">Delete this story? This action removes it from your account feed.</p>
+                      <div className="rounded-lg border border-warning/40 bg-warning-bg/55 px-3 py-2">
+                        <p className="text-xs text-warning-ink">Delete this story? This action removes it from your account feed.</p>
                         <div className="mt-2 flex items-center justify-end gap-2">
                           <button
                             type="button"
-                            className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            className="min-h-[36px] rounded-lg border border-warning/45 bg-surface px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                             onClick={() => setPendingStoryLifecycleIntent(null)}
                           >
                             Cancel
@@ -804,7 +804,7 @@ export default function StoryDetailRoute() {
                             <input type="hidden" name={csrfFieldName} value={csrfToken} />
                             <button
                               type="submit"
-                              className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                              className="min-h-[36px] rounded-lg bg-warning-ink px-3 text-xs font-semibold text-white hover:bg-warning-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                               disabled={submittingIntent === 'delete-story'}
                               aria-busy={submittingIntent === 'delete-story'}
                             >
@@ -824,7 +824,7 @@ export default function StoryDetailRoute() {
                 Reflections
               </h2>
 
-              <div className="mt-4 rounded-2xl border border-midnight/10 bg-white p-4 sm:p-5">
+              <div className="mt-4 rounded-2xl border border-midnight/10 bg-surface p-4 sm:p-5">
                 <h3 className="text-sm font-semibold text-midnight">Share or save your reflection</h3>
 
                 <AutoDismissAlert
@@ -857,7 +857,7 @@ export default function StoryDetailRoute() {
                       type="submit"
                       name="intent"
                       value="save-private-reflection"
-                      className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white px-4 py-2 text-sm font-medium text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                      className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-surface px-4 py-2 text-sm font-medium text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? 'Saving...' : 'Save private reflection'}
@@ -878,12 +878,12 @@ export default function StoryDetailRoute() {
 
               <ul className="mt-5 space-y-3" role="list">
                 {reflections.length === 0 ? (
-                  <li className="rounded-xl border border-midnight/10 bg-white p-4 text-sm text-night/70">
+                  <li className="rounded-xl border border-midnight/10 bg-surface p-4 text-sm text-night/70">
                     No reflections yet. Be the first to encourage this storyteller.
                   </li>
                 ) : (
                   reflections.map((reflection) => (
-                    <li key={reflection.id} className="rounded-xl border border-midnight/10 bg-white p-4">
+                    <li key={reflection.id} className="rounded-xl border border-midnight/10 bg-surface p-4">
                       <div className="flex items-center justify-between gap-3">
                         <p className="text-sm font-semibold text-midnight">{reflection.author.displayName}</p>
                         <span className="text-xs text-night/60">{formatShortDate(reflection.createdAt)}</span>
@@ -897,7 +897,7 @@ export default function StoryDetailRoute() {
           </section>
 
           <aside className="space-y-4" aria-label="Story workspace">
-            <section className="rounded-3xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm">
+            <section className="rounded-3xl border border-midnight/10 bg-surface p-5 sm:p-6 shadow-sm">
               <p className="text-xs uppercase tracking-[0.14em] text-golden font-semibold">My Workspace</p>
               <h2 className="mt-2 font-heading text-2xl text-midnight">Dashboard Panel</h2>
               <p className="mt-2 text-sm text-night/70">
@@ -925,13 +925,13 @@ export default function StoryDetailRoute() {
 
               <nav className="mt-5 grid gap-2" aria-label="Workspace quick actions">
                 <Link to="/dashboard" className="btn-primary min-h-[44px] inline-flex items-center justify-center text-sm">Open dashboard</Link>
-                <Link to="/profile" className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden">Manage profile</Link>
-                <Link to="/profile/edit" className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden">Public profile settings</Link>
-                <Link to="/aspirations/new" className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden">Create aspiration</Link>
+                <Link to="/profile" className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-surface text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden">Manage profile</Link>
+                <Link to="/profile/edit" className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-surface text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden">Public profile settings</Link>
+                <Link to="/aspirations/new" className="min-h-[44px] inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-surface text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden">Create aspiration</Link>
               </nav>
             </section>
 
-            <section className="rounded-3xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm" aria-labelledby="recent-aspirations-heading">
+            <section className="rounded-3xl border border-midnight/10 bg-surface p-5 sm:p-6 shadow-sm" aria-labelledby="recent-aspirations-heading">
               <h2 id="recent-aspirations-heading" className="font-heading text-xl text-midnight">Recent aspirations</h2>
               {workspace.recentAspirations.length === 0 ? (
                 <p className="mt-3 text-sm text-night/70">No aspirations yet. Start one to track your next milestone.</p>
@@ -949,7 +949,7 @@ export default function StoryDetailRoute() {
               )}
             </section>
 
-            <section className="rounded-3xl border border-midnight/10 bg-white p-5 sm:p-6 shadow-sm" aria-labelledby="recent-journal-heading">
+            <section className="rounded-3xl border border-midnight/10 bg-surface p-5 sm:p-6 shadow-sm" aria-labelledby="recent-journal-heading">
               <h2 id="recent-journal-heading" className="font-heading text-xl text-midnight">Private journal</h2>
               {workspace.recentPrivateReflections.length === 0 ? (
                 <p className="mt-3 text-sm text-night/70">No private reflections yet. Save one after reading this story.</p>

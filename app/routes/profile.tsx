@@ -285,7 +285,7 @@ export default function ProfileRoute() {
           {" "}
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
             {" "}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-white/20 border border-white/30 text-white flex items-center justify-center text-xl font-semibold">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-surface/20 border border-white/30 text-white flex items-center justify-center text-xl font-semibold">
               {" "}
               {profile.profilePhotoUrl ? (
                 <img
@@ -316,7 +316,7 @@ export default function ProfileRoute() {
           {" "}
           {isRefreshing ? (
             <div
-              className="mb-4 rounded-xl border border-midnight/15 bg-white px-4 py-3 text-xs text-night/70"
+              className="mb-4 rounded-xl border border-midnight/15 bg-surface px-4 py-3 text-xs text-night/70"
               role="status"
               aria-live="polite"
             >
@@ -336,7 +336,7 @@ export default function ProfileRoute() {
           />{" "}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {" "}
-            <article className="rounded-xl border border-midnight/10 bg-white p-4 shadow-sm">
+            <article className="rounded-xl border border-midnight/10 bg-surface p-4 shadow-sm">
               {" "}
               <p className="text-xs text-night/60 uppercase tracking-wide">
                 Stories
@@ -345,7 +345,7 @@ export default function ProfileRoute() {
                 {stats.storyCount}
               </p>{" "}
             </article>{" "}
-            <article className="rounded-xl border border-midnight/10 bg-white p-4 shadow-sm">
+            <article className="rounded-xl border border-midnight/10 bg-surface p-4 shadow-sm">
               {" "}
               <p className="text-xs text-night/60 uppercase tracking-wide">
                 Aspirations
@@ -354,7 +354,7 @@ export default function ProfileRoute() {
                 {stats.aspirationCount}
               </p>{" "}
             </article>{" "}
-            <article className="rounded-xl border border-midnight/10 bg-white p-4 shadow-sm">
+            <article className="rounded-xl border border-midnight/10 bg-surface p-4 shadow-sm">
               {" "}
               <p className="text-xs text-night/60 uppercase tracking-wide">
                 Saved
@@ -363,7 +363,7 @@ export default function ProfileRoute() {
                 {stats.savedCount}
               </p>{" "}
             </article>{" "}
-            <article className="rounded-xl border border-midnight/10 bg-white p-4 shadow-sm">
+            <article className="rounded-xl border border-midnight/10 bg-surface p-4 shadow-sm">
               {" "}
               <p className="text-xs text-night/60 uppercase tracking-wide">
                 Followers
@@ -372,7 +372,7 @@ export default function ProfileRoute() {
                 {stats.followerCount}
               </p>{" "}
             </article>{" "}
-            <article className="rounded-xl border border-midnight/10 bg-white p-4 shadow-sm">
+            <article className="rounded-xl border border-midnight/10 bg-surface p-4 shadow-sm">
               {" "}
               <p className="text-xs text-night/60 uppercase tracking-wide">
                 Following
@@ -381,7 +381,7 @@ export default function ProfileRoute() {
                 {stats.followingCount}
               </p>{" "}
             </article>{" "}
-            <article className="rounded-xl border border-midnight/10 bg-white p-4 shadow-sm">
+            <article className="rounded-xl border border-midnight/10 bg-surface p-4 shadow-sm">
               {" "}
               <p className="text-xs text-night/60 uppercase tracking-wide">
                 Trust
@@ -393,7 +393,7 @@ export default function ProfileRoute() {
           </div>{" "}
           <div className="mt-6 grid lg:grid-cols-3 gap-4 sm:gap-5">
             {" "}
-            <section className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm lg:col-span-2">
+            <section className="rounded-2xl border border-midnight/10 bg-surface p-5 shadow-sm lg:col-span-2">
               {" "}
               <h2 className="font-heading text-xl text-midnight">
                 About you
@@ -428,7 +428,7 @@ export default function ProfileRoute() {
                 </div>{" "}
               </dl>{" "}
             </section>{" "}
-            <aside className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm">
+            <aside className="rounded-2xl border border-midnight/10 bg-surface p-5 shadow-sm">
               {" "}
               <h2 className="font-heading text-xl text-midnight">
                 Interests
@@ -443,7 +443,7 @@ export default function ProfileRoute() {
                   {profile.personalInterests.map((interest) => (
                     <li
                       key={interest}
-                      className="rounded-full bg-[#FDF3D6] text-[#7A5A00] px-3 py-1 text-xs font-semibold"
+                      className="rounded-full bg-golden-glow text-warning-accessible px-3 py-1 text-xs font-semibold"
                     >
                       {" "}
                       {interest}{" "}
@@ -461,25 +461,25 @@ export default function ProfileRoute() {
                 </Link>{" "}
                 <Link
                   to="/profile/settings"
-                  className="min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-white text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                  className="min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-surface text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                 >
                   Edit profile settings
                 </Link>{" "}
                 <Link
                   to={`/u/${profile.username}`}
-                  className="min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-white text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                  className="min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-surface text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                 >
                   View public profile
                 </Link>{" "}
                 <Link
                   to="/stories/new"
-                  className="min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-white text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                  className="min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-surface text-midnight text-sm font-medium hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                 >
                   Share new story
                 </Link>{" "}
               </div>{" "}
             </aside>{" "}
-            <aside className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm lg:col-span-3">
+            <aside className="rounded-2xl border border-midnight/10 bg-surface p-5 shadow-sm lg:col-span-3">
               {" "}
               <h2 className="font-heading text-xl text-midnight">
                 Account Security
@@ -525,7 +525,7 @@ export default function ProfileRoute() {
                     Send a fresh verification link to {profile.email}.
                   </p>
                   <SubmitButton
-                    className="min-h-[44px] shrink-0 rounded-xl border border-midnight/15 bg-white px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
+                    className="min-h-[44px] shrink-0 rounded-xl border border-midnight/15 bg-surface px-4 py-2 text-sm font-semibold text-midnight hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
                     aria-label="Send verification email"
                     busy={isSendingVerification}
                     pendingLabel="Sending…"
@@ -553,7 +553,7 @@ export default function ProfileRoute() {
                     : "Enable MFA challenges when sign-in behavior appears suspicious."}{" "}
                 </p>{" "}
                 <SubmitButton
-                  className="min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 border border-midnight/15 bg-white text-midnight hover:bg-surface"
+                  className="min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 border border-midnight/15 bg-surface text-midnight hover:bg-surface"
                   aria-label={
                     profile.mfaEnabled
                       ? "Disable high-risk MFA protection"
@@ -583,7 +583,7 @@ export function ErrorBoundary() {
           message="We could not load your profile right now."
           timeoutMs={10000}
         />
-        <div className="mt-4 rounded-2xl border border-midnight/10 bg-white px-5 py-4 text-midnight">
+        <div className="mt-4 rounded-2xl border border-midnight/10 bg-surface px-5 py-4 text-midnight">
           <h1 className="font-heading text-2xl">Profile error state</h1>
           <div className="mt-4 flex flex-wrap gap-2">
             <Link

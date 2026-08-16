@@ -1,6 +1,8 @@
 import { Form, Link, NavLink, useFetchers, useNavigation, useRouteLoaderData } from 'react-router';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { SessionUser } from '~/utils/auth.server';
+import { Icon } from '~/components/icon';
+import { ThemeToggle } from '~/components/theme-toggle';
 
 type NavItem = {
   label: string;
@@ -141,7 +143,7 @@ function NotificationBellLink({
     <Link
       to="/notifications"
       onClick={onClick}
-      className={`relative inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-white text-midnight shadow-sm transition-all duration-200 motion-reduce:transition-none hover:-translate-y-0.5 hover:bg-surface hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 ${
+      className={`relative inline-flex items-center justify-center rounded-xl border border-midnight/15 bg-surface text-midnight shadow-sm transition-all duration-200 motion-reduce:transition-none hover:-translate-y-0.5 hover:bg-surface hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 ${
         compact ? 'min-h-[44px] min-w-[44px]' : 'min-h-[46px] min-w-[46px]'
       }`}
       aria-label={
@@ -151,19 +153,11 @@ function NotificationBellLink({
       }
       title={hasUnread ? `${badgeText} unread notifications` : 'No unread notifications'}
     >
-      <svg
-        className="h-5 w-5"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M14.5 18a2.5 2.5 0 0 1-5 0" />
-        <path d="M5.8 15.2h12.4c-.9-1.1-1.7-2.7-1.7-5V9a4.5 4.5 0 1 0-9 0v1.2c0 2.3-.8 3.9-1.7 5Z" />
-      </svg>
+      <Icon
+        name="bell"
+        size={20}
+        motion={hasUnread ? 'wiggle' : 'none'}
+      />
       {hasUnread ? (
         <span
           className="absolute -right-1 -top-1 inline-flex min-h-[20px] min-w-[20px] items-center justify-center bg-golden px-1 text-[10px] font-bold text-midnight ring-2 ring-white [clip-path:polygon(16%_0,100%_0,100%_100%,0_100%,0_22%)]"
@@ -213,7 +207,7 @@ function UserProfileBadge({
 
   return (
     <div
-      className="inline-flex min-h-[46px] items-center gap-2 rounded-2xl border border-midnight/10 bg-white px-2.5 py-1.5 shadow-sm"
+      className="inline-flex min-h-[46px] items-center gap-2 rounded-2xl border border-midnight/10 bg-surface px-2.5 py-1.5 shadow-sm"
       aria-label={accessibleLabel}
       title={accessibleLabel}
     >
@@ -233,7 +227,7 @@ function UserProfileBadge({
       </div>
 
       <div className="min-w-0">
-        <p className="text-[11px] leading-tight text-[#64748B]">Signed in</p>
+        <p className="text-[11px] leading-tight text-subtle">Signed in</p>
         <p className="max-w-[11rem] truncate text-sm font-semibold leading-tight text-midnight">
           {displayName}
         </p>
@@ -371,10 +365,10 @@ export function Navigation({
   }, [isMenuOpen]);
 
   const headerClasses = isDashboardShell
-    ? 'sticky top-0 z-50 border-b border-midnight/10 bg-white/95 shadow-[0_8px_30px_rgba(13,43,69,0.08)] backdrop-blur-xl'
+    ? 'glass-nav sticky top-0 z-50'
     : `sticky top-0 z-50 transition-all duration-300 motion-reduce:transition-none ${
         isScrolled
-          ? 'border-b border-midnight/5 bg-white/98 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.03)] backdrop-blur-xl'
+          ? 'glass-nav'
           : 'bg-gradient-to-b from-midnight/20 to-transparent'
       }`;
 
@@ -440,8 +434,8 @@ export function Navigation({
                           ? 'bg-surface text-midnight'
                           : 'text-text-secondary hover:bg-surface/80 hover:text-midnight'
                         : isActive
-                          ? 'bg-white/15 text-golden'
-                          : 'text-white drop-shadow-sm hover:bg-white/10 hover:text-golden'
+                          ? 'bg-surface/15 text-golden'
+                          : 'text-white drop-shadow-sm hover:bg-surface/10 hover:text-golden'
                     }`
                   }
                 >
@@ -462,10 +456,10 @@ export function Navigation({
                           isScrolled
                             ? isActive
                               ? 'bg-surface text-midnight'
-                              : 'text-[#526277] hover:bg-surface/85 hover:text-midnight'
+                              : 'text-subtle hover:bg-surface/85 hover:text-midnight'
                             : isActive
-                              ? 'bg-white/15 text-golden'
-                              : 'text-white drop-shadow-sm hover:bg-white/10 hover:text-golden'
+                              ? 'bg-surface/15 text-golden'
+                              : 'text-white drop-shadow-sm hover:bg-surface/10 hover:text-golden'
                         }`
                       }
                     >
@@ -484,7 +478,7 @@ export function Navigation({
               {onboarding.isRequired ? (
                 <Link
                   to={onboarding.resumeHref}
-                  className="inline-flex min-h-[44px] items-center rounded-xl border border-forest/20 bg-[#ECF9F0] px-3.5 py-2 text-sm font-semibold text-forest transition-colors duration-200 hover:bg-[#DDF2E4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
+                  className="inline-flex min-h-[44px] items-center rounded-xl border border-forest/20 bg-forest-mist px-3.5 py-2 text-sm font-semibold text-forest transition-colors duration-200 hover:bg-forest-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
                   aria-label={`Resume onboarding, step ${onboarding.step} of 2`}
                 >
                   Continue setup {onboarding.step}/2
@@ -492,6 +486,8 @@ export function Navigation({
               ) : null}
 
               <NotificationBellLink unreadCount={notificationUnreadCount} />
+
+              <ThemeToggle />
 
               <Link
                 to="/profile"
@@ -505,7 +501,7 @@ export function Navigation({
                 <input type="hidden" name={csrfFieldName} value={csrfToken} />
                 <button
                   type="submit"
-                  className="inline-flex min-h-[44px] items-center rounded-xl border border-midnight/15 bg-white px-4 py-2.5 text-sm font-medium text-midnight transition-colors duration-200 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
+                  className="inline-flex min-h-[44px] items-center rounded-xl border border-midnight/15 bg-surface px-4 py-2.5 text-sm font-medium text-midnight transition-colors duration-200 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
                   aria-label="Sign out and switch account"
                 >
                   Sign Out
@@ -519,7 +515,7 @@ export function Navigation({
                 className={`inline-flex min-h-[44px] items-center rounded-xl px-5 py-2.5 text-sm font-medium transition-all duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 ${
                   isScrolled
                     ? 'text-secondary hover:bg-surface hover:text-midnight'
-                    : 'text-midnight drop-shadow-sm hover:bg-white/10 hover:text-golden'
+                    : 'text-midnight drop-shadow-sm hover:bg-surface/10 hover:text-golden'
                 }`}
               >
                 Log In
@@ -529,7 +525,7 @@ export function Navigation({
                 className={`inline-flex min-h-[44px] items-center rounded-xl px-6 py-2.5 text-sm font-semibold transition-all duration-300 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 ${
                   isScrolled
                     ? 'bg-midnight text-white shadow-sm hover:-translate-y-0.5 hover:bg-midnight-hover hover:shadow-md'
-                    : 'bg-white text-midnight shadow-lg hover:-translate-y-0.5 hover:bg-golden hover:text-midnight hover:shadow-xl'
+                    : 'bg-surface text-midnight shadow-lg hover:-translate-y-0.5 hover:bg-golden hover:text-midnight hover:shadow-xl'
                 }`}
               >
                 Get Started
@@ -539,6 +535,7 @@ export function Navigation({
         </div>
 
         <div className="flex items-center gap-1.5 lg:hidden">
+          <ThemeToggle />
           {user ? (
             <>
               <NotificationBellLink unreadCount={notificationUnreadCount} compact />
@@ -558,7 +555,7 @@ export function Navigation({
             className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl transition-all duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${
               isScrolled || isDashboardShell
                 ? 'text-secondary hover:bg-surface hover:text-midnight active:bg-border'
-                : 'text-midnight drop-shadow-sm hover:bg-midnight hover:text-golden active:bg-white/20'
+                : 'text-midnight drop-shadow-sm hover:bg-midnight hover:text-golden active:bg-surface/20'
             } ${isMenuOpen ? 'bg-surface' : ''}`}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-expanded={isMenuOpen}
@@ -601,7 +598,7 @@ export function Navigation({
         role="dialog"
         aria-modal="true"
         aria-label={user ? 'Account and navigation menu' : 'Navigation menu'}
-        className={`fixed inset-x-4 ${isDashboardShell ? 'top-[4.75rem] sm:top-20' : 'top-[4.5rem]'} z-50 max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-midnight/5 transition-all duration-300 ease-out motion-reduce:transition-none lg:hidden ${
+        className={`fixed inset-x-4 ${isDashboardShell ? 'top-[4.75rem] sm:top-20' : 'top-[4.5rem]'} z-50 max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl bg-surface shadow-2xl ring-1 ring-midnight/5 transition-all duration-300 ease-out motion-reduce:transition-none lg:hidden ${
           isMenuOpen
             ? 'translate-y-0 scale-100 opacity-100'
             : 'pointer-events-none -translate-y-2 scale-[0.98] opacity-0'
@@ -634,7 +631,7 @@ export function Navigation({
               {secondaryMenuItems.length > 0 ? (
                 <>
                   <p
-                    className="mt-4 px-3 text-xs font-semibold uppercase tracking-wide text-[#64748B]"
+                    className="mt-4 px-3 text-xs font-semibold uppercase tracking-wide text-subtle"
                     id="mobile-explore-label"
                   >
                     Explore
@@ -676,7 +673,7 @@ export function Navigation({
                     <UserProfileBadge user={user} compact />
                   </Link>
                   <div className="min-w-0">
-                    <p className="text-xs text-[#64748B]">Signed in via {getProviderLabel(user.provider)}</p>
+                    <p className="text-xs text-subtle">Signed in via {getProviderLabel(user.provider)}</p>
                     <p className="truncate text-sm font-semibold text-midnight">{getDisplayName(user)}</p>
                   </div>
                 </div>
@@ -684,7 +681,7 @@ export function Navigation({
                 <Link
                   ref={!shouldRenderTopNavMenu ? firstMenuItemRef : undefined}
                   to="/notifications"
-                  className="mt-3 inline-flex w-full min-h-[44px] items-center justify-between rounded-xl border border-midnight/15 bg-white px-3 py-2.5 text-sm font-semibold text-midnight transition-colors duration-200 hover:bg-border/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                  className="mt-3 inline-flex w-full min-h-[44px] items-center justify-between rounded-xl border border-midnight/15 bg-surface px-3 py-2.5 text-sm font-semibold text-midnight transition-colors duration-200 hover:bg-border/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                   onClick={closeMenu}
                 >
                   Notifications
@@ -693,14 +690,14 @@ export function Navigation({
                       {notificationUnreadCount > 99 ? '99+' : notificationUnreadCount}
                     </span>
                   ) : (
-                    <span className="text-xs font-medium text-[#64748B]">All read</span>
+                    <span className="text-xs font-medium text-subtle">All read</span>
                   )}
                 </Link>
 
                 {onboarding.isRequired ? (
                   <Link
                     to={onboarding.resumeHref}
-                    className="mt-3 inline-flex w-full min-h-[44px] items-center justify-center rounded-xl border border-forest/20 bg-[#ECF9F0] text-sm font-semibold text-forest transition-colors duration-200 hover:bg-[#DDF2E4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                    className="mt-3 inline-flex w-full min-h-[44px] items-center justify-center rounded-xl border border-forest/20 bg-forest-mist text-sm font-semibold text-forest transition-colors duration-200 hover:bg-forest-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                     onClick={closeMenu}
                     aria-label={`Resume onboarding, step ${onboarding.step} of 2`}
                   >
@@ -712,7 +709,7 @@ export function Navigation({
                   <input type="hidden" name={csrfFieldName} value={csrfToken} />
                   <button
                     type="submit"
-                    className="w-full min-h-[44px] rounded-xl border border-midnight/15 bg-white px-4 py-2.5 text-sm font-medium text-midnight transition-colors duration-200 hover:bg-border/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                    className="w-full min-h-[44px] rounded-xl border border-midnight/15 bg-surface px-4 py-2.5 text-sm font-medium text-midnight transition-colors duration-200 hover:bg-border/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                     aria-label="Sign out and switch account"
                     onClick={closeMenu}
                   >

@@ -256,7 +256,7 @@ export default function Signup() {
             <h1 className="font-heading text-2xl font-bold text-midnight text-center">
               Begin Your Journey
             </h1>
-            <p className="mt-2 text-center text-[#64748B]">
+            <p className="mt-2 text-center text-subtle">
               Your story could light someone else's path
             </p>
 
@@ -356,19 +356,19 @@ export default function Signup() {
                 />
                 <label
                   htmlFor="terms"
-                  className="ml-2 block text-sm text-[#334155]"
+                  className="ml-2 block text-sm text-ink-body"
                 >
                   I agree to the{" "}
                   <Link
                     to="/terms"
-                    className="text-[#2E6F40] hover:text-[#0D2B45]"
+                    className="text-forest hover:text-midnight"
                   >
                     Terms of Service
                   </Link>{" "}
                   and{" "}
                   <Link
                     to="/privacy"
-                    className="text-[#2E6F40] hover:text-[#0D2B45]"
+                    className="text-forest hover:text-midnight"
                   >
                     Privacy Policy
                   </Link>
@@ -391,7 +391,7 @@ export default function Signup() {
                   <div className="w-full border-t border-mist" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-[#64748B]">
+                  <span className="px-2 bg-surface text-subtle">
                     Or sign up with
                   </span>
                 </div>
@@ -447,7 +447,7 @@ export default function Signup() {
               Already have an account?{" "}
               <Link
                 to={`/login?redirectTo=${encodeURIComponent(redirectTo)}`}
-                className="font-medium text-[#2E6F40] hover:text-[#0D2B45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded"
+                className="font-medium text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden rounded"
               >
                 Log in
               </Link>

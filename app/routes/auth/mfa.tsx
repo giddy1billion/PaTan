@@ -271,7 +271,7 @@ export default function MfaRoute() {
             <h1 className="font-heading text-2xl font-bold text-midnight text-center">
               Verify Your Sign-In
             </h1>{" "}
-            <p className="mt-2 text-center text-[#64748B]">
+            <p className="mt-2 text-center text-subtle">
               We sent a verification code to {emailHint}
             </p>{" "}
             <AutoDismissAlert

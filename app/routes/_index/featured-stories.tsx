@@ -99,7 +99,7 @@ export function FeaturedStories() {
                 key={story.id}
                 className={`
                   group relative
-                  bg-white rounded-2xl
+                  bg-surface rounded-2xl
                   border border-mist/50 ${config.border}
                   p-5 sm:p-6
                   transition-all duration-500 ease-out

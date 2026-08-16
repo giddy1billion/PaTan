@@ -10,8 +10,8 @@ type AutoDismissAlertProps = {
 };
 
 const toneStyles: Record<AlertTone, string> = {
-  error: "border-[#F59E0B]/40 bg-[#FEF3C7]/70 text-[#7C2D12]",
-  success: "border-forest/30 bg-[#ECF9F0] text-forest",
+  error: "border-warning/40 bg-warning-bg/70 text-warning-ink",
+  success: "border-forest/30 bg-forest-mist text-forest",
   info: "border-midnight/20 bg-sky-reflection/80 text-midnight",
 };
 

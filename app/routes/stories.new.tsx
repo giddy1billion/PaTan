@@ -311,39 +311,39 @@ export default function NewStory() {
     >
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 lg:py-16">
         {/* Header */}
-        <div className="relative overflow-hidden rounded-3xl border border-[#E2E8F0] bg-white shadow-sm">
+        <div className="relative overflow-hidden rounded-3xl border border-mist bg-surface shadow-sm">
           <div
-            className="absolute -top-24 -right-16 w-64 h-64 rounded-full bg-[#F5B942]/12 blur-3xl pointer-events-none"
+            className="absolute -top-24 -right-16 w-64 h-64 rounded-full bg-golden/12 blur-3xl pointer-events-none"
             aria-hidden="true"
           />
           <div
-            className="absolute -bottom-24 -left-16 w-64 h-64 rounded-full bg-[#2E6F40]/10 blur-3xl pointer-events-none"
+            className="absolute -bottom-24 -left-16 w-64 h-64 rounded-full bg-forest/10 blur-3xl pointer-events-none"
             aria-hidden="true"
           />
 
           <div className="relative p-6 sm:p-8 lg:p-10">
-            <p className="text-xs sm:text-sm uppercase tracking-[0.18em] text-[#64748B] font-medium">
+            <p className="text-xs sm:text-sm uppercase tracking-[0.18em] text-subtle font-medium">
               Reflect • Inspire • Connect
             </p>
             <h1 className="mt-3 font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-midnight leading-tight">
               Share Your Story
             </h1>
-            <p className="mt-4 text-base sm:text-lg text-[#334155] max-w-3xl leading-relaxed">
+            <p className="mt-4 text-base sm:text-lg text-ink-body max-w-3xl leading-relaxed">
               Your experience could be the light that guides someone else's way.
               Write with honesty, care, and hope.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-2 sm:gap-3">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FDF3D6] text-[#0D2B45] text-xs sm:text-sm font-medium">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-golden-glow text-midnight text-xs sm:text-sm font-medium">
                 <span
-                  className="w-2 h-2 rounded-full bg-[#F5B942]"
+                  className="w-2 h-2 rounded-full bg-golden"
                   aria-hidden="true"
                 />
                 Uplifting Community
               </span>
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EAF5EC] text-[#0D2B45] text-xs sm:text-sm font-medium">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-forest-mist text-midnight text-xs sm:text-sm font-medium">
                 <span
-                  className="w-2 h-2 rounded-full bg-[#2E6F40]"
+                  className="w-2 h-2 rounded-full bg-forest"
                   aria-hidden="true"
                 />
                 Safe Storytelling
@@ -367,7 +367,7 @@ export default function NewStory() {
           />
 
           <section
-            className="rounded-2xl border border-[#E2E8F0] bg-white p-5 sm:p-7 shadow-sm space-y-6"
+            className="rounded-2xl border border-mist bg-surface p-5 sm:p-7 shadow-sm space-y-6"
             aria-labelledby="story-basics-heading"
           >
             <h2
@@ -389,7 +389,7 @@ export default function NewStory() {
                 id="category"
                 name="category"
                 required
-                className="mt-1 block w-full px-4 py-3 border border-[#E2E8F0] rounded-xl bg-white text-[#334155] focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent transition-shadow"
+                className="mt-1 block w-full px-4 py-3 border border-mist rounded-xl bg-surface text-ink-body focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent transition-shadow"
               >
                 <option value="">Select a category</option>
                 {categories.map((cat) => (
@@ -414,11 +414,11 @@ export default function NewStory() {
                 type="text"
                 required
                 maxLength={100}
-                className="mt-1 block w-full px-4 py-3 border border-[#E2E8F0] rounded-xl text-[#334155] focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent transition-shadow"
+                className="mt-1 block w-full px-4 py-3 border border-mist rounded-xl text-ink-body focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent transition-shadow"
                 placeholder="A title that captures the essence of your story"
                 aria-describedby="title-hint"
               />
-              <p id="title-hint" className="mt-1 text-sm text-[#64748B]">
+              <p id="title-hint" className="mt-1 text-sm text-subtle">
                 A compelling title helps others discover your story
               </p>
             </div>
@@ -426,7 +426,7 @@ export default function NewStory() {
 
           {/* Content */}
           <section
-            className="rounded-2xl border border-[#E2E8F0] bg-white p-5 sm:p-7 shadow-sm"
+            className="rounded-2xl border border-mist bg-surface p-5 sm:p-7 shadow-sm"
             aria-labelledby="story-content-heading"
           >
             <div className="flex items-center justify-between">
@@ -440,7 +440,7 @@ export default function NewStory() {
               <button
                 type="button"
                 onClick={() => setShowAIPanel(!showAIPanel)}
-                className="text-sm text-[#2E6F40] hover:text-[#0D2B45] flex items-center gap-1 rounded-lg px-2 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942]"
+                className="text-sm text-forest hover:text-midnight flex items-center gap-1 rounded-lg px-2 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                 aria-expanded={showAIPanel}
                 aria-controls="ai-assistant-panel"
               >
@@ -464,7 +464,7 @@ export default function NewStory() {
               name="content"
               required
               rows={12}
-              className="mt-2 block w-full px-4 py-3 border border-[#E2E8F0] rounded-xl text-[#334155] focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent resize-y transition-shadow"
+              className="mt-2 block w-full px-4 py-3 border border-mist rounded-xl text-ink-body focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent resize-y transition-shadow"
               placeholder="Share your experience... What happened? How did it affect you? What did you learn?"
             />
 
@@ -472,9 +472,9 @@ export default function NewStory() {
             {(showAIPanel || actionData?.aiSuggestion) && (
               <div
                 id="ai-assistant-panel"
-                className="mt-4 p-4 sm:p-5 bg-[#EDF6FB] rounded-xl border border-[#B8E3F3]"
+                className="mt-4 p-4 sm:p-5 bg-sky-reflection rounded-xl border border-ai-border"
               >
-                <h3 className="text-sm font-medium text-[#0D2B45] flex items-center gap-2">
+                <h3 className="text-sm font-medium text-midnight flex items-center gap-2">
                   <svg
                     className="w-4 h-4"
                     fill="currentColor"
@@ -488,7 +488,7 @@ export default function NewStory() {
                   </svg>
                   AI Writing Assistant
                 </h3>
-                <p className="mt-2 text-sm text-[#334155]">
+                <p className="mt-2 text-sm text-ink-body">
                   Need help expressing your story? Our AI can assist with:
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -498,7 +498,7 @@ export default function NewStory() {
                     value="grammar"
                     formNoValidate
                     aria-label="Get grammar suggestion"
-                    className="px-3 py-1.5 text-xs bg-white border border-[#E2E8F0] rounded-full hover:bg-[#F8FAFC] transition-colors"
+                    className="px-3 py-1.5 text-xs bg-surface border border-mist rounded-full hover:bg-surface transition-colors"
                   >
                     Improve grammar
                   </button>
@@ -508,7 +508,7 @@ export default function NewStory() {
                     value="structure"
                     formNoValidate
                     aria-label="Get structure suggestion"
-                    className="px-3 py-1.5 text-xs bg-white border border-[#E2E8F0] rounded-full hover:bg-[#F8FAFC] transition-colors"
+                    className="px-3 py-1.5 text-xs bg-surface border border-mist rounded-full hover:bg-surface transition-colors"
                   >
                     Suggest structure
                   </button>
@@ -518,7 +518,7 @@ export default function NewStory() {
                     value="title"
                     formNoValidate
                     aria-label="Get title ideas"
-                    className="px-3 py-1.5 text-xs bg-white border border-[#E2E8F0] rounded-full hover:bg-[#F8FAFC] transition-colors"
+                    className="px-3 py-1.5 text-xs bg-surface border border-mist rounded-full hover:bg-surface transition-colors"
                   >
                     Generate title ideas
                   </button>
@@ -528,20 +528,20 @@ export default function NewStory() {
                     value="reflection"
                     formNoValidate
                     aria-label="Get reflection prompts"
-                    className="px-3 py-1.5 text-xs bg-white border border-[#E2E8F0] rounded-full hover:bg-[#F8FAFC] transition-colors"
+                    className="px-3 py-1.5 text-xs bg-surface border border-mist rounded-full hover:bg-surface transition-colors"
                   >
                     Add reflection prompts
                   </button>
                 </div>
 
                 {actionData?.aiSuggestion ? (
-                  <div className="mt-4 rounded-xl border border-[#B8E3F3] bg-white px-4 py-3">
-                    <p className="text-xs uppercase tracking-wide text-[#64748B] font-semibold">Suggested guidance</p>
-                    <p className="mt-1 text-sm text-[#334155] leading-relaxed">{actionData.aiSuggestion}</p>
+                  <div className="mt-4 rounded-xl border border-ai-border bg-surface px-4 py-3">
+                    <p className="text-xs uppercase tracking-wide text-subtle font-semibold">Suggested guidance</p>
+                    <p className="mt-1 text-sm text-ink-body leading-relaxed">{actionData.aiSuggestion}</p>
                   </div>
                 ) : null}
 
-                <p className="mt-3 text-xs text-[#64748B]">
+                <p className="mt-3 text-xs text-subtle">
                   AI suggestions are optional. Your authentic voice is what
                   matters most.
                 </p>
@@ -551,7 +551,7 @@ export default function NewStory() {
 
           {/* Tags */}
           <section
-            className="rounded-2xl border border-[#E2E8F0] bg-white p-5 sm:p-7 shadow-sm"
+            className="rounded-2xl border border-mist bg-surface p-5 sm:p-7 shadow-sm"
             aria-labelledby="story-meta-heading"
           >
             <h2
@@ -572,18 +572,18 @@ export default function NewStory() {
                 id="tags"
                 name="tags"
                 type="text"
-                className="mt-1 block w-full px-4 py-3 border border-[#E2E8F0] rounded-xl text-[#334155] focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent transition-shadow"
+                className="mt-1 block w-full px-4 py-3 border border-mist rounded-xl text-ink-body focus:outline-none focus:ring-2 focus:ring-golden focus:border-transparent transition-shadow"
                 placeholder="resilience, hope, healing (comma separated)"
                 aria-describedby="tags-hint"
               />
-              <p id="tags-hint" className="mt-1 text-sm text-[#64748B]">
+              <p id="tags-hint" className="mt-1 text-sm text-subtle">
                 Add up to 5 tags to help others find your story
               </p>
             </div>
 
             {/* Content Warning */}
             <div className="mt-5">
-              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-[#E2E8F0] p-4 hover:bg-[#F8FAFC] transition-colors">
+              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-mist p-4 hover:bg-surface transition-colors">
                 <input
                   type="checkbox"
                   name="contentWarning"
@@ -603,13 +603,13 @@ export default function NewStory() {
           </section>
 
           {/* Privacy Options */}
-          <fieldset className="p-6 bg-white rounded-2xl border border-[#E2E8F0] shadow-sm">
+          <fieldset className="p-6 bg-surface rounded-2xl border border-mist shadow-sm">
             <legend className="text-sm font-medium text-night px-2">
               Privacy Settings
             </legend>
 
             <div className="mt-4 space-y-4">
-              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-[#E2E8F0] p-4 hover:bg-[#F8FAFC] transition-colors">
+              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-mist p-4 hover:bg-surface transition-colors">
                 <input
                   type="radio"
                   name="privacy"
@@ -625,7 +625,7 @@ export default function NewStory() {
                 </div>
               </label>
 
-              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-[#E2E8F0] p-4 hover:bg-[#F8FAFC] transition-colors">
+              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-mist p-4 hover:bg-surface transition-colors">
                 <input
                   type="radio"
                   name="privacy"
@@ -643,7 +643,7 @@ export default function NewStory() {
                 </div>
               </label>
 
-              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-[#E2E8F0] p-4 hover:bg-[#F8FAFC] transition-colors">
+              <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-mist p-4 hover:bg-surface transition-colors">
                 <input
                   type="radio"
                   name="privacy"
@@ -661,7 +661,7 @@ export default function NewStory() {
             </div>
 
             <div className="mt-6 pt-4 border-t border-mist">
-              <label className="flex items-center gap-3 cursor-pointer rounded-xl border border-[#E2E8F0] p-4 hover:bg-[#F8FAFC] transition-colors">
+              <label className="flex items-center gap-3 cursor-pointer rounded-xl border border-mist p-4 hover:bg-surface transition-colors">
                 <input
                   type="checkbox"
                   name="anonymous"
@@ -705,7 +705,7 @@ export default function NewStory() {
         </Form>
 
         {/* Guidelines Reminder */}
-        <div className="mt-10 p-6 sm:p-7 bg-[#F8FAFC] rounded-2xl border border-[#E2E8F0]">
+        <div className="mt-10 p-6 sm:p-7 bg-surface rounded-2xl border border-mist">
           <h2 className="font-heading text-xl font-bold text-midnight">
             Before you publish
           </h2>
@@ -735,7 +735,7 @@ export default function NewStory() {
               Review our{" "}
               <Link
                 to="/guidelines"
-                className="text-[#2E6F40] hover:text-[#0D2B45] underline underline-offset-2"
+                className="text-forest hover:text-midnight underline underline-offset-2"
               >
                 Community Guidelines
               </Link>

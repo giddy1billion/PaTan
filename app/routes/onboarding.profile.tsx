@@ -150,7 +150,7 @@ export default function OnboardingProfileRoute() {
         className="flex-1 flex items-center justify-center p-4 sm:p-6"
       >
         {" "}
-        <section className="w-full max-w-2xl rounded-3xl border border-midnight/10 bg-white/95 p-6 sm:p-8 shadow-[0_15px_45px_rgba(13,43,69,0.08)]">
+        <section className="w-full max-w-2xl rounded-3xl border border-midnight/10 bg-surface/95 p-6 sm:p-8 shadow-2">
           {" "}
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-forest">
             Step 1 of 2

@@ -347,7 +347,7 @@ export default function Discover() {
             <div className="mt-4 text-center">
               <Link
                 to="/discover"
-                className="inline-flex min-h-[44px] items-center rounded-full border border-dawn/30 px-4 py-2 text-sm text-dawn hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                className="inline-flex min-h-[44px] items-center rounded-full border border-dawn/30 px-4 py-2 text-sm text-dawn hover:bg-surface/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
               >
                 Clear filters
               </Link>
@@ -362,7 +362,7 @@ export default function Discover() {
       </section>
 
       {/* Categories */}
-      <section className="border-b border-mist bg-white sticky top-16 z-40">
+      <section className="border-b border-mist bg-surface sticky top-16 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav aria-label="Story categories">
             <ul
@@ -412,7 +412,7 @@ export default function Discover() {
       <section className="py-12" aria-busy={isRefreshing}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {stories.length === 0 ? (
-            <article className="rounded-2xl border border-midnight/10 bg-white p-6 text-center shadow-sm">
+            <article className="rounded-2xl border border-midnight/10 bg-surface p-6 text-center shadow-sm">
               <h2 className="font-heading text-2xl text-midnight">No stories match this filter</h2>
               <p className="mt-2 text-night/70">
                 Try a different category or search term to discover more community stories.
@@ -517,7 +517,7 @@ export function ErrorBoundary() {
     <main id="main-content" className="page-modern min-h-screen bg-dawn">
       <section className="max-w-3xl mx-auto px-4 py-14">
         <AutoDismissAlert tone="error" message={message} timeoutMs={10000} />
-        <div className="mt-4 rounded-2xl border border-midnight/10 bg-white px-5 py-4 text-midnight">
+        <div className="mt-4 rounded-2xl border border-midnight/10 bg-surface px-5 py-4 text-midnight">
           <h1 className="font-heading text-2xl">Discover unavailable</h1>
           <div className="mt-4 flex flex-wrap gap-2">
             <Link

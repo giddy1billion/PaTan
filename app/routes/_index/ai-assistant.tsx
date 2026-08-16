@@ -144,7 +144,7 @@ export function AIAssistant() {
               {features.map((feature, index) => (
                 <div
                   key={feature.label}
-                  className="group flex items-start gap-3 p-4 rounded-xl bg-white border border-mist/50 hover:border-golden/30 hover:shadow-md transition-all duration-300"
+                  className="group flex items-start gap-3 p-4 rounded-xl bg-surface border border-mist/50 hover:border-golden/30 hover:shadow-md transition-all duration-300"
                 >
                   {" "}
                   <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-golden/15 text-golden-accessible flex items-center justify-center group-hover:bg-golden/25 transition-colors">
@@ -194,7 +194,7 @@ export function AIAssistant() {
           {/* Editor Mockup */}{" "}
           <div className="relative order-1 lg:order-2" aria-hidden="true">
             {" "}
-            <div className="relative bg-white rounded-2xl shadow-layered-lg border border-mist/50 overflow-hidden">
+            <div className="relative bg-surface rounded-2xl shadow-layered-lg border border-mist/50 overflow-hidden">
               {" "}
               {/* Editor Header */}{" "}
               <div className="bg-gradient-to-r from-mist/50 to-mist/30 px-4 sm:px-6 py-4 flex items-center gap-3 border-b border-mist/50">

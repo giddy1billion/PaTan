@@ -107,6 +107,18 @@
   --color-night-muted: #475569;    /* Secondary text - ~7.4:1 on white */
   --color-night-subtle: #64748B;   /* Tertiary text - ~4.8:1 on white */
 
+  /* =========================================================================
+     INK / WARNING-INK
+     --color-ink is the canonical "dark text on light surface" color.
+     It replaces raw near-black hexes (#334155, #0D2B45-as-text) and, unlike
+     --color-night, is redefined under .dark so text never disappears.
+     --color-warning-ink is the accessible dark-amber text for warnings.
+     ========================================================================= */
+  --color-ink: #0D2B45;
+  --color-ink-body: #334155;
+  --color-warning-accessible: #92400E;
+  --color-warning-ink: #7C2D12;
+
   /* Typography Scale */
   --text-display: 3.5rem;       /* 56px */
   --text-h1: 3rem;              /* 48px */
@@ -117,6 +129,81 @@
   --text-body: 1rem;            /* 16px */
   --text-caption: 0.875rem;     /* 14px */
   --text-small: 0.75rem;        /* 12px */
+
+  /* =========================================================================
+     RADIUS SCALE (generates rounded-* utilities)
+     One semantic scale replaces the five ad-hoc card radii.
+     ========================================================================= */
+  --radius-none: 0;
+  --radius-sm: 0.375rem;        /* 6px  - small chips, tags */
+  --radius-md: 0.625rem;        /* 10px - inputs */
+  --radius-lg: 0.75rem;         /* 12px - buttons, small cards */
+  --radius-xl: 1rem;            /* 16px - cards (canonical) */
+  --radius-2xl: 1.25rem;        /* 20px - modals, featured */
+  --radius-3xl: 1.5rem;         /* 24px - heroes, large featured */
+  --radius-full: 9999px;
+
+  /* =========================================================================
+     ELEVATION / SHADOW SCALE (generates shadow-* utilities)
+     Collapses .elevation-*, .fluent-layer-*, .shadow-layered-* into ONE
+     5-level system. Soft, layered, never heavy.
+     ========================================================================= */
+  --shadow-0: none;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+  --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.04), 0 4px 8px rgba(0, 0, 0, 0.03), 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+  --shadow-3: 0 4px 8px rgba(0, 0, 0, 0.04), 0 8px 16px rgba(0, 0, 0, 0.04), 0 16px 32px rgba(0, 0, 0, 0.03);
+  --shadow-4: 0 8px 16px rgba(0, 0, 0, 0.06), 0 16px 32px rgba(0, 0, 0, 0.05), 0 32px 64px rgba(0, 0, 0, 0.04);
+  --shadow-modal: 0 24px 48px rgba(0, 0, 0, 0.12), 0 12px 24px rgba(0, 0, 0, 0.08);
+  --shadow-golden: 0 4px 14px rgba(245, 185, 66, 0.15), 0 8px 32px rgba(245, 185, 66, 0.1);
+  --shadow-focus: 0 0 0 2px var(--color-golden);
+
+  /* =========================================================================
+     MOTION (generates ease-* utilities; durations as CSS vars)
+     One set of spring/emphasized curves replaces scattered cubic-beziers.
+     ========================================================================= */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+/* ============================================================================
+   INTERNAL DESIGN TOKENS (CSS custom properties, not Tailwind utilities)
+   z-index, duration, opacity, and spacing rhythm used by component classes.
+   ============================================================================ */
+:root {
+  /* Z-index scale */
+  --z-base: 1;
+  --z-sticky: 40;
+  --z-dropdown: 50;
+  --z-overlay: 100;
+  --z-modal: 101;
+  --z-toast: 110;
+  --z-nav-loader: 60;
+
+  /* Motion durations */
+  --duration-fast: 0.15s;
+  --duration-normal: 0.25s;
+  --duration-slow: 0.4s;
+  --duration-dramatic: 0.6s;
+
+  /* Opacity */
+  --opacity-state-layer: 0.08;
+  --opacity-state-layer-active: 0.12;
+  --opacity-hover: 0.06;
+  --opacity-disabled: 0.5;
+  --opacity-overlay: 0.4;
+
+  /* Spacing rhythm (4px base) - reference, not a utility generator */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
 }
 
 /* ============================================================================
@@ -390,23 +477,20 @@ h1, h2, h3, h4, h5, h6 {
    ============================================================================ */
 
 /* Card component - Surface background with subtle depth
-   USE: Story cards, Aspiration cards, Comment containers, Sidebar widgets, Modal surfaces */
+   USE: Story cards, Aspiration cards, Comment containers, Sidebar widgets, Modal surfaces
+   Canonical card: unified radius (--radius-xl) + elevation token (--shadow-2). */
 .card {
   @apply rounded-2xl p-4 sm:p-6;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  box-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.02),
-    0 2px 4px rgba(0, 0, 0, 0.02),
-    0 4px 8px rgba(0, 0, 0, 0.02);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-2);
+  transition: box-shadow var(--duration-slow) var(--ease-emphasized),
+    border-color var(--duration-slow) var(--ease-emphasized),
+    transform var(--duration-slow) var(--ease-emphasized);
 }
 
 .card:hover {
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.04),
-    0 8px 16px rgba(0, 0, 0, 0.04),
-    0 16px 32px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-3);
   border-color: rgba(245, 185, 66, 0.3);
 }
 
@@ -415,25 +499,21 @@ h1, h2, h3, h4, h5, h6 {
   @apply rounded-2xl p-4 sm:p-6 cursor-pointer;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  box-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.02),
-    0 2px 4px rgba(0, 0, 0, 0.02),
-    0 4px 8px rgba(0, 0, 0, 0.02);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-2);
+  transition: box-shadow var(--duration-slow) var(--ease-emphasized),
+    border-color var(--duration-slow) var(--ease-emphasized),
+    transform var(--duration-slow) var(--ease-emphasized);
 }
 
 .card-interactive:hover {
   transform: translateY(-4px);
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.04),
-    0 8px 16px rgba(0, 0, 0, 0.04),
-    0 16px 32px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-3);
   border-color: rgba(245, 185, 66, 0.3);
 }
 
 .card-interactive:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-golden);
+  box-shadow: var(--shadow-focus);
 }
 
 /* ============================================================================
@@ -658,28 +738,31 @@ h1, h2, h3, h4, h5, h6 {
 .form-modern input:not([type="radio"]):not([type="checkbox"]),
 .form-modern select,
 .form-modern textarea {
-  border: 1px solid var(--color-border) !important;
-  border-radius: 0.75rem !important;
-  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-page);
   color: var(--color-text-body);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  transition: box-shadow var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
 }
 
 .form-modern input:not([type="radio"]):not([type="checkbox"]):hover,
 .form-modern select:hover,
 .form-modern textarea:hover {
-  border-color: rgba(13, 43, 69, 0.28) !important;
+  border-color: var(--color-text-secondary);
 }
 
 .form-modern input:not([type="radio"]):not([type="checkbox"]):focus,
 .form-modern select:focus,
 .form-modern textarea:focus {
-  border-color: transparent !important;
-  box-shadow: 0 0 0 2px var(--color-golden);
+  border-color: transparent;
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 .form-modern fieldset {
-  background: #ffffff;
+  background: var(--color-page);
   border: 1px solid var(--color-border);
 }
 
@@ -713,9 +796,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .input:focus {
-  border-color: var(--color-midnight);
+  border-color: transparent;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(13, 43, 69, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .input::placeholder {
@@ -738,6 +821,70 @@ h1, h2, h3, h4, h5, h6 {
 /* ============================================================================
    ANIMATIONS
    ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   ICON MOTION (patan-icon)
+   Tasteful micro-animations for the Icon component. All gated behind the
+   global prefers-reduced-motion guard (bottom of file) so they become instant.
+   --------------------------------------------------------------------------- */
+.patan-icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
+}
+.icon-motion-pulse {
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.icon-motion-bounce {
+  animation: iconBounce 1.4s ease-in-out infinite;
+}
+
+@keyframes iconSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.icon-motion-spin {
+  animation: iconSpin 1.6s linear infinite;
+}
+
+@keyframes iconWiggle {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-12deg); }
+  40% { transform: rotate(10deg); }
+  60% { transform: rotate(-6deg); }
+  80% { transform: rotate(4deg); }
+}
+.icon-motion-wiggle {
+  animation: iconWiggle 0.8s ease-in-out;
+}
+
+/* Draw-on-mount: stroke reveals via dashoffset */
+@keyframes iconDraw {
+  from { stroke-dashoffset: 60; }
+  to { stroke-dashoffset: 0; }
+}
+.icon-motion-draw {
+  stroke-dasharray: 60;
+  animation: iconDraw 0.6s var(--ease-emphasized) both;
+}
+
+/* fill-on-press: parent toggles .is-pressed to swap outline->fill smoothly */
+.icon-motion-fill {
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+.icon-motion-fill.is-pressed {
+  transform: scale(1.15);
+}
 
 /* Floating animation for decorative elements */
 @keyframes float {
@@ -982,34 +1129,22 @@ h1, h2, h3, h4, h5, h6 {
   color: transparent;
 }
 
-/* Layered shadows for depth */
+/* Layered shadows for depth — aliased onto the unified elevation token scale. */
 .shadow-layered {
-  box-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.02),
-    0 2px 4px rgba(0, 0, 0, 0.02),
-    0 4px 8px rgba(0, 0, 0, 0.02),
-    0 8px 16px rgba(0, 0, 0, 0.02),
-    0 16px 32px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-3);
 }
 
 .shadow-layered-lg {
-  box-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.03),
-    0 4px 8px rgba(0, 0, 0, 0.03),
-    0 8px 16px rgba(0, 0, 0, 0.03),
-    0 16px 32px rgba(0, 0, 0, 0.03),
-    0 32px 64px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-4);
 }
 
-/* Golden glow shadow */
+/* Golden glow shadow — aliased onto the golden elevation token. */
 .shadow-golden {
-  box-shadow: 
-    0 4px 14px rgba(245, 185, 66, 0.15),
-    0 8px 32px rgba(245, 185, 66, 0.1);
+  box-shadow: var(--shadow-golden);
 }
 
 .shadow-golden-lg {
-  box-shadow: 
+  box-shadow:
     0 8px 24px rgba(245, 185, 66, 0.2),
     0 16px 48px rgba(245, 185, 66, 0.15);
 }
@@ -1237,6 +1372,21 @@ h1, h2, h3, h4, h5, h6 {
   --color-text-muted: #64748B;
   --color-midnight: #1E3A5F;
   --color-midnight-hover: #2A4F7A;
+
+  /* --color-night in dark mode becomes a readable light text/surface tint
+     (was near-black #1C2230, which made text-night invisible on dark bg). */
+  --color-night: #CBD5E1;
+  /* --color-ink flips to a light foreground so text-ink / text-night both
+     remain legible regardless of which token a component uses. */
+  --color-ink: #F1F5F9;
+  --color-ink-body: #CBD5E1;
+
+  /* Legacy surface aliases were NOT redefined before, causing bg-dawn/mist
+     to render white on dark pages. Now they resolve to dark surfaces. */
+  --color-dawn: #0F1419;
+  --color-mist: #2A3A4E;
+  --color-soft-gold: rgba(245, 185, 66, 0.12);
+
   --color-golden-glow: rgba(245, 185, 66, 0.12);
   --color-forest-mist: rgba(46, 111, 64, 0.12);
   --color-sky-reflection: rgba(37, 99, 235, 0.08);
@@ -1251,12 +1401,55 @@ h1, h2, h3, h4, h5, h6 {
   --color-disabled-text: #475569;
   --color-night-muted: #94A3B8;
   --color-night-subtle: #64748B;
+
+  /* Accessible variants stay vivid-on-dark for legibility */
+  --color-golden-accessible: #F5B942;
+  --color-forest-accessible: #4ADE80;
+  --color-warning-ink: #FBBF24;
+  --color-warning-accessible: #FBBF24;
   color-scheme: dark;
 }
 
 .dark body {
   background-color: var(--color-page);
   color: var(--color-text-body);
+}
+
+/* Route markup uses raw .bg-white / .bg-\[#F8FAFC\] in many places.
+   In dark mode, remap these common light surfaces to the dark surface token
+   so they don't render as white boxes. text-night is handled via the
+   --color-night redefinition above. */
+.dark .bg-white {
+  background-color: var(--color-surface);
+}
+
+.dark .bg-\[\#F8FAFC\] {
+  background-color: var(--color-surface);
+}
+
+/* Light-mode "ink" text helpers used directly in routes map to readable
+   foreground in dark mode. */
+.dark .text-\[\#334155\],
+.dark .text-\[\#0D2B45\] {
+  color: var(--color-text-primary);
+}
+
+.dark .text-\[\#64748B\],
+.dark .text-\[\#526277\] {
+  color: var(--color-text-secondary);
+}
+
+.dark .text-\[\#2E6F40\] {
+  color: var(--color-forest-accessible);
+}
+
+.dark .text-\[\#F5B942\] {
+  color: var(--color-golden);
+}
+
+.dark .border-white\/15,
+.dark .border-white\/10 {
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .dark .card,
@@ -1502,34 +1695,25 @@ h1, h2, h3, h4, h5, h6 {
    Consistent, semantically-meaningful depth levels.
    ============================================================================ */
 
+/* Aliased onto the unified --shadow-0..4 token scale. */
 .elevation-0 {
-  box-shadow: none;
+  box-shadow: var(--shadow-0);
 }
 
 .elevation-1 {
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-1);
 }
 
 .elevation-2 {
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.04),
-    0 4px 8px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-2);
 }
 
 .elevation-3 {
-  box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.04),
-    0 8px 16px rgba(0, 0, 0, 0.04),
-    0 16px 32px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-3);
 }
 
 .elevation-4 {
-  box-shadow:
-    0 8px 16px rgba(0, 0, 0, 0.06),
-    0 16px 32px rgba(0, 0, 0, 0.05),
-    0 32px 64px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-4);
 }
 
 /* ============================================================================
@@ -1949,6 +2133,35 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Translucent sticky header surface. Adapts to dark mode. */
+.glass-nav {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border-bottom: 1px solid rgba(13, 43, 69, 0.08);
+  box-shadow: var(--shadow-1);
+}
+
+.dark .glass-nav {
+  background: rgba(15, 20, 25, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Generic translucent panel for hero overlays, dropdowns, popovers. */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: var(--shadow-2);
+  border-radius: var(--radius-xl);
+}
+
+.dark .glass-panel {
+  background: rgba(26, 35, 50, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .glass-card {
@@ -2474,40 +2687,30 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* Fluent depth layers (5-level system) */
+/* Fluent depth layers (5-level system) — aliased onto the unified --shadow-0..4
+   scale. Dark overrides below strengthen shadows for dark surfaces. */
 .fluent-layer-0 {
-  box-shadow: none;
+  box-shadow: var(--shadow-0);
   background-color: var(--color-page);
 }
 
 .fluent-layer-1 {
-  box-shadow:
-    0 0.5px 1.75px rgba(0, 0, 0, 0.04),
-    0 1.5px 5px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-1);
   background-color: var(--color-page);
 }
 
 .fluent-layer-2 {
-  box-shadow:
-    0 0.8px 2.5px rgba(0, 0, 0, 0.04),
-    0 2px 7px rgba(0, 0, 0, 0.04),
-    0 5px 17px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-2);
   background-color: var(--color-page);
 }
 
 .fluent-layer-3 {
-  box-shadow:
-    0 1px 3.5px rgba(0, 0, 0, 0.04),
-    0 3px 10px rgba(0, 0, 0, 0.05),
-    0 8px 28px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-3);
   background-color: var(--color-page);
 }
 
 .fluent-layer-4 {
-  box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.05),
-    0 6px 18px rgba(0, 0, 0, 0.06),
-    0 14px 48px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-4);
   background-color: var(--color-page);
 }
 
@@ -2536,20 +2739,20 @@ h1, h2, h3, h4, h5, h6 {
     0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* Fluent motion curves (spring-based) */
+/* Fluent motion curves — aliased onto the --ease-spring / --duration-* tokens. */
 .motion-quick {
-  transition-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
-  transition-duration: 0.15s;
+  transition-timing-function: var(--ease-spring);
+  transition-duration: var(--duration-fast);
 }
 
 .motion-normal {
-  transition-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
-  transition-duration: 0.25s;
+  transition-timing-function: var(--ease-spring);
+  transition-duration: var(--duration-normal);
 }
 
 .motion-dramatic {
-  transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
-  transition-duration: 0.4s;
+  transition-timing-function: var(--ease-emphasized);
+  transition-duration: var(--duration-slow);
 }
 
 /* Fluent reveal highlight (subtle radial glow on hover) */
@@ -2624,5 +2827,18 @@ h1, h2, h3, h4, h5, h6 {
   .m3-fab,
   .m3-fab-extended {
     transition-duration: 0.01ms !important;
+  }
+
+  /* Icon motion: disable all animation, keep instant transitions only */
+  .icon-motion-pulse,
+  .icon-motion-bounce,
+  .icon-motion-spin,
+  .icon-motion-wiggle,
+  .icon-motion-draw,
+  .icon-motion-fill {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
   }
 }

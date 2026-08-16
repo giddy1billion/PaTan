@@ -153,7 +153,7 @@ export default function InspirationalTestimonies() {
             {testimonyTypes.map((type) => (
               <div
                 key={type.title}
-                className="p-6 bg-white rounded-xl border border-mist text-center"
+                className="p-6 bg-surface rounded-xl border border-mist text-center"
               >
                 <span className="text-4xl" aria-hidden="true">
                   {type.icon}

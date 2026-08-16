@@ -17,6 +17,7 @@ import { verifyCsrfToken } from "~/utils/csrf.server";
 import { db } from "~/utils/db.server";
 import { createNotification } from "~/utils/notifications.server";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
+import { Icon } from "~/components/icon";
 
 type ActionData = {
   error?: string;
@@ -81,37 +82,18 @@ function formatStatus(value: TriageStatus) {
 
 function TriageStatusIcon({ status }: { status: TriageStatus }) {
   if (status === "RESOLVED") {
-    return (
-      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="m5 13 4 4L19 7" />
-      </svg>
-    );
+    return <Icon name="check" size={16} />;
   }
 
   if (status === "DISMISSED") {
-    return (
-      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="8" />
-        <path d="m9 15 6-6" />
-      </svg>
-    );
+    return <Icon name="x" size={16} />;
   }
 
   if (status === "UNDER_REVIEW") {
-    return (
-      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M12 4v8l5 3" />
-        <circle cx="12" cy="12" r="8" />
-      </svg>
-    );
+    return <Icon name="clock" size={16} motion="pulse" />;
   }
 
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="8" />
-      <circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none" />
-    </svg>
-  );
+  return <Icon name="bell" size={16} />;
 }
 
 async function requireModerationRole(request: Request) {
@@ -441,7 +423,7 @@ export default function ModerationReportsRoute() {
             className="mb-4"
           />
 
-          <section className="rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm" aria-label="Report filters">
+          <section className="rounded-2xl border border-midnight/10 bg-surface p-5 shadow-sm" aria-label="Report filters">
             <div className="flex flex-wrap items-center gap-2">
               {(["all", "PENDING", "UNDER_REVIEW", "RESOLVED", "DISMISSED"] as StatusFilter[]).map((option) => (
                 <Link
@@ -467,7 +449,7 @@ export default function ModerationReportsRoute() {
             </div>
           </section>
 
-          <section className="mt-5 rounded-2xl border border-midnight/10 bg-white p-5 shadow-sm" aria-labelledby="reports-heading">
+          <section className="mt-5 rounded-2xl border border-midnight/10 bg-surface p-5 shadow-sm" aria-labelledby="reports-heading">
             <h2 id="reports-heading" className="font-heading text-xl text-midnight">
               Reports
             </h2>
@@ -481,7 +463,7 @@ export default function ModerationReportsRoute() {
                 {reports.map((report) => (
                   <li
                     key={report.id}
-                    className={`rounded-xl border p-4 ${activeReportId === report.id ? "border-golden bg-[#FFF7E6]" : "border-midnight/10 bg-white"}`}
+                    className={`rounded-xl border p-4 ${activeReportId === report.id ? "border-golden bg-warning-bg" : "border-midnight/10 bg-surface"}`}
                     tabIndex={0}
                     onFocus={() => setActiveReportId(report.id)}
                     aria-label={`Report ${report.id} currently ${formatStatus(report.status as TriageStatus)}`}
@@ -510,14 +492,14 @@ export default function ModerationReportsRoute() {
 
                     <div className="mt-3 grid gap-3 lg:grid-cols-[minmax(0,1fr),19rem]">
                       <div className="space-y-3">
-                        <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                        <article className="rounded-lg border border-midnight/10 bg-surface px-3 py-2">
                           <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Reporter</p>
                           <p className="mt-1 text-sm text-midnight">
                             {report.reporter.displayName} (@{report.reporter.username})
                           </p>
                         </article>
 
-                        <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                        <article className="rounded-lg border border-midnight/10 bg-surface px-3 py-2">
                           <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Reported target</p>
                           <p className="mt-1 text-sm text-midnight">
                             {report.reportedUser
@@ -527,7 +509,7 @@ export default function ModerationReportsRoute() {
                         </article>
 
                         {report.story ? (
-                          <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                          <article className="rounded-lg border border-midnight/10 bg-surface px-3 py-2">
                             <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Story context</p>
                             <Link
                               to={`/stories/${report.story.id}`}
@@ -545,7 +527,7 @@ export default function ModerationReportsRoute() {
                         ) : null}
 
                         {report.comment ? (
-                          <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                          <article className="rounded-lg border border-midnight/10 bg-surface px-3 py-2">
                             <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Comment context</p>
                             <p className="mt-1 text-sm text-night/80">{report.comment.content.slice(0, 260)}</p>
                             <p className="mt-1 text-xs text-night/60">
@@ -555,14 +537,14 @@ export default function ModerationReportsRoute() {
                         ) : null}
 
                         {report.description ? (
-                          <article className="rounded-lg border border-midnight/10 bg-white px-3 py-2">
+                          <article className="rounded-lg border border-midnight/10 bg-surface px-3 py-2">
                             <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Reporter description</p>
                             <p className="mt-1 text-sm text-night/80">{report.description}</p>
                           </article>
                         ) : null}
 
                         {report.resolution ? (
-                          <article className="rounded-lg border border-forest/20 bg-[#ECF9F0] px-3 py-2">
+                          <article className="rounded-lg border border-forest/20 bg-forest-mist px-3 py-2">
                             <p className="text-xs font-semibold uppercase tracking-wide text-forest">Resolution</p>
                             <p className="mt-1 text-sm text-forest">{report.resolution}</p>
                           </article>
@@ -570,7 +552,7 @@ export default function ModerationReportsRoute() {
                       </div>
 
                       <div className="space-y-2">
-                        <div className="rounded-lg border border-midnight/10 bg-white p-3">
+                        <div className="rounded-lg border border-midnight/10 bg-surface p-3">
                           <p className="text-xs font-semibold uppercase tracking-wide text-night/65">Quick triage</p>
                           <div className="mt-2 grid grid-cols-2 gap-2">
                             {([
@@ -584,7 +566,7 @@ export default function ModerationReportsRoute() {
                                 type="button"
                                 className={`min-h-[44px] w-full rounded-lg border px-2 py-2 text-xs font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${
                                   pendingQuickAction?.reportId === report.id && pendingQuickAction.nextStatus === entry.status
-                                    ? "border-[#F59E0B]/55 bg-[#FEF3C7]/70 text-[#7C2D12]"
+                                    ? "border-warning/55 bg-warning-bg/70 text-warning-ink"
                                     : "border-midnight/15 text-midnight hover:bg-surface"
                                 }`}
                                 onClick={() =>
@@ -613,14 +595,14 @@ export default function ModerationReportsRoute() {
                             }`}
                           >
                             {pendingQuickAction?.reportId === report.id ? (
-                              <div className="rounded-lg border border-[#F59E0B]/40 bg-[#FEF3C7]/55 px-3 py-2">
-                                <p className="text-xs text-[#7C2D12]">
+                              <div className="rounded-lg border border-warning/40 bg-warning-bg/55 px-3 py-2">
+                                <p className="text-xs text-warning-ink">
                                   Set this report to {formatStatus(pendingQuickAction.nextStatus)}?
                                 </p>
                                 <div className="mt-2 flex items-center justify-end gap-2">
                                   <button
                                     type="button"
-                                    className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                    className="min-h-[36px] rounded-lg border border-warning/45 bg-surface px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                     onClick={() => setPendingQuickAction(null)}
                                   >
                                     Cancel
@@ -632,7 +614,7 @@ export default function ModerationReportsRoute() {
                                     <input type="hidden" name="resolution" value={resolutionDrafts[report.id] ?? ""} />
                                     <button
                                       type="submit"
-                                      className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                      className="min-h-[36px] rounded-lg bg-warning-ink px-3 text-xs font-semibold text-white hover:bg-warning-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                       disabled={isSubmitting}
                                       aria-busy={isSubmitting}
                                       onClick={() => setPendingQuickAction(null)}
@@ -646,7 +628,7 @@ export default function ModerationReportsRoute() {
                           </div>
                         </div>
 
-                        <Form method="post" className="rounded-lg border border-midnight/10 bg-white p-3 space-y-2">
+                        <Form method="post" className="rounded-lg border border-midnight/10 bg-surface p-3 space-y-2">
                           <input type="hidden" name="intent" value="set-report-status" />
                           <input type="hidden" name="reportId" value={report.id} />
                           <label htmlFor={`next-status-${report.id}`} className="block text-xs font-medium text-night">
@@ -656,7 +638,7 @@ export default function ModerationReportsRoute() {
                             id={`next-status-${report.id}`}
                             name="nextStatus"
                             defaultValue={report.status}
-                            className="min-h-[44px] w-full rounded-xl border border-mist px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-golden"
+                            className="min-h-[44px] w-full rounded-xl border border-mist px-3 py-2 text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-golden"
                           >
                             <option value="PENDING">Pending</option>
                             <option value="UNDER_REVIEW">Under review</option>
@@ -704,7 +686,7 @@ export default function ModerationReportsRoute() {
                 to={`/moderation/reports?status=${status}&page=${Math.max(1, page - 1)}`}
                 preventScrollReset
                 aria-disabled={page <= 1}
-                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page <= 1 ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
+                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page <= 1 ? "pointer-events-none bg-mist/40 text-night/40" : "bg-surface border border-midnight/15 text-midnight hover:bg-surface"}`}
               >
                 Previous
               </Link>
@@ -715,7 +697,7 @@ export default function ModerationReportsRoute() {
                 to={`/moderation/reports?status=${status}&page=${Math.min(totalPages, page + 1)}`}
                 preventScrollReset
                 aria-disabled={page >= totalPages}
-                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page >= totalPages ? "pointer-events-none bg-mist/40 text-night/40" : "bg-white border border-midnight/15 text-midnight hover:bg-surface"}`}
+                className={`min-h-[44px] rounded-xl px-4 py-2 text-sm font-semibold ${page >= totalPages ? "pointer-events-none bg-mist/40 text-night/40" : "bg-surface border border-midnight/15 text-midnight hover:bg-surface"}`}
               >
                 Next
               </Link>

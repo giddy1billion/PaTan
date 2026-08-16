@@ -424,7 +424,7 @@ export default function MessagesRoute() {
       <section className="py-8 sm:py-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-5 lg:grid-cols-[20rem_minmax(0,1fr)]">
           <aside
-            className="rounded-2xl border border-midnight/10 bg-white p-4 sm:p-5 shadow-sm"
+            className="rounded-2xl border border-midnight/10 bg-surface p-4 sm:p-5 shadow-sm"
             aria-labelledby="message-partners-heading"
           >
             <h2 id="message-partners-heading" className="font-heading text-xl text-midnight">
@@ -444,7 +444,7 @@ export default function MessagesRoute() {
                     <li key={recipient.id}>
                       <Link
                         to={`/messages?with=${encodeURIComponent(recipient.id)}`}
-                        className={`min-h-[44px] rounded-xl border px-3 py-2.5 flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${isActive ? "border-golden bg-[#FFF7E6]" : "border-midnight/10 hover:bg-surface"}`}
+                        className={`min-h-[44px] rounded-xl border px-3 py-2.5 flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${isActive ? "border-golden bg-warning-bg" : "border-midnight/10 hover:bg-surface"}`}
                         aria-current={isActive ? "page" : undefined}
                       >
                         <div className="h-9 w-9 rounded-full bg-midnight/15 overflow-hidden flex items-center justify-center text-xs font-semibold text-midnight">
@@ -473,7 +473,7 @@ export default function MessagesRoute() {
           </aside>
 
           <section
-            className="rounded-2xl border border-midnight/10 bg-white p-4 sm:p-5 shadow-sm"
+            className="rounded-2xl border border-midnight/10 bg-surface p-4 sm:p-5 shadow-sm"
             aria-labelledby="conversation-heading"
           >
             <div className="flex items-center justify-between gap-3">
@@ -519,7 +519,7 @@ export default function MessagesRoute() {
                         return (
                           <li key={message.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
                             <article
-                              className={`max-w-[85%] rounded-xl px-3 py-2 text-sm ${isMine ? "bg-midnight text-dawn" : "bg-white border border-midnight/10 text-night"}`}
+                              className={`max-w-[85%] rounded-xl px-3 py-2 text-sm ${isMine ? "bg-midnight text-dawn" : "bg-surface border border-midnight/10 text-night"}`}
                             >
                               <p className="whitespace-pre-wrap break-words">{message.content}</p>
                               <p className={`mt-1 text-[11px] ${isMine ? "text-dawn/75" : "text-night/55"}`}>

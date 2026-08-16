@@ -66,7 +66,7 @@ export function ErrorPageView({
           className={`mt-2 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
             tone === "notFound"
               ? "bg-golden-glow text-midnight"
-              : "bg-[var(--color-error-bg)] text-[var(--color-error)]"
+              : "bg-error-bg text-error"
           }`}
         >
           {tone === "notFound" ? "Page not found" : "Something went wrong"}
@@ -100,7 +100,7 @@ export function ErrorPageView({
                 className={
                   action.variant === "primary"
                     ? "btn-primary min-h-[44px] w-full px-6 py-3 text-base sm:w-auto"
-                    : "min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-white px-6 py-3 text-base font-semibold text-midnight transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 sm:w-auto"
+                    : "min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-surface px-6 py-3 text-base font-semibold text-midnight transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 sm:w-auto"
                 }
               >
                 {action.label}
@@ -112,7 +112,7 @@ export function ErrorPageView({
                 className={
                   action.variant === "primary"
                     ? "btn-primary min-h-[44px] w-full px-6 py-3 text-base sm:w-auto"
-                    : "min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-white px-6 py-3 text-base font-semibold text-midnight transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 sm:w-auto"
+                    : "min-h-[44px] inline-flex w-full items-center justify-center rounded-xl border border-midnight/15 bg-surface px-6 py-3 text-base font-semibold text-midnight transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2 sm:w-auto"
                 }
               >
                 {action.label}

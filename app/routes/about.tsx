@@ -90,7 +90,7 @@ export default function About() {
           </div>
 
           <div className="mt-16 grid md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-mist">
+            <div className="bg-surface rounded-xl p-8 shadow-sm border border-mist">
               <h3 className="font-heading text-xl font-bold text-midnight">
                 What We Believe
               </h3>
@@ -114,7 +114,7 @@ export default function About() {
               </ul>
             </div>
 
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-mist">
+            <div className="bg-surface rounded-xl p-8 shadow-sm border border-mist">
               <h3 className="font-heading text-xl font-bold text-midnight">
                 What We Do Differently
               </h3>
@@ -151,7 +151,7 @@ export default function About() {
             {values.map((value) => (
               <div
                 key={value.title}
-                className="bg-white rounded-xl p-6 shadow-sm border border-mist"
+                className="bg-surface rounded-xl p-6 shadow-sm border border-mist"
               >
                 <span className="text-4xl" aria-hidden="true">
                   {value.icon}
