@@ -407,11 +407,11 @@ export default function AspirationEditRoute() {
                       </label>
 
                       {confirmedMilestoneRemovals[milestone.id] ? (
-                        <div className="rounded-xl border border-[#F59E0B]/45 bg-[#FEF3C7]/60 px-3 py-2">
-                          <p className="text-sm font-semibold text-[#7C2D12]">Milestone will be removed on save.</p>
+                        <div className="rounded-xl border border-warning/45 bg-warning-bg/60 px-3 py-2">
+                          <p className="text-sm font-semibold text-warning-ink">Milestone will be removed on save.</p>
                           <button
                             type="button"
-                            className="mt-2 min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            className="mt-2 min-h-[36px] rounded-lg border border-warning/45 bg-white px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                             onClick={() => {
                               setConfirmedMilestoneRemovals((current) => ({
                                 ...current,
@@ -427,7 +427,7 @@ export default function AspirationEditRoute() {
                         <div className="rounded-xl border border-midnight/15 bg-white p-2">
                           <button
                             type="button"
-                            className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-[#7C2D12] transition-colors duration-200 hover:bg-[#FEF3C7]/65 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-warning-ink transition-colors duration-200 hover:bg-warning-bg/65 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                             onClick={() =>
                               setPendingMilestoneRemovalId((current) =>
                                 current === milestone.id ? null : milestone.id,
@@ -436,7 +436,7 @@ export default function AspirationEditRoute() {
                             aria-expanded={pendingMilestoneRemovalId === milestone.id}
                             aria-controls={`confirm-remove-milestone-${milestone.id}`}
                           >
-                            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#F59E0B]/45 bg-[#FFF7E8]">
+                            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-warning/45 bg-warning-bg">
                               <RemoveMilestoneIcon />
                             </span>
                             <span>Remove milestone</span>
@@ -450,21 +450,21 @@ export default function AspirationEditRoute() {
                                 : "max-h-0 opacity-0"
                             }`}
                           >
-                            <div className="rounded-lg border border-[#F59E0B]/40 bg-[#FEF3C7]/55 px-3 py-2">
-                              <p className="text-xs text-[#7C2D12]">
+                            <div className="rounded-lg border border-warning/40 bg-warning-bg/55 px-3 py-2">
+                              <p className="text-xs text-warning-ink">
                                 Remove this milestone from the aspiration after you save changes?
                               </p>
                               <div className="mt-2 flex items-center justify-end gap-2">
                                 <button
                                   type="button"
-                                  className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                  className="min-h-[36px] rounded-lg border border-warning/45 bg-white px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                   onClick={() => setPendingMilestoneRemovalId(null)}
                                 >
                                   Cancel
                                 </button>
                                 <button
                                   type="button"
-                                  className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                  className="min-h-[36px] rounded-lg bg-warning-ink px-3 text-xs font-semibold text-white hover:bg-warning-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                   onClick={() => {
                                     setConfirmedMilestoneRemovals((current) => ({
                                       ...current,

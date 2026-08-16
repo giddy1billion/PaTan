@@ -738,12 +738,12 @@ export default function StoryDetailRoute() {
                         pendingStoryLifecycleIntent === 'archive-story' ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'
                       }`}
                     >
-                      <div className="rounded-lg border border-[#F59E0B]/35 bg-[#FEF3C7]/55 px-3 py-2">
-                        <p className="text-xs text-[#7C2D12]">Archive this story and remove it from public discovery?</p>
+                      <div className="rounded-lg border border-warning/35 bg-warning-bg/55 px-3 py-2">
+                        <p className="text-xs text-warning-ink">Archive this story and remove it from public discovery?</p>
                         <div className="mt-2 flex items-center justify-end gap-2">
                           <button
                             type="button"
-                            className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            className="min-h-[36px] rounded-lg border border-warning/45 bg-white px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                             onClick={() => setPendingStoryLifecycleIntent(null)}
                           >
                             Cancel
@@ -753,7 +753,7 @@ export default function StoryDetailRoute() {
                             <input type="hidden" name={csrfFieldName} value={csrfToken} />
                             <button
                               type="submit"
-                              className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                              className="min-h-[36px] rounded-lg bg-warning-ink px-3 text-xs font-semibold text-white hover:bg-warning-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                               disabled={submittingIntent === 'archive-story'}
                               aria-busy={submittingIntent === 'archive-story'}
                             >
@@ -768,7 +768,7 @@ export default function StoryDetailRoute() {
                   <div className="rounded-xl border border-midnight/15 bg-white p-2">
                     <button
                       type="button"
-                      className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-[#7C2D12] hover:bg-[#FEF3C7]/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                      className="min-h-[44px] w-full inline-flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm font-semibold text-warning-ink hover:bg-warning-bg/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                       onClick={() =>
                         setPendingStoryLifecycleIntent((current) =>
                           current === 'delete-story' ? null : 'delete-story',
@@ -777,7 +777,7 @@ export default function StoryDetailRoute() {
                       aria-expanded={pendingStoryLifecycleIntent === 'delete-story'}
                       aria-controls="confirm-delete-story"
                     >
-                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#F59E0B]/45 bg-[#FFF7E8]">
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-warning/45 bg-warning-bg">
                         <DeleteStoryIcon />
                       </span>
                       <span>Delete story</span>
@@ -789,12 +789,12 @@ export default function StoryDetailRoute() {
                         pendingStoryLifecycleIntent === 'delete-story' ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'
                       }`}
                     >
-                      <div className="rounded-lg border border-[#F59E0B]/40 bg-[#FEF3C7]/55 px-3 py-2">
-                        <p className="text-xs text-[#7C2D12]">Delete this story? This action removes it from your account feed.</p>
+                      <div className="rounded-lg border border-warning/40 bg-warning-bg/55 px-3 py-2">
+                        <p className="text-xs text-warning-ink">Delete this story? This action removes it from your account feed.</p>
                         <div className="mt-2 flex items-center justify-end gap-2">
                           <button
                             type="button"
-                            className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                            className="min-h-[36px] rounded-lg border border-warning/45 bg-white px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                             onClick={() => setPendingStoryLifecycleIntent(null)}
                           >
                             Cancel
@@ -804,7 +804,7 @@ export default function StoryDetailRoute() {
                             <input type="hidden" name={csrfFieldName} value={csrfToken} />
                             <button
                               type="submit"
-                              className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                              className="min-h-[36px] rounded-lg bg-warning-ink px-3 text-xs font-semibold text-white hover:bg-warning-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                               disabled={submittingIntent === 'delete-story'}
                               aria-busy={submittingIntent === 'delete-story'}
                             >

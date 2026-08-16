@@ -72,7 +72,7 @@ export default function SecurityAuthAuditRoute() {
             <h2 className="text-sm font-medium text-night/70">
               Failures (24h)
             </h2>{" "}
-            <p className="mt-2 text-2xl font-bold text-[#B91C1C]">
+            <p className="mt-2 text-2xl font-bold text-error-accessible">
               {dashboard.totals.last24hFailures}
             </p>{" "}
           </article>{" "}
@@ -81,7 +81,7 @@ export default function SecurityAuthAuditRoute() {
             <h2 className="text-sm font-medium text-night/70">
               High Severity (24h)
             </h2>{" "}
-            <p className="mt-2 text-2xl font-bold text-[#92400E]">
+            <p className="mt-2 text-2xl font-bold text-warning-accessible">
               {dashboard.totals.last24hHighSeverity}
             </p>{" "}
           </article>{" "}
@@ -158,7 +158,7 @@ export default function SecurityAuthAuditRoute() {
                 dashboard.recentHighRiskEvents.map((event) => (
                   <div
                     key={event.id}
-                    className="rounded-lg border border-mist/80 bg-[#F8FAFC] p-3"
+                    className="rounded-lg border border-mist/80 bg-surface p-3"
                   >
                     {" "}
                     <p className="text-sm font-semibold text-midnight">

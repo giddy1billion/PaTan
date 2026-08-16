@@ -261,7 +261,7 @@ export default function VerifyEmailStatusRoute() {
             <h1 className="font-heading text-2xl sm:text-3xl font-bold text-midnight text-center">
               Verify Your Email
             </h1>
-            <p className="mt-2 text-center text-[#64748B]">
+            <p className="mt-2 text-center text-subtle">
               Keep your account secure before accessing the full PaTan experience.
             </p>
 
@@ -300,7 +300,7 @@ export default function VerifyEmailStatusRoute() {
               {isVerified ? (
                 <Link
                   to={destination}
-                  className="mt-4 inline-flex min-h-[44px] w-full sm:w-auto items-center justify-center rounded-xl bg-midnight px-4 py-2 text-sm font-semibold text-white hover:bg-[#123A5A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
+                  className="mt-4 inline-flex min-h-[44px] w-full sm:w-auto items-center justify-center rounded-xl bg-midnight px-4 py-2 text-sm font-semibold text-white hover:bg-midnight-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
                 >
                   Continue to your destination
                 </Link>

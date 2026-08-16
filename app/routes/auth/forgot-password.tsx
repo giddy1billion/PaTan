@@ -46,7 +46,7 @@ export default function ForgotPassword() {
             <h1 className="font-heading text-2xl font-bold text-midnight text-center">
               Reset Your Password
             </h1>
-            <p className="mt-2 text-center text-[#64748B]">
+            <p className="mt-2 text-center text-subtle">
               Enter your email and we'll send you a reset link
             </p>
 
@@ -82,7 +82,7 @@ export default function ForgotPassword() {
               Remember your password?{" "}
               <Link
                 to="/login"
-                className="font-medium text-[#2E6F40] hover:text-[#0D2B45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded"
+                className="font-medium text-forest hover:text-midnight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F5B942] rounded"
               >
                 Log in
               </Link>

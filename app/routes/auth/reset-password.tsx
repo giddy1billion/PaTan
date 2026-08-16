@@ -251,7 +251,7 @@ export default function ResetPasswordRoute() {
             <h1 className="font-heading text-2xl font-bold text-midnight text-center">
               Set a New Password
             </h1>{" "}
-            <p className="mt-2 text-center text-[#64748B]">
+            <p className="mt-2 text-center text-subtle">
               Account: {emailHint}
             </p>{" "}
             <AutoDismissAlert

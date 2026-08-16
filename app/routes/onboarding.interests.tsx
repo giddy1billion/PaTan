@@ -153,7 +153,7 @@ export default function OnboardingInterestsRoute() {
                     <label
                       key={interest}
                       htmlFor={id}
-                      className="group flex items-center gap-3 rounded-xl border border-midnight/10 bg-surface/60 px-4 py-3 min-h-[52px] hover:border-golden/50 hover:bg-[#FFF9EC] transition-colors duration-200 motion-reduce:transition-none"
+                      className="group flex items-center gap-3 rounded-xl border border-midnight/10 bg-surface/60 px-4 py-3 min-h-[52px] hover:border-golden/50 hover:bg-warning-bg transition-colors duration-200 motion-reduce:transition-none"
                     >
                       {" "}
                       <input

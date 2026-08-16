@@ -38,9 +38,9 @@ const statusOptions: Array<{ value: StatusFilter; label: string }> = [
 const statusClassName: Record<Exclude<StatusFilter, "all">, string> = {
   pending: "bg-mist text-night/70",
   "in-progress": "bg-golden/10 text-golden",
-  achieved: "bg-[#DCFCE7] text-[#14532D]",
-  granted: "bg-[#ECF9F0] text-forest",
-  transformed: "bg-[#FFF7E6] text-[#92400E]",
+  achieved: "bg-forest-mist text-success-accessible",
+  granted: "bg-forest-mist text-forest",
+  transformed: "bg-warning-bg text-warning-accessible",
 };
 
 function parseStatus(input: string | null): StatusFilter {
@@ -533,7 +533,7 @@ export default function AspirationsIndex() {
                       <input type="hidden" name="intent" value="support-aspiration" />
                       <input type="hidden" name="aspirationId" value={aspiration.id} />
                       <SubmitButton
-                        className="min-h-[44px] w-full rounded-xl border border-golden/40 bg-white px-4 py-2 text-sm font-semibold text-midnight hover:bg-[#FFF7E6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="min-h-[44px] w-full rounded-xl border border-golden/40 bg-white px-4 py-2 text-sm font-semibold text-midnight hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden disabled:opacity-60 disabled:cursor-not-allowed"
                         disabled={aspiration.isSupported || aspiration.isOwner || aspiration.authorId === sessionUserId}
                         busy={supportingAspirationId === aspiration.id}
                         pendingLabel="Supporting…"

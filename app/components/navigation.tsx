@@ -233,7 +233,7 @@ function UserProfileBadge({
       </div>
 
       <div className="min-w-0">
-        <p className="text-[11px] leading-tight text-[#64748B]">Signed in</p>
+        <p className="text-[11px] leading-tight text-subtle">Signed in</p>
         <p className="max-w-[11rem] truncate text-sm font-semibold leading-tight text-midnight">
           {displayName}
         </p>
@@ -462,7 +462,7 @@ export function Navigation({
                           isScrolled
                             ? isActive
                               ? 'bg-surface text-midnight'
-                              : 'text-[#526277] hover:bg-surface/85 hover:text-midnight'
+                              : 'text-subtle hover:bg-surface/85 hover:text-midnight'
                             : isActive
                               ? 'bg-white/15 text-golden'
                               : 'text-white drop-shadow-sm hover:bg-white/10 hover:text-golden'
@@ -484,7 +484,7 @@ export function Navigation({
               {onboarding.isRequired ? (
                 <Link
                   to={onboarding.resumeHref}
-                  className="inline-flex min-h-[44px] items-center rounded-xl border border-forest/20 bg-[#ECF9F0] px-3.5 py-2 text-sm font-semibold text-forest transition-colors duration-200 hover:bg-[#DDF2E4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
+                  className="inline-flex min-h-[44px] items-center rounded-xl border border-forest/20 bg-forest-mist px-3.5 py-2 text-sm font-semibold text-forest transition-colors duration-200 hover:bg-forest-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden focus-visible:ring-offset-2"
                   aria-label={`Resume onboarding, step ${onboarding.step} of 2`}
                 >
                   Continue setup {onboarding.step}/2
@@ -634,7 +634,7 @@ export function Navigation({
               {secondaryMenuItems.length > 0 ? (
                 <>
                   <p
-                    className="mt-4 px-3 text-xs font-semibold uppercase tracking-wide text-[#64748B]"
+                    className="mt-4 px-3 text-xs font-semibold uppercase tracking-wide text-subtle"
                     id="mobile-explore-label"
                   >
                     Explore
@@ -676,7 +676,7 @@ export function Navigation({
                     <UserProfileBadge user={user} compact />
                   </Link>
                   <div className="min-w-0">
-                    <p className="text-xs text-[#64748B]">Signed in via {getProviderLabel(user.provider)}</p>
+                    <p className="text-xs text-subtle">Signed in via {getProviderLabel(user.provider)}</p>
                     <p className="truncate text-sm font-semibold text-midnight">{getDisplayName(user)}</p>
                   </div>
                 </div>
@@ -693,14 +693,14 @@ export function Navigation({
                       {notificationUnreadCount > 99 ? '99+' : notificationUnreadCount}
                     </span>
                   ) : (
-                    <span className="text-xs font-medium text-[#64748B]">All read</span>
+                    <span className="text-xs font-medium text-subtle">All read</span>
                   )}
                 </Link>
 
                 {onboarding.isRequired ? (
                   <Link
                     to={onboarding.resumeHref}
-                    className="mt-3 inline-flex w-full min-h-[44px] items-center justify-center rounded-xl border border-forest/20 bg-[#ECF9F0] text-sm font-semibold text-forest transition-colors duration-200 hover:bg-[#DDF2E4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                    className="mt-3 inline-flex w-full min-h-[44px] items-center justify-center rounded-xl border border-forest/20 bg-forest-mist text-sm font-semibold text-forest transition-colors duration-200 hover:bg-forest-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                     onClick={closeMenu}
                     aria-label={`Resume onboarding, step ${onboarding.step} of 2`}
                   >

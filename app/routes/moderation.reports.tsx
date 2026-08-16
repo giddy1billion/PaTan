@@ -477,7 +477,7 @@ export default function ModerationReportsRoute() {
                 {reports.map((report) => (
                   <li
                     key={report.id}
-                    className={`rounded-xl border p-4 ${activeReportId === report.id ? "border-golden bg-[#FFF7E6]" : "border-midnight/10 bg-white"}`}
+                    className={`rounded-xl border p-4 ${activeReportId === report.id ? "border-golden bg-warning-bg" : "border-midnight/10 bg-white"}`}
                     tabIndex={0}
                     onFocus={() => setActiveReportId(report.id)}
                     aria-label={`Report ${report.id} currently ${formatStatus(report.status as TriageStatus)}`}
@@ -558,7 +558,7 @@ export default function ModerationReportsRoute() {
                         ) : null}
 
                         {report.resolution ? (
-                          <article className="rounded-lg border border-forest/20 bg-[#ECF9F0] px-3 py-2">
+                          <article className="rounded-lg border border-forest/20 bg-forest-mist px-3 py-2">
                             <p className="text-xs font-semibold uppercase tracking-wide text-forest">Resolution</p>
                             <p className="mt-1 text-sm text-forest">{report.resolution}</p>
                           </article>
@@ -580,7 +580,7 @@ export default function ModerationReportsRoute() {
                                 type="button"
                                 className={`min-h-[44px] w-full rounded-lg border px-2 py-2 text-xs font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${
                                   pendingQuickAction?.reportId === report.id && pendingQuickAction.nextStatus === entry.status
-                                    ? "border-[#F59E0B]/55 bg-[#FEF3C7]/70 text-[#7C2D12]"
+                                    ? "border-warning/55 bg-warning-bg/70 text-warning-ink"
                                     : "border-midnight/15 text-midnight hover:bg-surface"
                                 }`}
                                 onClick={() =>
@@ -609,14 +609,14 @@ export default function ModerationReportsRoute() {
                             }`}
                           >
                             {pendingQuickAction?.reportId === report.id ? (
-                              <div className="rounded-lg border border-[#F59E0B]/40 bg-[#FEF3C7]/55 px-3 py-2">
-                                <p className="text-xs text-[#7C2D12]">
+                              <div className="rounded-lg border border-warning/40 bg-warning-bg/55 px-3 py-2">
+                                <p className="text-xs text-warning-ink">
                                   Set this report to {formatStatus(pendingQuickAction.nextStatus)}?
                                 </p>
                                 <div className="mt-2 flex items-center justify-end gap-2">
                                   <button
                                     type="button"
-                                    className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                    className="min-h-[36px] rounded-lg border border-warning/45 bg-white px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                     onClick={() => setPendingQuickAction(null)}
                                   >
                                     Cancel
@@ -628,7 +628,7 @@ export default function ModerationReportsRoute() {
                                     <input type="hidden" name="resolution" value={resolutionDrafts[report.id] ?? ""} />
                                     <button
                                       type="submit"
-                                      className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                      className="min-h-[36px] rounded-lg bg-warning-ink px-3 text-xs font-semibold text-white hover:bg-warning-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                       disabled={isSubmitting}
                                       aria-busy={isSubmitting}
                                       onClick={() => setPendingQuickAction(null)}

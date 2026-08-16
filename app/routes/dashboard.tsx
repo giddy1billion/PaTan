@@ -418,7 +418,7 @@ export default function DashboardRoute() {
       : "Take one minute to reflect: what moment today made you feel grateful or hopeful?";
   const completionWidth = `${summary.profileCompletion.percent}%`;
   return (
-    <main id="main-content" className="min-h-screen bg-dawn dark:bg-[#0F1419]">
+    <main id="main-content" className="min-h-screen bg-dawn dark:bg-page">
       <section className="aurora-accent bg-midnight dark:bg-night text-dawn py-10 sm:py-14">
         {" "}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

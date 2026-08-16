@@ -677,7 +677,7 @@ interface AlertProps {
 
 const alertVariantConfig = {
   success: { bg: 'bg-success-bg', border: 'border-success/30', text: 'text-success-accessible', icon: '\u2713' },
-  warning: { bg: 'bg-warning-bg', border: 'border-warning/30', text: 'text-[#7C2D12]', icon: '!' },
+  warning: { bg: 'bg-warning-bg', border: 'border-warning/30', text: 'text-warning-ink', icon: '!' },
   error: { bg: 'bg-error-bg', border: 'border-error/30', text: 'text-error-accessible', icon: '\u2715' },
   info: { bg: 'bg-info-bg', border: 'border-info/30', text: 'text-info-accessible', icon: 'i' },
 };

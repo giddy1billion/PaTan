@@ -422,7 +422,7 @@ export default function MessagesRoute() {
                     <li key={recipient.id}>
                       <Link
                         to={`/messages?with=${encodeURIComponent(recipient.id)}`}
-                        className={`min-h-[44px] rounded-xl border px-3 py-2.5 flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${isActive ? "border-golden bg-[#FFF7E6]" : "border-midnight/10 hover:bg-surface"}`}
+                        className={`min-h-[44px] rounded-xl border px-3 py-2.5 flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden ${isActive ? "border-golden bg-warning-bg" : "border-midnight/10 hover:bg-surface"}`}
                         aria-current={isActive ? "page" : undefined}
                       >
                         <div className="h-9 w-9 rounded-full bg-midnight/15 overflow-hidden flex items-center justify-center text-xs font-semibold text-midnight">

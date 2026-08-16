@@ -601,7 +601,7 @@ export default function PublicUserProfileRoute() {
                               <input type="hidden" name="username" value={profile.username} />
                               <button
                                 type="submit"
-                                className="min-h-[36px] rounded-lg bg-midnight px-3 text-xs font-semibold text-white hover:bg-[#123A5A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                className="min-h-[36px] rounded-lg bg-midnight px-3 text-xs font-semibold text-white hover:bg-midnight-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                 disabled={submittingIntent === "block-user"}
                                 aria-busy={submittingIntent === "block-user"}
                                 onClick={() => setIsSafetyMenuOpen(false)}
@@ -614,10 +614,10 @@ export default function PublicUserProfileRoute() {
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-[#F59E0B]/30 bg-white p-2">
+                    <div className="rounded-xl border border-warning/30 bg-white p-2">
                       <button
                         type="button"
-                        className="min-h-[44px] w-full inline-flex items-center gap-3 rounded-lg px-2 py-2 text-left text-[#7C2D12] transition-colors duration-200 hover:bg-[#FEF3C7]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                        className="min-h-[44px] w-full inline-flex items-center gap-3 rounded-lg px-2 py-2 text-left text-warning-ink transition-colors duration-200 hover:bg-warning-bg/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                         onClick={() =>
                           setPendingSafetyIntent((current) =>
                             current === "report-user" ? null : "report-user",
@@ -626,12 +626,12 @@ export default function PublicUserProfileRoute() {
                         aria-expanded={pendingSafetyIntent === "report-user"}
                         aria-controls="confirm-report-user"
                       >
-                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#F59E0B]/45 bg-[#FFF7E8] text-[#7C2D12]">
+                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-warning/45 bg-warning-bg text-warning-ink">
                           <ReportIcon />
                         </span>
                         <span className="flex flex-col">
                           <span className="text-sm font-semibold leading-tight">Report user</span>
-                          <span className="text-xs text-[#7C2D12]/80 leading-tight mt-0.5">
+                          <span className="text-xs text-warning-ink/80 leading-tight mt-0.5">
                             Send this profile to moderators for review.
                           </span>
                         </span>
@@ -645,14 +645,14 @@ export default function PublicUserProfileRoute() {
                             : "max-h-0 opacity-0"
                         }`}
                       >
-                        <div className="rounded-lg border border-[#F59E0B]/35 bg-[#FEF3C7]/55 px-3 py-2">
-                          <p className="text-xs text-[#7C2D12]">
+                        <div className="rounded-lg border border-warning/35 bg-warning-bg/55 px-3 py-2">
+                          <p className="text-xs text-warning-ink">
                             Report @{profile.username}? Our moderation team reviews every report.
                           </p>
                           <div className="mt-2 flex items-center justify-end gap-2">
                             <button
                               type="button"
-                              className="min-h-[36px] rounded-lg border border-[#F59E0B]/45 bg-white px-3 text-xs font-semibold text-[#7C2D12] hover:bg-[#FFF7E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                              className="min-h-[36px] rounded-lg border border-warning/45 bg-white px-3 text-xs font-semibold text-warning-ink hover:bg-warning-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                               onClick={() => setPendingSafetyIntent(null)}
                             >
                               Cancel
@@ -662,7 +662,7 @@ export default function PublicUserProfileRoute() {
                               <input type="hidden" name="username" value={profile.username} />
                               <button
                                 type="submit"
-                                className="min-h-[36px] rounded-lg bg-[#7C2D12] px-3 text-xs font-semibold text-white hover:bg-[#6A250F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
+                                className="min-h-[36px] rounded-lg bg-warning-ink px-3 text-xs font-semibold text-white hover:bg-warning-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-golden"
                                 disabled={submittingIntent === "report-user"}
                                 aria-busy={submittingIntent === "report-user"}
                                 onClick={() => setIsSafetyMenuOpen(false)}
@@ -782,7 +782,7 @@ export default function PublicUserProfileRoute() {
               {profile.personalInterests.map((interest) => (
                 <li
                   key={interest}
-                  className="rounded-full bg-[#FDF3D6] text-[#7A5A00] px-3 py-1 text-xs font-semibold"
+                  className="rounded-full bg-golden-glow text-warning-accessible px-3 py-1 text-xs font-semibold"
                 >
                   {" "}
                   {interest}{" "}
@@ -891,7 +891,7 @@ export default function PublicUserProfileRoute() {
                   </p>{" "}
                   <div className="mt-1 flex items-center gap-2 text-xs text-night/60">
                     {" "}
-                    <span className="rounded-full bg-[#ECF9F0] text-forest px-2 py-0.5 font-semibold uppercase tracking-wide">
+                    <span className="rounded-full bg-forest-mist text-forest px-2 py-0.5 font-semibold uppercase tracking-wide">
                       {" "}
                       {aspiration.status}{" "}
                     </span>{" "}

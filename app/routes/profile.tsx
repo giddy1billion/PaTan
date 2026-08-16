@@ -443,7 +443,7 @@ export default function ProfileRoute() {
                   {profile.personalInterests.map((interest) => (
                     <li
                       key={interest}
-                      className="rounded-full bg-[#FDF3D6] text-[#7A5A00] px-3 py-1 text-xs font-semibold"
+                      className="rounded-full bg-golden-glow text-warning-accessible px-3 py-1 text-xs font-semibold"
                     >
                       {" "}
                       {interest}{" "}
