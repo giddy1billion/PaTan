@@ -14,7 +14,11 @@ import {
 import { createUserSession, getUser } from "~/utils/auth.server";
 import { SubmitButton } from "~/components/ui";
 import { getAuthErrorMessage } from "~/utils/auth-errors";
-import { logAuthSecurityEvent } from "~/utils/auth-security.server";
+import {
+  isBotChallengeRequired,
+  logAuthSecurityEvent,
+} from "~/utils/auth-security.server";
+import { verifyBotDefenseToken } from "~/utils/bot-defense.server";
 import { verifyCsrfToken } from "~/utils/csrf.server";
 import { db } from "~/utils/db.server";
 import { issueEmailVerification } from "~/utils/email-verification.server";
@@ -94,6 +98,37 @@ export async function action({ request }: ActionFunctionArgs) {
     return redirect("/login?error=rate-limited", {
       headers: rateLimit.headers,
     });
+  }
+
+  // Bot defense check for login
+  const challengeRequired = await isBotChallengeRequired({
+    request,
+    identifier: email || undefined,
+    scope: "login",
+  });
+  if (challengeRequired) {
+    const botDefenseToken = String(formData.get("botDefenseToken") ?? "");
+    const challengeResult = await verifyBotDefenseToken({
+      token: botDefenseToken,
+      request,
+    });
+    if (!challengeResult.ok) {
+      await logAuthSecurityEvent({
+        request,
+        eventType: "bot_challenge_failure",
+        severity: "warn",
+        outcome: challengeResult.reason,
+        route: "/login",
+        email: email || undefined,
+      });
+      const errorCode =
+        challengeResult.reason === "provider-unconfigured"
+          ? "captcha-unavailable"
+          : "captcha-failed";
+      return redirect(`/login?error=${errorCode}`, {
+        headers: rateLimit.headers,
+      });
+    }
   }
 
   if (intent === "resend-verification") {
@@ -310,6 +345,7 @@ export default function Login() {
               <input type="hidden" name="intent" value="login" />
               <input type="hidden" name="redirectTo" value={redirectTo} />
               <input type="hidden" name={csrfFieldName} value={csrfToken} />
+              <input type="hidden" name="botDefenseToken" value="" />
               <div>
                 <label
                   htmlFor="email"

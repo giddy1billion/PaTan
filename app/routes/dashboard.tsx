@@ -14,6 +14,7 @@ import {
 } from "react-router";
 import { useState } from "react";
 import { requireUser } from "~/utils/auth.server";
+import { verifyCsrfToken } from "~/utils/csrf.server";
 import { db } from "~/utils/db.server";
 import { createNotification } from "~/utils/notifications.server";
 import {
@@ -160,6 +161,10 @@ export function shouldRevalidate({
 
 export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
+  
+  // Verify CSRF token for all mutating operations
+  await verifyCsrfToken(request);
+  
   const formData = await request.formData();
   const intent = String(formData.get("intent") ?? "");
 

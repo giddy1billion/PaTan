@@ -13,6 +13,7 @@ import {
 } from "react-router";
 import { useEffect, useState } from "react";
 import { requireUser } from "~/utils/auth.server";
+import { verifyCsrfToken } from "~/utils/csrf.server";
 import { db } from "~/utils/db.server";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 
@@ -194,6 +195,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
   const formData = await request.formData();
+  
+  // Verify CSRF token for notification actions
+  await verifyCsrfToken(request);
 
   const intent = String(formData.get("intent") ?? "").trim();
   const notificationId = String(formData.get("notificationId") ?? "").trim();

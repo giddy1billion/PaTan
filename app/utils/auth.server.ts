@@ -1,6 +1,14 @@
 import { createCookieSessionStorage, createCookie, redirect } from "react-router";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { db } from "~/utils/db.server";
+import { 
+  createSessionRecord, 
+  validateSessionToken, 
+  checkAccountStatus,
+  revokeSession,
+  SessionRevocationReason,
+  validateSessionAndAccountStatus,
+} from "~/utils/session.server";
 
 export type SessionUser = {
   id: string;
@@ -12,7 +20,16 @@ export type SessionUser = {
 
 const USER_SESSION_KEY = "user";
 const THIRTY_DAYS_IN_SECONDS = 60 * 60 * 24 * 30;
-const SESSION_COOKIE_SECRET = process.env.SESSION_SECRET ?? "dev-session-secret-change-me";
+
+// Fail fast if SESSION_SECRET is not set in production
+if (process.env.NODE_ENV === "production" && !process.env.SESSION_SECRET?.trim()) {
+  throw new Error(
+    "SESSION_SECRET environment variable must be set in production. " +
+    "Generate a secure random value with: openssl rand -base64 32"
+  );
+}
+
+const SESSION_COOKIE_SECRET = process.env.SESSION_SECRET;
 
 const authTokenCookie = createCookie("__patan_auth", {
   httpOnly: true,
@@ -29,7 +46,7 @@ const sessionStorage = createCookieSessionStorage({
     path: "/",
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
-    secrets: [process.env.SESSION_SECRET ?? "dev-session-secret-change-me"],
+    secrets: [SESSION_COOKIE_SECRET ?? "dev-session-secret-change-me"],
     maxAge: THIRTY_DAYS_IN_SECONDS,
   },
 });
@@ -145,6 +162,26 @@ export async function getUser(request: Request): Promise<SessionUser | null> {
     return null;
   }
 
+  // Validate session against database and check account status
+  const sessionValidation = await validateSessionAndAccountStatus(token);
+  if (!sessionValidation.valid) {
+    return null;
+  }
+
+  // Check if user is soft-deleted
+  const userRecord = await db.user.findUnique({
+    where: { id: payload.sub },
+    select: { 
+      deletedAt: true,
+      accountStatus: true,
+      emailVerified: true,
+    },
+  });
+
+  if (!userRecord || userRecord.deletedAt) {
+    return null;
+  }
+
   return {
     id: payload.sub,
     email: payload.email,
@@ -222,6 +259,19 @@ export async function createUserSession({
     exp,
   });
 
+  // Extract request metadata for session tracking
+  const userAgent = request.headers.get("User-Agent");
+  const ipAddress = request.headers.get("X-Forwarded-For")?.split(",")[0]?.trim() 
+    || request.headers.get("X-Real-IP") 
+    || undefined;
+  
+  // Create simple device fingerprint from user agent and IP
+  const deviceFingerprint = userAgent && ipAddress
+    ? createHmac("sha256", SESSION_COOKIE_SECRET ?? "dev")
+        .update(`${userAgent}|${ipAddress}`)
+        .digest("hex")
+    : undefined;
+
   const responseHeaders = new Headers(headers);
   responseHeaders.append(
     "Set-Cookie",
@@ -235,6 +285,19 @@ export async function createUserSession({
     await sessionStorage.commitSession(sessionToUse),
   );
 
+  // Create session record in database for tracking and revocation
+  await createSessionRecord({
+    userId: user.id,
+    token,
+    userAgent,
+    ipAddress,
+    deviceFingerprint,
+    expiresAt: new Date(exp * 1000),
+  }).catch((error) => {
+    // Log error but don't fail login if session tracking fails
+    console.error("[session] Failed to create session record:", error.message);
+  });
+
   return redirect(safeRedirect(redirectTo), {
     headers: responseHeaders,
   });
@@ -242,6 +305,15 @@ export async function createUserSession({
 
 export async function logout(request: Request) {
   const session = await getSession(request);
+  const cookieHeader = request.headers.get("Cookie");
+  const token = await authTokenCookie.parse(cookieHeader);
+
+  // Revoke the session in the database if we have a token
+  if (token && typeof token === "string") {
+    await revokeSession(token, SessionRevocationReason.USER_REQUESTED).catch((error) => {
+      console.error("[session] Failed to revoke session on logout:", error.message);
+    });
+  }
 
   return redirect("/login?error=signed-out", {
     headers: new Headers([
@@ -254,5 +326,47 @@ export async function logout(request: Request) {
         }),
       ],
     ]),
+  });
+}
+
+/**
+ * Logout from all devices for the current user
+ */
+export async function logoutAllDevices(request: Request, userId: string) {
+  const session = await getSession(request);
+  
+  // Revoke all sessions except the current one
+  const cookieHeader = request.headers.get("Cookie");
+  const currentToken = await authTokenCookie.parse(cookieHeader);
+  
+  await revokeAllUserSessions(userId, SessionRevocationReason.USER_REQUESTED, currentToken || undefined)
+    .catch((error) => {
+      console.error("[session] Failed to revoke all sessions:", error.message);
+    });
+
+  return redirect("/login?message=all-devices-logged-out", {
+    headers: new Headers([
+      ["Set-Cookie", await sessionStorage.destroySession(session)],
+      [
+        "Set-Cookie",
+        await authTokenCookie.serialize("", {
+          maxAge: 0,
+          expires: new Date(0),
+        }),
+      ],
+    ]),
+  });
+}
+
+/**
+ * Logout after password change - revokes all other sessions
+ */
+export async function logoutOtherDevices(userId: string, currentToken?: string) {
+  await revokeAllUserSessions(
+    userId, 
+    SessionRevocationReason.PASSWORD_CHANGED,
+    currentToken
+  ).catch((error) => {
+    console.error("[session] Failed to revoke other sessions after password change:", error.message);
   });
 }

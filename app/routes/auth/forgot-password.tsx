@@ -1,6 +1,11 @@
-import type { MetaFunction } from "react-router";
-import { Link, Form, useNavigation } from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "react-router";
+import { Link, Form, redirect, useNavigation, useRouteLoaderData, useSearchParams } from "react-router";
 import { SubmitButton } from "~/components/ui";
+import { logAuthSecurityEvent } from "~/utils/auth-security.server";
+import { verifyCsrfToken } from "~/utils/csrf.server";
+import { issuePasswordResetToken } from "~/utils/password-reset.server";
+import { enforceAuthRateLimit } from "~/utils/rate-limit.server";
+import { db } from "~/utils/db.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -12,9 +17,123 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const email = String(formData.get("email") ?? "")
+    .trim()
+    .toLowerCase();
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+
+  // CSRF verification
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+  if (!hasValidCsrf) {
+    await logAuthSecurityEvent({
+      request,
+      eventType: "csrf_failure",
+      severity: "warn",
+      outcome: "blocked",
+      route: "/forgot-password",
+      email: email || undefined,
+    });
+    return redirect("/forgot-password?error=invalid-csrf");
+  }
+
+  // Rate limiting
+  const rateLimit = await enforceAuthRateLimit({
+    request,
+    scope: "password-reset",
+    identifier: email || undefined,
+  });
+  if (!rateLimit.allowed) {
+    await logAuthSecurityEvent({
+      request,
+      eventType: "rate_limit_block",
+      severity: "warn",
+      outcome: "blocked",
+      route: "/forgot-password",
+      email: email || undefined,
+    });
+    return redirect("/forgot-password?error=rate-limited", {
+      headers: rateLimit.headers,
+    });
+  }
+
+  if (!email) {
+    return redirect("/forgot-password?error=invalid-email");
+  }
+
+  // Look up user by email
+  const user = await db.user.findFirst({
+    where: {
+      email,
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+      email: true,
+    },
+  });
+
+  // Always redirect to success page (prevents email enumeration)
+  const redirectLocation = "/forgot-password?sent=true";
+
+  if (!user) {
+    return redirect(redirectLocation);
+  }
+
+  try {
+    const result = await issuePasswordResetToken({
+      userId: user.id,
+      email: user.email,
+      requestUrl: request.url,
+    });
+
+    await logAuthSecurityEvent({
+      request,
+      eventType: "password_reset_sent",
+      severity: "info",
+      outcome: "sent",
+      userId: user.id,
+      email: user.email,
+      route: "/forgot-password",
+      metadata: {
+        expiresAt: result.expiresAt.toISOString(),
+        provider: "resend",
+      },
+    });
+  } catch {
+    await logAuthSecurityEvent({
+      request,
+      eventType: "password_reset_sent",
+      severity: "warn",
+      outcome: "failed",
+      email,
+      route: "/forgot-password",
+    });
+  }
+
+  return redirect(redirectLocation);
+}
+
+export async function loader() {
+  return null;
+}
+
 export default function ForgotPassword() {
   const navigation = useNavigation();
+  const [searchParams] = useSearchParams();
+  const rootData = useRouteLoaderData<{
+    csrfToken?: string;
+    csrfFieldName?: string;
+  }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
   const isSending = navigation.state === "submitting";
+  const isSent = searchParams.get("sent") === "true";
+  
   return (
     <div className="min-h-screen page-modern flex flex-col">
       {/* Header */}
@@ -50,7 +169,14 @@ export default function ForgotPassword() {
               Enter your email and we'll send you a reset link
             </p>
 
+            {isSent && (
+              <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg text-center text-sm text-green-800">
+                If an account exists with that email, you will receive a password reset link shortly.
+              </div>
+            )}
+
             <Form method="post" className="form-modern mt-8 space-y-6">
+              <input type="hidden" name={csrfFieldName} value={csrfToken} />
               <div>
                 <label
                   htmlFor="email"

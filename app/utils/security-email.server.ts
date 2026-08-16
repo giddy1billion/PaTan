@@ -156,14 +156,62 @@ export async function sendSecurityEmail(input: SecurityEmailInput): Promise<Secu
     };
   }
 
+  // Redact sensitive information from metadata before logging
+  const redactedMetadata = input.metadata ? redactSensitiveMetadata(input.metadata) : {};
+
   console.info("[security-email]", {
     to: input.to,
     subject: template.subject,
     category: input.category,
     text: template.text,
     html: template.html,
-    metadata: input.metadata ?? {},
+    metadata: redactedMetadata,
   });
 
   return { sent: true, status: "sent", provider: "console" };
+}
+
+/**
+ * Redacts sensitive information from metadata before logging
+ * Prevents tokens, codes, URLs with secrets from appearing in logs
+ */
+export function redactSensitiveMetadata(
+  metadata: Record<string, unknown>
+): Record<string, unknown> {
+  const redacted: Record<string, unknown> = {};
+  
+  for (const [key, value] of Object.entries(metadata)) {
+    const lowerKey = key.toLowerCase();
+    
+    // Redact fields that commonly contain secrets
+    if (
+      lowerKey.includes("token") ||
+      lowerKey.includes("code") ||
+      lowerKey.includes("secret") ||
+      lowerKey.includes("password") ||
+      lowerKey.includes("key") ||
+      lowerKey.includes("auth")
+    ) {
+      redacted[key] = "[REDACTED]";
+      continue;
+    }
+    
+    // Redact URLs that might contain tokens
+    if (typeof value === "string" && 
+        (lowerKey.includes("url") || lowerKey.includes("link")) &&
+        (value.includes("token=") || value.includes("code=") || value.includes("secret="))) {
+      redacted[key] = "[REDACTED_URL]";
+      continue;
+    }
+    
+    // Recursively redact nested objects
+    if (typeof value === "object" && value !== null) {
+      redacted[key] = redactSensitiveMetadata(value as Record<string, unknown>);
+      continue;
+    }
+    
+    redacted[key] = value;
+  }
+  
+  return redacted;
 }

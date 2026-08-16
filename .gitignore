@@ -1,10 +1,59 @@
-.DS_Store
+```
+# Dependencies
+node_modules/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment variables
 .env
-/node_modules/
+.env.local
+*.env.*
 
-# React Router
-/.react-router/
-/build/
+# Editors
+.vscode/
+.idea/
 
-/generated/prisma
-dd.json
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Build outputs
+dist/
+build/
+target/
+out/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# Database
+*.db
+*.db-journal
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Cache directories
+.cache/
+.mypy_cache/
+.pytest_cache/
+.nyc_output/
+coverage/
+```

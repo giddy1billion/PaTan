@@ -11,6 +11,7 @@ import {
   useNavigation,
 } from "react-router";
 import { requireUser } from "~/utils/auth.server";
+import { verifyCsrfToken } from "~/utils/csrf.server";
 import {
   getPublicProfileVisibilitySettings,
   getProfileForEdit,
@@ -119,6 +120,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
+  
+  // Verify CSRF token for all mutating operations
+  await verifyCsrfToken(request);
+  
   const formData = await request.formData();
   const values = {
     bio: String(formData.get("bio") ?? ""),

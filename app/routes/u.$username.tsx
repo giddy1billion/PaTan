@@ -7,6 +7,7 @@ import { Form, Link, useActionData, useLoaderData, useNavigation } from "react-r
 import { useEffect, useRef, useState } from "react";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 import { getUser, requireUser } from "~/utils/auth.server";
+import { verifyCsrfToken } from "~/utils/csrf.server";
 import { db } from "~/utils/db.server";
 import { createNotification } from "~/utils/notifications.server";
 import {
@@ -254,6 +255,9 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 export async function action({ request, params }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
   const formData = await request.formData();
+  
+  // Verify CSRF token for profile actions (follow/unfollow/block/report)
+  await verifyCsrfToken(request);
 
   const intent = String(formData.get("intent") ?? "");
   const username = String(formData.get("username") ?? params.username ?? "").trim();

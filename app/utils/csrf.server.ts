@@ -69,3 +69,38 @@ export async function verifyCsrfToken({
 
   return safeCompare(cookieValue, submittedToken);
 }
+
+/**
+ * Middleware-style CSRF verification for route actions.
+ * Throws an error if CSRF validation fails.
+ */
+export async function enforceCsrfProtection(request: Request, formData?: FormData) {
+  const submittedToken = formData?.get(CSRF_TOKEN_FIELD_NAME) as string | null;
+  
+  if (!submittedToken) {
+    // Also check header for API requests
+    const headerToken = request.headers.get("X-CSRF-Token");
+    if (!headerToken) {
+      throw new Response("CSRF token missing", { 
+        status: 403, 
+        statusText: "Forbidden" 
+      });
+    }
+    submittedToken = headerToken;
+  }
+
+  const isValid = await verifyCsrfToken({ request, submittedToken });
+  if (!isValid) {
+    throw new Response("CSRF token invalid", { 
+      status: 403, 
+      statusText: "Forbidden" 
+    });
+  }
+}
+
+/**
+ * Checks if HTTP method is safe (idempotent)
+ */
+export function isSafeMethod(method: string): boolean {
+  return ["GET", "HEAD", "OPTIONS"].includes(method.toUpperCase());
+}

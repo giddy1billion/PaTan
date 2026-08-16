@@ -13,6 +13,7 @@ import {
 import { useState } from "react";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 import { requireUser } from "~/utils/auth.server";
+import { verifyCsrfToken } from "~/utils/csrf.server";
 import { db } from "~/utils/db.server";
 import { createNotification, createNotifications } from "~/utils/notifications.server";
 
@@ -231,6 +232,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
+  // Verify CSRF token for all mutating operations
+  await verifyCsrfToken(request);
+
   const sessionUser = await requireUser(request);
   const aspirationId = params.id?.trim();
   const formData = await request.formData();

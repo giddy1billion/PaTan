@@ -3,16 +3,19 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "react-router";
-import { Link, Form, redirect, useNavigation, useSearchParams } from "react-router";
+import { Link, Form, redirect, useNavigation, useSearchParams, useRouteLoaderData } from "react-router";
 import { createUserSession, getUser } from "~/utils/auth.server";
 import { SubmitButton } from "~/components/ui";
 import { getAuthErrorMessage } from "~/utils/auth-errors";
-import { logAuthSecurityEvent } from "~/utils/auth-security.server";
+import { isBotChallengeRequired, logAuthSecurityEvent } from "~/utils/auth-security.server";
+import { verifyBotDefenseToken } from "~/utils/bot-defense.server";
 import { issueEmailVerification } from "~/utils/email-verification.server";
 import {
   createLocalUser,
   getPostAuthRedirectForUser,
 } from "~/utils/users.server";
+import { validateSecurePassword } from "~/utils/password-security.server";
+import { verifyCsrfToken } from "~/utils/csrf.server";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 
 export const meta: MetaFunction = () => {
@@ -48,9 +51,70 @@ export async function action({ request }: ActionFunctionArgs) {
     .trim()
     .toLowerCase();
   const password = String(formData.get("password") ?? "");
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+  const botDefenseToken = String(formData.get("botDefenseToken") ?? "");
   const redirectTo = String(formData.get("redirectTo") ?? "/discover");
 
-  if (!firstName || !lastName || !email || password.length < 8) {
+  // CSRF verification
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+  if (!hasValidCsrf) {
+    await logAuthSecurityEvent({
+      request,
+      eventType: "csrf_failure",
+      severity: "warn",
+      outcome: "blocked",
+      route: "/signup",
+      email: email || undefined,
+    });
+    return redirect("/signup?error=invalid-csrf");
+  }
+
+  // Bot defense check for signup
+  const challengeRequired = await isBotChallengeRequired({
+    request,
+    identifier: email || undefined,
+    scope: "signup",
+  });
+  if (challengeRequired) {
+    const challengeResult = await verifyBotDefenseToken({
+      token: botDefenseToken,
+      request,
+    });
+    if (!challengeResult.ok) {
+      await logAuthSecurityEvent({
+        request,
+        eventType: "bot_challenge_failure",
+        severity: "warn",
+        outcome: challengeResult.reason,
+        route: "/signup",
+        email: email || undefined,
+      });
+      const errorCode =
+        challengeResult.reason === "provider-unconfigured"
+          ? "captcha-unavailable"
+          : "captcha-failed";
+      return redirect(`/signup?error=${errorCode}`);
+    }
+  }
+
+  // Enforce secure password policy
+  const passwordValidation = await validateSecurePassword({ password, email });
+  if (!passwordValidation.valid) {
+    await logAuthSecurityEvent({
+      request,
+      eventType: "signup_failure",
+      severity: "warn",
+      outcome: "weak-password",
+      email,
+      route: "/signup",
+    });
+    return redirect("/signup?error=weak-password");
+  }
+
+  if (!firstName || !lastName || !email) {
     return redirect("/signup?error=invalid-signup");
   }
 
@@ -152,6 +216,12 @@ export default function Signup() {
   const isCreatingAccount = navigation.state === "submitting";
   const redirectTo = searchParams.get("redirectTo") ?? "/discover";
   const authError = getAuthErrorMessage(searchParams.get("error"));
+  const rootData = useRouteLoaderData<{
+    csrfToken?: string;
+    csrfFieldName?: string;
+  }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
   const oauthGoogleUrl = `/oauth/google?mode=signup&redirectTo=${encodeURIComponent(redirectTo)}`;
   const oauthFacebookUrl = `/oauth/facebook?mode=signup&redirectTo=${encodeURIComponent(redirectTo)}`;
 
@@ -198,6 +268,8 @@ export default function Signup() {
 
             <Form method="post" className="form-modern mt-8 space-y-6">
               <input type="hidden" name="redirectTo" value={redirectTo} />
+              <input type="hidden" name={csrfFieldName} value={csrfToken} />
+              <input type="hidden" name="botDefenseToken" value="" />
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label
