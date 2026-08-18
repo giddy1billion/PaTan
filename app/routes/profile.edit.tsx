@@ -9,6 +9,7 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
+  useRouteLoaderData,
 } from "react-router";
 import { requireUser } from "~/utils/auth.server";
 import { verifyCsrfToken } from "~/utils/csrf.server";
@@ -120,11 +121,20 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
-  
-  // Verify CSRF token for all mutating operations
-  await verifyCsrfToken(request);
-  
   const formData = await request.formData();
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+
+  if (!hasValidCsrf) {
+    return {
+      error: "Your session could not be verified. Please refresh and try again.",
+    } satisfies ActionData;
+  }
+
   const values = {
     bio: String(formData.get("bio") ?? ""),
     country: String(formData.get("country") ?? ""),
@@ -207,6 +217,10 @@ export async function action({ request }: ActionFunctionArgs) {
   return { success: "Profile updated successfully." } satisfies ActionData;
 }
 export default function ProfileEditRoute() {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
+
   const { profile, safety, visibility, notificationSettings } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
@@ -385,6 +399,7 @@ export default function ProfileEditRoute() {
               message={actionData?.success}
             />{" "}
             <Form method="post" className="space-y-5">
+              <input type="hidden" name={csrfFieldName} value={csrfToken} />
               {" "}
               <section
                 className="rounded-2xl border border-midnight/10 bg-surface p-5 sm:p-6 shadow-sm"

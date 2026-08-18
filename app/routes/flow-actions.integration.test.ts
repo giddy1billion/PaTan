@@ -5,6 +5,10 @@ vi.mock("~/utils/auth.server", () => ({
   requireUser: vi.fn(),
 }));
 
+vi.mock("~/utils/csrf.server", () => ({
+  verifyCsrfToken: vi.fn().mockResolvedValue(true),
+}));
+
 vi.mock("~/utils/users.server", async (importOriginal) => {
   const actual = await importOriginal<typeof import("~/utils/users.server")>();
   return {

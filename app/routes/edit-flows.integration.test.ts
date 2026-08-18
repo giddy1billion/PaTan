@@ -4,6 +4,10 @@ vi.mock("~/utils/auth.server", () => ({
   requireUser: vi.fn(),
 }));
 
+vi.mock("~/utils/csrf.server", () => ({
+  verifyCsrfToken: vi.fn().mockResolvedValue(true),
+}));
+
 vi.mock("~/utils/db.server", () => ({
   db: {
     $transaction: vi.fn(),

@@ -10,6 +10,7 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
+  useRouteLoaderData,
   useSearchParams,
 } from "react-router";
 import { useState } from "react";
@@ -161,11 +162,20 @@ export function shouldRevalidate({
 
 export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
-  
-  // Verify CSRF token for all mutating operations
-  await verifyCsrfToken(request);
-  
   const formData = await request.formData();
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+
+  if (!hasValidCsrf) {
+    return {
+      error: "Your session could not be verified. Please refresh and try again.",
+    } satisfies ActionData;
+  }
+
   const intent = String(formData.get("intent") ?? "");
 
   if (intent === "follow-user") {
@@ -390,6 +400,10 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function DashboardRoute() {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
+
   const { summary, suggestions, showWelcome, range } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
@@ -837,6 +851,7 @@ export default function DashboardRoute() {
                                   Cancel
                                 </button>
                                 <Form method="post">
+                                  <input type="hidden" name={csrfFieldName} value={csrfToken} />
                                   <input type="hidden" name="intent" value="mark-all-notifications-read" />
                                   <button
                                     type="submit"
@@ -883,6 +898,7 @@ export default function DashboardRoute() {
 
                             {!notification.isRead ? (
                               <Form method="post">
+                                <input type="hidden" name={csrfFieldName} value={csrfToken} />
                                 <input type="hidden" name="intent" value="mark-notification-read" />
                                 <input type="hidden" name="notificationId" value={notification.id} />
                                 <button
@@ -956,6 +972,7 @@ export default function DashboardRoute() {
                             View
                           </Link>
                           <Form method="post">
+                            <input type="hidden" name={csrfFieldName} value={csrfToken} />
                             <input
                               type="hidden"
                               name="intent"
@@ -1005,6 +1022,7 @@ export default function DashboardRoute() {
                             </p>
                           </div>
                           <Form method="post">
+                            <input type="hidden" name={csrfFieldName} value={csrfToken} />
                             <input
                               type="hidden"
                               name="intent"

@@ -10,6 +10,7 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
+  useRouteLoaderData,
 } from "react-router";
 import { useEffect, useMemo, useState } from "react";
 import { requireUser } from "~/utils/auth.server";
@@ -213,9 +214,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const { user } = await requireModerationRole(request);
   const formData = await request.formData();
-  
-  // Verify CSRF token for moderation actions
-  await verifyCsrfToken(request);
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+
+  if (!hasValidCsrf) {
+    return {
+      error: "Your session could not be verified. Please refresh and try again.",
+    } satisfies ActionData;
+  }
 
   const intent = String(formData.get("intent") ?? "").trim();
   const reportId = String(formData.get("reportId") ?? "").trim();
@@ -290,6 +300,10 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function ModerationReportsRoute() {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
+
   const { status, page, totalCount, totalPages, counts, reports } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
@@ -608,6 +622,7 @@ export default function ModerationReportsRoute() {
                                     Cancel
                                   </button>
                                   <Form method="post">
+                                    <input type="hidden" name={csrfFieldName} value={csrfToken} />
                                     <input type="hidden" name="intent" value="set-report-status" />
                                     <input type="hidden" name="reportId" value={report.id} />
                                     <input type="hidden" name="nextStatus" value={pendingQuickAction.nextStatus} />
@@ -629,6 +644,7 @@ export default function ModerationReportsRoute() {
                         </div>
 
                         <Form method="post" className="rounded-lg border border-midnight/10 bg-surface p-3 space-y-2">
+                          <input type="hidden" name={csrfFieldName} value={csrfToken} />
                           <input type="hidden" name="intent" value="set-report-status" />
                           <input type="hidden" name="reportId" value={report.id} />
                           <label htmlFor={`next-status-${report.id}`} className="block text-xs font-medium text-night">

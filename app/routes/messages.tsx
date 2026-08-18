@@ -10,9 +10,11 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
+  useRouteLoaderData,
   useSearchParams,
 } from "react-router";
 import { requireUser } from "~/utils/auth.server";
+import { verifyCsrfToken } from "~/utils/csrf.server";
 import { db } from "~/utils/db.server";
 import {
   createMentionNotifications,
@@ -291,6 +293,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
   const formData = await request.formData();
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+
+  if (!hasValidCsrf) {
+    return { error: "Your session could not be verified. Please refresh and try again." } satisfies ActionData;
+  }
 
   const intent = String(formData.get("intent") ?? "").trim();
   const recipientId = String(formData.get("recipientId") ?? "").trim();
@@ -398,6 +410,10 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function MessagesRoute() {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
+
   const { sessionUserId, recipients, activeRecipient, messages, unreadCount, showSentNotice } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
@@ -534,6 +550,7 @@ export default function MessagesRoute() {
                 </div>
 
                 <Form method="post" className="mt-4 space-y-3">
+                  <input type="hidden" name={csrfFieldName} value={csrfToken} />
                   <input type="hidden" name="intent" value="send-message" />
                   <input type="hidden" name="recipientId" value={activeRecipient.id} />
                   <label htmlFor="message-content" className="sr-only">

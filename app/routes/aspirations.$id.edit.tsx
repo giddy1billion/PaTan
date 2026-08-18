@@ -10,6 +10,7 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
+  useRouteLoaderData,
 } from "react-router";
 import { useState } from "react";
 import { verifyCsrfToken } from "~/utils/csrf.server";
@@ -139,12 +140,19 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  // Verify CSRF token for all mutating operations
-  await verifyCsrfToken(request);
-
   const sessionUser = await requireUser(request);
   const aspirationId = params.id?.trim();
   const formData = await request.formData();
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+
+  if (!hasValidCsrf) {
+    return { error: "Your session could not be verified. Please refresh and try again." } satisfies ActionData;
+  }
 
   const values = {
     title: String(formData.get("title") ?? "").trim(),
@@ -270,6 +278,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function AspirationEditRoute() {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
+
   const { aspiration } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
@@ -297,6 +309,7 @@ export default function AspirationEditRoute() {
         />
 
         <Form method="post" className="mt-6 space-y-6 rounded-2xl border border-midnight/10 bg-surface p-6 shadow-sm">
+          <input type="hidden" name={csrfFieldName} value={csrfToken} />
           <div>
             <label htmlFor="aspiration-title" className="block text-sm font-medium text-night">
               Title

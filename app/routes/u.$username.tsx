@@ -3,7 +3,7 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "react-router";
-import { Form, Link, useActionData, useLoaderData, useNavigation } from "react-router";
+import { Form, Link, useActionData, useLoaderData, useNavigation, useRouteLoaderData } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 import { Icon } from "~/components/icon";
@@ -246,9 +246,18 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 export async function action({ request, params }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
   const formData = await request.formData();
-  
-  // Verify CSRF token for profile actions (follow/unfollow/block/report)
-  await verifyCsrfToken(request);
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+
+  if (!hasValidCsrf) {
+    return {
+      error: "Your session could not be verified. Please refresh and try again.",
+    } satisfies ActionData;
+  }
 
   const intent = String(formData.get("intent") ?? "");
   const username = String(formData.get("username") ?? params.username ?? "").trim();
@@ -359,6 +368,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function PublicUserProfileRoute() {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
+
   const {
     profile,
     viewer,
@@ -493,6 +506,7 @@ export default function PublicUserProfileRoute() {
           ) : viewer ? (
             <div className="mt-5 flex items-center gap-3">
               <Form method="post">
+                <input type="hidden" name={csrfFieldName} value={csrfToken} />
                 <input
                   type="hidden"
                   name="intent"
@@ -592,6 +606,7 @@ export default function PublicUserProfileRoute() {
                               Cancel
                             </button>
                             <Form method="post">
+                              <input type="hidden" name={csrfFieldName} value={csrfToken} />
                               <input type="hidden" name="intent" value="block-user" />
                               <input type="hidden" name="username" value={profile.username} />
                               <button
@@ -653,6 +668,7 @@ export default function PublicUserProfileRoute() {
                               Cancel
                             </button>
                             <Form method="post">
+                              <input type="hidden" name={csrfFieldName} value={csrfToken} />
                               <input type="hidden" name="intent" value="report-user" />
                               <input type="hidden" name="username" value={profile.username} />
                               <button

@@ -3,7 +3,7 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "react-router";
-import { Form, Link, redirect, useActionData, useLoaderData, useNavigation } from "react-router";
+import { Form, Link, redirect, useActionData, useLoaderData, useNavigation, useRouteLoaderData } from "react-router";
 import { requireUser } from "~/utils/auth.server";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 import { SubmitButton } from "~/components/ui";
@@ -56,11 +56,20 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  // Verify CSRF token for all mutating operations
-  await verifyCsrfToken(request);
-
   const sessionUser = await requireUser(request);
   const formData = await request.formData();
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+
+  if (!hasValidCsrf) {
+    return {
+      error: "Your session could not be verified. Please refresh and try again.",
+    } satisfies ActionData;
+  }
 
   const title = String(formData.get("title") ?? "").trim();
   const category = String(formData.get("category") ?? "").trim();
@@ -126,6 +135,10 @@ const categories = [
 ];
 
 export default function NewAspiration() {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
+
   const { safety } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
@@ -171,6 +184,7 @@ export default function NewAspiration() {
         </div>
 
         <Form method="post" className="form-modern mt-8 sm:mt-10 space-y-8">
+          <input type="hidden" name={csrfFieldName} value={csrfToken} />
           <AutoDismissAlert
             tone="error"
             message={actionData?.error}

@@ -9,11 +9,13 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
+  useRouteLoaderData,
   useSearchParams,
 } from "react-router";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
 import { SubmitButton } from "~/components/ui";
 import { requireUser } from "~/utils/auth.server";
+import { verifyCsrfToken } from "~/utils/csrf.server";
 import { db } from "~/utils/db.server";
 import { createNotification } from "~/utils/notifications.server";
 
@@ -254,6 +256,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
   const formData = await request.formData();
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+
+  if (!hasValidCsrf) {
+    return { error: "Your session could not be verified. Please refresh and try again." } satisfies ActionData;
+  }
+
   const intent = String(formData.get("intent") ?? "").trim();
   const aspirationId = String(formData.get("aspirationId") ?? "").trim();
   const message = String(formData.get("message") ?? "").trim().slice(0, 300);
@@ -348,6 +361,10 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function AspirationsIndex() {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
+
   const {
     sessionUserId,
     aspirations,
@@ -530,6 +547,7 @@ export default function AspirationsIndex() {
                     </div>
 
                     <Form method="post" className="sm:w-[14rem]">
+                      <input type="hidden" name={csrfFieldName} value={csrfToken} />
                       <input type="hidden" name="intent" value="support-aspiration" />
                       <input type="hidden" name="aspirationId" value={aspiration.id} />
                       <SubmitButton

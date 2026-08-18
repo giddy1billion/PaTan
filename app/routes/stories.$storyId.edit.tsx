@@ -10,6 +10,7 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
+  useRouteLoaderData,
 } from "react-router";
 import { useState } from "react";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
@@ -170,12 +171,21 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export async function action({ request, params }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
-  
-  // Verify CSRF token for all mutating operations
-  await verifyCsrfToken(request);
-  
   const storyParam = params.storyId?.trim();
   const formData = await request.formData();
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+
+  if (!hasValidCsrf) {
+    return {
+      error: "Your session could not be verified. Please refresh and try again.",
+    } satisfies ActionData;
+  }
+
   const rawAction = String(formData.get("action") ?? "").trim().toLowerCase();
   const selectedSuggestionType = formData.get("suggestionType");
   const intent = rawAction || (selectedSuggestionType ? "ai-suggest" : "save");
@@ -386,6 +396,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function StoryEditRoute() {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
+
   const { story, categories } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
@@ -426,6 +440,7 @@ export default function StoryEditRoute() {
         />
 
         <Form method="post" className="mt-6 space-y-6 rounded-2xl border border-midnight/10 bg-surface p-6 shadow-sm">
+          <input type="hidden" name={csrfFieldName} value={csrfToken} />
           <div>
             <label htmlFor="story-title" className="block text-sm font-medium text-night">
               Title

@@ -9,6 +9,7 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
+  useRouteLoaderData,
   useSearchParams,
 } from "react-router";
 import { useEffect, useState } from "react";
@@ -195,9 +196,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireUser(request);
   const formData = await request.formData();
-  
-  // Verify CSRF token for notification actions
-  await verifyCsrfToken(request);
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+
+  if (!hasValidCsrf) {
+    return {
+      error: "Your session could not be verified. Please refresh and try again.",
+    } satisfies ActionData;
+  }
 
   const intent = String(formData.get("intent") ?? "").trim();
   const notificationId = String(formData.get("notificationId") ?? "").trim();
@@ -257,6 +267,10 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function NotificationsRoute() {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
+
   const {
     page,
     view,
@@ -409,6 +423,7 @@ export default function NotificationsRoute() {
                           Cancel
                         </button>
                         <Form method="post">
+                          <input type="hidden" name={csrfFieldName} value={csrfToken} />
                           <input type="hidden" name="intent" value="mark-filter-read" />
                           <input type="hidden" name="view" value={view} />
                           <input type="hidden" name="type" value={type} />
@@ -463,6 +478,7 @@ export default function NotificationsRoute() {
                           Cancel
                         </button>
                         <Form method="post">
+                          <input type="hidden" name={csrfFieldName} value={csrfToken} />
                           <input type="hidden" name="intent" value="mark-all-read" />
                           <button
                             type="submit"
@@ -553,6 +569,7 @@ export default function NotificationsRoute() {
 
                         {!notification.isRead ? (
                           <Form method="post">
+                            <input type="hidden" name={csrfFieldName} value={csrfToken} />
                             <input type="hidden" name="intent" value="mark-read" />
                             <input type="hidden" name="notificationId" value={notification.id} />
                             <button

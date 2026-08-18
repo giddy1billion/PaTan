@@ -9,6 +9,7 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
+  useRouteLoaderData,
 } from "react-router";
 import { useState } from "react";
 import { AutoDismissAlert } from "~/components/auto-dismiss-alert";
@@ -232,12 +233,22 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  // Verify CSRF token for all mutating operations
-  await verifyCsrfToken(request);
-
   const sessionUser = await requireUser(request);
   const aspirationId = params.id?.trim();
   const formData = await request.formData();
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+
+  if (!hasValidCsrf) {
+    return {
+      error: "Your session could not be verified. Please refresh and try again.",
+    } satisfies ActionData;
+  }
+
   const intent = String(formData.get("intent") ?? "").trim();
 
   const supportMessage = String(formData.get("supportMessage") ?? "").trim().slice(0, 300);
@@ -516,6 +527,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function AspirationDetail() {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
+
   const {
     aspiration,
     isOwner,
@@ -647,6 +662,7 @@ export default function AspirationDetail() {
                         Cancel
                       </button>
                       <Form method="post">
+                        <input type="hidden" name={csrfFieldName} value={csrfToken} />
                         <input type="hidden" name="intent" value="archive-aspiration" />
                         <button
                           type="submit"
@@ -697,6 +713,7 @@ export default function AspirationDetail() {
                         Cancel
                       </button>
                       <Form method="post">
+                        <input type="hidden" name={csrfFieldName} value={csrfToken} />
                         <input type="hidden" name="intent" value="delete-aspiration" />
                         <button
                           type="submit"
@@ -729,6 +746,7 @@ export default function AspirationDetail() {
 
           {!isOwner ? (
             <Form method="post" className="mt-5 space-y-3">
+              <input type="hidden" name={csrfFieldName} value={csrfToken} />
               <input type="hidden" name="intent" value="support-aspiration" />
               <label htmlFor="supportMessage" className="block text-sm font-medium text-night">
                 Add a support message (optional)
@@ -753,6 +771,7 @@ export default function AspirationDetail() {
             </Form>
           ) : (
             <Form method="post" className="mt-5 space-y-3" aria-labelledby="update-heading">
+              <input type="hidden" name={csrfFieldName} value={csrfToken} />
               <input type="hidden" name="intent" value="post-update" />
               <h3 id="update-heading" className="text-sm font-semibold text-midnight">
                 Post an update for supporters
@@ -793,6 +812,7 @@ export default function AspirationDetail() {
 
                     {isOwner ? (
                       <Form method="post">
+                        <input type="hidden" name={csrfFieldName} value={csrfToken} />
                         <input type="hidden" name="intent" value="toggle-milestone" />
                         <input type="hidden" name="milestoneId" value={milestone.id} />
                         <button

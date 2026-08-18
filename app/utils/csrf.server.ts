@@ -75,7 +75,7 @@ export async function verifyCsrfToken({
  * Throws an error if CSRF validation fails.
  */
 export async function enforceCsrfProtection(request: Request, formData?: FormData) {
-  const submittedToken = formData?.get(CSRF_TOKEN_FIELD_NAME) as string | null;
+  let submittedToken = formData?.get(CSRF_TOKEN_FIELD_NAME) as string | null;
   
   if (!submittedToken) {
     // Also check header for API requests

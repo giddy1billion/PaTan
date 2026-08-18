@@ -10,6 +10,7 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
+  useRouteLoaderData,
 } from "react-router";
 import { requireVerifiedUser } from "~/utils/auth.server";
 import { verifyCsrfToken } from "~/utils/csrf.server";
@@ -72,11 +73,20 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 export async function action({ request }: ActionFunctionArgs) {
   const sessionUser = await requireVerifiedUser(request);
-  
-  // Verify CSRF token for all mutating operations
-  await verifyCsrfToken(request);
-  
   const formData = await request.formData();
+  const csrfToken = String(formData.get("csrfToken") ?? "");
+
+  const hasValidCsrf = await verifyCsrfToken({
+    request,
+    submittedToken: csrfToken,
+  });
+
+  if (!hasValidCsrf) {
+    return {
+      error: "Your session could not be verified. Please refresh and try again.",
+    } satisfies ActionData;
+  }
+
   const redirectTo = getSafeRedirectTarget(
     String(formData.get("redirectTo") ?? "/dashboard"),
   );
@@ -93,6 +103,10 @@ export async function action({ request }: ActionFunctionArgs) {
   throw redirect(withOnboardingWelcome(redirectTo));
 }
 export default function OnboardingInterestsRoute() {
+  const rootData = useRouteLoaderData<{ csrfToken?: string; csrfFieldName?: string }>("root");
+  const csrfToken = rootData?.csrfToken ?? "";
+  const csrfFieldName = rootData?.csrfFieldName ?? "csrfToken";
+
   const { redirectTo, selectedInterests } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
@@ -144,7 +158,7 @@ export default function OnboardingInterestsRoute() {
             className="mt-5"
           />{" "}
           <Form method="post" className="mt-6 space-y-6">
-            {" "}
+            <input type="hidden" name={csrfFieldName} value={csrfToken} />
             <input type="hidden" name="redirectTo" value={redirectTo} />{" "}
             <fieldset>
               {" "}
